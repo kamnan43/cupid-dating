@@ -413,12 +413,12 @@ function saveMemberProfilePicture(userId) {
   return line.getProfile(userId)
     .then((profile) => {
       updateMemberData(userId, profile);
-      downloadProfilePicture(profile.pictureUrl, getProfilePath(userId));
+      return downloadProfilePicture(profile.pictureUrl, getProfilePath(userId));
     })
     .then(() => {
       // createPreviewImage
       cp.execSync(`convert -resize 240x jpeg:${getProfilePath(userId)} jpeg:${getProfilePreviewPath(userId)}`);
-    }).catch((error) => { console.log('error', error) });
+    }).catch((error) => { console.log('saveMemberProfilePicture Error', error) });
 }
 
 function downloadProfilePicture(pictureUrl, downloadPath) {
