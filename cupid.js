@@ -182,7 +182,7 @@ module.exports = {
             })
             .then(() => {
               updateMemberData(userId, { 'nextMessageTo': '' });
-            }).catch((error) => { console.log('sendFirstMessageToPartner Error', error) });
+            }).catch((error) => { console.log('sendFirstMessageToPartner Error', error + '') });
         }
       });
 
@@ -215,7 +215,7 @@ function saveMemberProfilePicture(userId) {
     .then(() => {
       // createPreviewImage
       cp.execSync(`convert -resize 240x jpeg:${getProfilePath(userId)} jpeg:${getProfilePreviewPath(userId)}`);
-    }).catch((error) => { console.log('saveMemberProfilePicture Error', error) });
+    }).catch((error) => { console.log('saveMemberProfilePicture Error', error + '') });
 }
 
 function downloadProfilePicture(pictureUrl, downloadPath) {
@@ -345,7 +345,8 @@ function sendSuggestFriend(userId) {
               }
             });
             var columns = lists.map(element => {
-              return createCarouselColumns(element.displayName || 'ไม่มีชื่อ', element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
+              var column = createCarouselColumns(element.displayName || 'ไม่มีชื่อ', element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
+              return column;
             });
             console.log('columns', JSON.stringify(columns));
 
