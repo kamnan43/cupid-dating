@@ -27,9 +27,8 @@ module.exports = {
   ],
   partnerProfileActions: [
     createPostBackOption('ดูรูป', 'ACTION-DOWNLOAD'),
-    createPostBackOption('รักเลย', 'ACTION-LOVE'),
-    createPostBackOption('กลัวๆ', 'ACTION-BLOCK'),
-    createPostBackOption('กลัวdddๆ', 'ACTION-BL'),
+    createPostBackOption('ถูกใจ', 'ACTION-LOVE'),
+    createPostBackOption('ไม่ชอบ', 'ACTION-BLOCK'),
   ]
 }
 

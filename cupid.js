@@ -13,6 +13,7 @@ firebaseConfig.credential = firebase.credential.cert(require(firebaseConfig.serv
 firebase.initializeApp(firebaseConfig);
 var database = firebase.database();
 var membersRef = database.ref("/members");
+var relationsRef = database.ref("/members");
 
 module.exports = {
   sendMessage: (userId, replyToken, text) => {
@@ -120,6 +121,34 @@ module.exports = {
         createImageMessage(getProfileUrl(partnerUserId), getProfilePreviewUrl(partnerUserId)),
       ]
     );
+  },
+
+  sendLoveToPartner: (userId, replyToken, partnerUserId) => {
+    var partnerName;
+    var obj = {};
+    obj['relations/' + partnerUserId] = { 'love': true };
+    updateMemberData(userId, obj);
+    getUserInfo(partnerUserId, (profile) => {
+      partnerName = profile.displayName;
+      if (alrealdyHasRelationShip(userId, partnerUserId)) {
+        updateMemberData(userId, { 'nextMessageTo': partnerUserId });
+        return line.replyMessage(
+          replyToken,
+          [
+            createTextMessage(`ว้าววว ยินดีด้วย คนนี้ก็ถูกใจคุณเหมือนกัน`),
+            createTextMessage(`คุณสามารถส่งข้อความไปถึง ${partnerName} ได้\nจะเป็นข้อความ รูปภาพ คลิปเสียง หรือแม้แต่วิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
+            createTextMessage(`มีโอกาสครั้งเดียว อย่าให้พลาดหล่ะ`),
+          ]
+        );
+      } else {
+        return line.replyMessage(
+          replyToken,
+          [
+            createTextMessage(`ถูกใจหล่ะสิ ถ้าคุณ ${partnerName} ถูกใจคุณเหมือนกัน  เราจะมาบอกข่าวดีนะ`),
+          ]
+        );
+      }
+    });
   }
 }
 
@@ -216,10 +245,11 @@ function createCarouselMessage(title, columns) {
 
 function createCarouselColumns(title, text, imageUrl, extra) {
   var columnOptions = options.partnerProfileActions;
-  if (extra) columnOptions = columnOptions.map(option => {
-    option.data = option.data + '_' +  extra;
-    return option;
-  });
+  if (extra) {
+    columnOptions.forEach((element, index) => {
+      columnOptions[index].data = columnOptions[index].data + '_' + extra;
+    });
+  }
   return {
     thumbnailImageUrl: imageUrl,
     title: title,
@@ -240,6 +270,18 @@ function getUserInfo(userId, cb) {
     .once("value", function (snapshot) {
       snapshot.forEach(function (snap) {
         cb(snap.val());
+      });
+    });
+}
+
+function alrealdyHasRelationShip(userId, partnerUserId) {
+  var partnerRelationRef = database.ref("/members/" + partnerUserId + "/relations");
+  relationRef.orderByKey()
+    .equalTo(userId)
+    .once("value", function (snapshot) {
+      snapshot.forEach(function (snap) {
+        var doc = snap.val();
+        cb(doc.love);
       });
     });
 }

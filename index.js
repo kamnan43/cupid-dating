@@ -94,6 +94,9 @@ function handleEvent(event) {
         case 'ACTION-DOWNLOAD':
           cupid.sendPartnerProfileImage(userId, replyToken, data);
           break;
+        case 'ACTION-LOVE':
+          cupid.sendLoveToPartner(userId, replyToken, data);
+          break;
         default:
           return;
       }
