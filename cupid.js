@@ -418,11 +418,12 @@ function saveMemberProfilePicture(userId) {
     .then(() => {
       // createPreviewImage
       cp.execSync(`convert -resize 240x jpeg:${getProfilePath(userId)} jpeg:${getProfilePreviewPath(userId)}`);
-    });
+    }).catch((error) => { console.log('error', error) });
 }
 
 function downloadProfilePicture(pictureUrl, downloadPath) {
   return new Promise((resolve, reject) => {
+    console.log(pictureUrl);
     http.get(pictureUrl, function (response) {
       const writable = fs.createWriteStream(downloadPath);
       response.pipe(writable);
