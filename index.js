@@ -20,8 +20,8 @@ app.post('/git', function (req, res) {
     branch: "master"
   });
 });
-// app.post('/webhooks', lineSdk.middleware(config), (req, res) => {
-app.post('/webhooks', (req, res) => {
+app.post('/webhooks', lineSdk.middleware(config), (req, res) => {
+// app.post('/webhooks', (req, res) => {
   if (!Array.isArray(req.body.events)) {
     return res.status(500).end();
   }
