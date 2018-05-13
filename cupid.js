@@ -164,7 +164,7 @@ module.exports = {
           getUserInfo(profile.nextMessageTo)
             .then((profile) => {
               partnerName = profile.displayName;
-              return line.push(
+              return line.pushMessage(
                 profile.nextMessageTo,
                 [
                   message
