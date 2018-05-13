@@ -140,9 +140,9 @@ module.exports = {
           line.replyMessage(
             replyToken,
             [
-              createTextMessage(`ว้าววว ยินดีด้วย คนนี้ก็ถูกใจคุณเหมือนกัน`),
-              createTextMessage(`คุณสามารถส่งข้อความไปถึง ${partnerName} ได้\nจะเป็นข้อความ รูปภาพ คลิปเสียง หรือแม้แต่วิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
-              createTextMessage(`มีโอกาสครั้งเดียว อย่าให้พลาดหล่ะ`),
+              createTextMessage(`ว้าววว ยินดีด้วย ${partnerName} ก็ถูกใจคุณเหมือนกัน`),
+              createTextMessage(`คุณสามารถส่งข้อความไปถึง ${partnerName} ได้\nข้อความ รูปภาพ คลิปเสียง หรือวิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
+              createTextMessage(`มีโอกาสครั้งเดียว อย่าให้พลาดหล่ะ เริ่ม`),
             ]
           );
         } else {
@@ -154,6 +154,38 @@ module.exports = {
           );
         }
       });
+  },
+
+  sendFirstMessageToPartner: (userId, replyToken, message) => {
+    var partnerName;
+    getUserInfo(userId)
+      .then((profile) => {
+        if (profile.nextMessageTo) {
+          getUserInfo(profile.nextMessageTo)
+            .then((profile) => {
+              partnerName = profile.displayName;
+              return line.push(
+                profile.nextMessageTo,
+                [
+                  message
+                ]
+              );
+            })
+            .then(() => {
+              return line.replyMessage(
+                replyToken,
+                [
+                  createTextMessage(`ส่งข้อความของคุณถึง ${partnerName} เรียบร้อยแล้ว`),
+                  createTextMessage(`ถ้า ${partnerName} ตอบกลับ ก็เริ่มสานสัมพันธ์กันได้เล้ยยย`),
+                ]
+              );
+            })
+            .then(() => {
+              updateMemberData(userId, { 'nextMessageTo': '' });
+            });
+        }
+      });
+
   }
 }
 
@@ -291,7 +323,6 @@ function alrealdyHasRelationShip(userId, partnerUserId) {
       .once("value", function (snapshot) {
         snapshot.forEach(function (snap) {
           var doc = snap.val();
-          console.log('doc', doc);
           resolve(doc.love);
         });
       });

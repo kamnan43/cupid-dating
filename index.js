@@ -43,22 +43,23 @@ function handleEvent(event) {
   switch (event.type) {
     case 'message':
       const message = event.message;
-      switch (message.type) {
-        case 'text':
-          return handleText(message, replyToken, event.source);
-        // case 'image':
-        //   return handleImage(message, event.replyToken);
-        // case 'video':
-        //   return handleVideo(message, event.replyToken);
-        // case 'audio':
-        //   return handleAudio(message, event.replyToken);
-        // case 'location':
-        //   return handleLocation(message, event.replyToken);
-        // case 'sticker':
-        //   return handleSticker(message, event.replyToken);
-        default:
-          throw new Error(`Unknown message: ${JSON.stringify(message)}`);
-      }
+      cupid.sendFirstMessageToPartner(userId, replyToken, message);
+    // switch (message.type) {
+    //   // case 'text':
+    //   //   return handleText(message, replyToken, event.source);
+    //   // case 'image':
+    //   //   return handleImage(message, event.replyToken);
+    //   // case 'video':
+    //   //   return handleVideo(message, event.replyToken);
+    //   // case 'audio':
+    //   //   return handleAudio(message, event.replyToken);
+    //   // case 'location':
+    //   //   return handleLocation(message, event.replyToken);
+    //   // case 'sticker':
+    //   //   return handleSticker(message, event.replyToken);
+    //   default:
+    //     throw new Error(`Unknown message: ${JSON.stringify(message)}`);
+    // }
 
     case 'follow':
       return cupid.sendGreetingMessage(userId, replyToken);
