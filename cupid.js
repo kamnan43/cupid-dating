@@ -450,9 +450,9 @@ function sendSuggestFriend(userId) {
         .once("value", function (snapshot) {
           snapshot.forEach(function (snap) {
             var doc = snap.val();
-            if (doc.gender === obj.partner_gender) {
-              console.log('A', snap.val());
-            }
+            // if (doc.gender === obj.partner_gender) {
+              console.log('A', doc);
+            // }
           });
           console.log('ALL');
         });
