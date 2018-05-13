@@ -283,7 +283,8 @@ function createCarouselMessage(title, columns) {
 function createCarouselColumns(title, text, imageUrl, extra) {
   console.log('createCarouselColumns', title, text, imageUrl, extra);
   var columnOptions = [];
-  options.partnerProfileActions.forEach(element => {
+  var dup_array = JSON.parse(JSON.stringify(options.partnerProfileActions))
+  dup_array.forEach(element => {
     var el = element;
     if (extra) el.data = el.data + '_' + extra;
     columnOptions.push(el);
