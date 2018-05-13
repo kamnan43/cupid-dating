@@ -422,7 +422,7 @@ function createButtonMessage(title, actions) {
 
 function saveMemberData(userId, key, value) {
   var memberRef = database.ref("/members/" + userId);
-  memberRef.update({
-    partner_gender: gender
-  });
+  var obj = {};
+  obj.key = value;
+  memberRef.update(obj);
 }
