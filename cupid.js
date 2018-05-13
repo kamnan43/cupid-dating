@@ -53,16 +53,6 @@ module.exports = {
     );
   },
 
-  saveMemberProfilePicture: (userId) => {
-    return client.getProfile(userId)
-      .then((profile) => {
-        updateMemberData(userId, profile);
-        downloadProfilePicture(profile.pictureUrl, getProfilePath(userId));
-        // createPreviewImage
-        cp.execSync(`convert -resize 240x jpeg:${getProfilePath(userId)} jpeg:${getProfilePreviewPath(userId)}`);
-      });
-  },
-
   saveGender: (userId, replyToken, gender) => {
     updateMemberData(userId, { 'gender': gender });
     return line.replyMessage(
@@ -426,6 +416,16 @@ function getProfilePath(userId) {
 
 function getProfilePreviewPath(userId) {
   return ath.join(__dirname, 'downloaded', `${userId}-profile-preview.jpg`);
+}
+
+function saveMemberProfilePicture(userId) {
+  return client.getProfile(userId)
+    .then((profile) => {
+      updateMemberData(userId, profile);
+      downloadProfilePicture(profile.pictureUrl, getProfilePath(userId));
+      // createPreviewImage
+      cp.execSync(`convert -resize 240x jpeg:${getProfilePath(userId)} jpeg:${getProfilePreviewPath(userId)}`);
+    });
 }
 
 function createTextMessage(text) {
