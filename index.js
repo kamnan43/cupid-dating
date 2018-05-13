@@ -34,6 +34,7 @@ app.post('/webhooks', lineSdk.middleware(config), (req, res) => {
 });
 
 function handleEvent(event) {
+  console.log(event);
   var userId = event.source.userId;
   var replyToken = event.replyToken;
   if (!userId) {
