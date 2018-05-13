@@ -284,7 +284,7 @@ function createCarouselColumns(title, text, imageUrl, extra) {
   var columnOptions = [...options.partnerProfileActions];
   if (extra) {
     columnOptions.map(element => {
-      element.data = element.data + '_' + extra;
+      element.data = extra;
       return element;
     });
   }
