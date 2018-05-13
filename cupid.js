@@ -281,13 +281,12 @@ function createCarouselMessage(title, columns) {
 }
 
 function createCarouselColumns(title, text, imageUrl, extra) {
-  var columnOptions = options.partnerProfileActions;
+  var columnOptions = [...options.partnerProfileActions];
   if (extra) {
-    columnOptions.forEach((element, index) => {
-      columnOptions[index].data = columnOptions[index].data + '_' + extra;
+    columnOptions.map(element => {
+      element.data = element.data + '_' + extra;
+      return element;
     });
-    console.log(imageUrl);
-    console.log(columnOptions);
   }
   return {
     thumbnailImageUrl: imageUrl,
