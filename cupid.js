@@ -52,10 +52,7 @@ module.exports = {
   },
 
   saveGender: (userId, replyToken, gender) => {
-    var memberRef = database.ref("/members/" + userId);
-    memberRef.set({
-      gender: gender
-    });
+    saveMemberData(userId, 'gender', gender);
     return line.replyMessage(
       replyToken,
       [
@@ -65,10 +62,7 @@ module.exports = {
   },
 
   saveAge: (userId, replyToken, age) => {
-    var memberRef = database.ref("/members/" + userId);
-    memberRef.set({
-      age: age
-    });
+    saveMemberData(userId, 'age', age);
     return line.replyMessage(
       replyToken,
       [
@@ -78,11 +72,8 @@ module.exports = {
     );
   },
 
-  savePartnerGender: (userId, replyToken, gender) => {
-    var memberRef = database.ref("/members/" + userId);
-    memberRef.set({
-      partner_gender: gender
-    });
+  savePartnerGender: (userId, replyToken, partner_gender) => {
+    saveMemberData(userId, 'partner_gender', partner_gender);
     return line.replyMessage(
       replyToken,
       [
@@ -91,12 +82,8 @@ module.exports = {
     );
   },
 
-  savePartnerAge: (userId, replyToken, age) => {
-    var memberRef = database.ref("/members/" + userId);
-    memberRef.set({
-      partner_age: age,
-      status: 1
-    });
+  savePartnerAge: (userId, replyToken, partner_age) => {
+    saveMemberData(userId, 'partner_age', partner_age);
     return line.replyMessage(
       replyToken,
       [
@@ -431,4 +418,11 @@ function createButtonMessage(title, actions) {
       actions: actions,
     },
   };
+}
+
+function saveMemberData(userId, key, value) {
+  var memberRef = database.ref("/members/" + userId);
+  memberRef.update({
+    partner_gender: gender
+  });
 }
