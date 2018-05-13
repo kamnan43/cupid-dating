@@ -423,6 +423,6 @@ function createButtonMessage(title, actions) {
 function saveMemberData(userId, key, value) {
   var memberRef = database.ref("/members/" + userId);
   var obj = {};
-  obj.key = value;
+  obj[key] = value;
   memberRef.update(obj);
 }
