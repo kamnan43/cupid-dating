@@ -68,10 +68,10 @@ module.exports = {
   saveAge: (userId, replyToken, age) => {
     var minAge, maxAge;
     switch (age) {
-      case 'AGE_18': minAge = 18; maxAge = 22; break;
-      case 'AGE_23': minAge = 23; maxAge = 27; break;
-      case 'AGE_28': minAge = 28; maxAge = 32; break;
-      case 'AGE_33': minAge = 33; maxAge = 99; break;
+      case '18-22': minAge = 18; maxAge = 22; break;
+      case '23-27': minAge = 23; maxAge = 27; break;
+      case '28-32': minAge = 28; maxAge = 32; break;
+      case '33UP': minAge = 33; maxAge = 99; break;
     }
     updateMemberData(userId, { 'age': age, 'min_age': minAge, 'max_age': maxAge });
     return line.replyMessage(
@@ -96,10 +96,10 @@ module.exports = {
   savePartnerAge: (userId, replyToken, partner_age) => {
     var minAge, maxAge;
     switch (partner_age) {
-      case 'AGE_18': minAge = 18; maxAge = 22; break;
-      case 'AGE_23': minAge = 23; maxAge = 27; break;
-      case 'AGE_28': minAge = 28; maxAge = 32; break;
-      case 'AGE_33': minAge = 33; maxAge = 99; break;
+      case '18-22': minAge = 18; maxAge = 22; break;
+      case '23-27': minAge = 23; maxAge = 27; break;
+      case '28-32': minAge = 28; maxAge = 32; break;
+      case '33UP': minAge = 33; maxAge = 99; break;
     }
     updateMemberData(userId, { 'partner_age': partner_age, 'partner_min_age': minAge, 'partner_max_age': maxAge, 'status': 1 });
     return line.replyMessage(
@@ -111,6 +111,15 @@ module.exports = {
     ).then(() => {
       setTimeout(sendSuggestFriend, 1000, userId);
     });
+  },
+
+  sendPartnerProfileImage: (userId, replyToken, partnerUserId) => {
+    return line.replyMessage(
+      replyToken,
+      [
+        createImageMessage(getProfileUrl(partnerUserId), getProfilePreviewUrl(partnerUserId)),
+      ]
+    );
   }
 }
 
@@ -156,7 +165,18 @@ function downloadProfilePicture(pictureUrl, downloadPath) {
 }
 
 function createTextMessage(text) {
-  return { type: 'text', text: text };
+  return {
+    type: 'text',
+    text: text
+  };
+}
+
+function createImageMessage(originalContentUrl, previewImageUrl) {
+  return {
+    type: 'image',
+    originalContentUrl: originalContentUrl,
+    previewImageUrl
+  };
 }
 
 function createConfirmMessage(title, actions) {
@@ -194,13 +214,18 @@ function createCarouselMessage(title, columns) {
   };
 }
 
-function createCarouselColumns(title, text, imageUrl) {
+function createCarouselColumns(title, text, imageUrl, extra) {
+  var columnOptions = options.partnerProfileActions;
+  if (extra) columnOptions = columnOptions.map(option => {
+    option.data = option.data + '_' +  extra;
+    return option;
+  });
   return {
     thumbnailImageUrl: imageUrl,
     title: title,
     text: text,
-    defaultAction: options.partnerProfileActions[0],
-    actions: options.partnerProfileActions
+    defaultAction: columnOptions[0],
+    actions: columnOptions
   };
 }
 
@@ -235,7 +260,7 @@ function sendSuggestFriend(userId) {
           });
           console.log('lists', lists);
           var columns = lists.map(element => {
-            return createCarouselColumns(element.displayName || 'ไม่มีชื่อ', element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId));
+            return createCarouselColumns(element.displayName || 'ไม่มีชื่อ', element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
           });
           console.log('columns', JSON.stringify(columns));
 

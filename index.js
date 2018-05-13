@@ -67,38 +67,32 @@ function handleEvent(event) {
       return console.log(`Unfollowed this bot: ${JSON.stringify(event)}`);
 
     case 'postback':
-      let data = event.postback.data;
-      // console.log('postback', data);
-      switch (data) {
-        case 'TOS_YES':
-          cupid.saveNewMember(userId, replyToken);
+      let postbackData = event.postback.data.split("_", 2);
+      let mode = postbackData[0];
+      let data = postbackData[1];
+
+      switch (mode) {
+        case 'TOS':
+          if (data === 'YES') {
+            cupid.saveNewMember(userId, replyToken);
+          } else {
+            cupid.sendMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ยอมรับ ด้านบนได้ทุกเมื่อ');
+          }
           break;
-        case 'TOS_NO':
-          cupid.sendMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ยอมรับ ด้านบนได้ทุกเมื่อ');
-          break;
-        case 'GENDER_M':
-        case 'GENDER_F':
-        case 'GENDER_X':
+        case 'GENDER':
           cupid.saveGender(userId, replyToken, data);
           break;
-        case 'AGE_18':
-        case 'AGE_23':
-        case 'AGE_28':
-        case 'AGE_33':
+        case 'AGE':
           cupid.saveAge(userId, replyToken, data);
           break;
-        case 'PARTNER_GENDER_M':
-        case 'PARTNER_GENDER_F':
-        case 'PARTNER_GENDER_X':
-          data = data.replace('PARTNER_', '')
+        case 'PARTNER-GENDER':
           cupid.savePartnerGender(userId, replyToken, data);
           break;
-        case 'PARTNER_AGE_18':
-        case 'PARTNER_AGE_23':
-        case 'PARTNER_AGE_28':
-        case 'PARTNER_AGE_33':
-          data = data.replace('PARTNER_', '')
+        case 'PARTNER-AGE':
           cupid.savePartnerAge(userId, replyToken, data);
+          break;
+        case 'ACTION-DOWNLOAD':
+          cupid.sendPartnerProfileImage(userId, replyToken, data);
           break;
         default:
           return;
