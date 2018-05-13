@@ -282,14 +282,24 @@ function createCarouselMessage(title, columns) {
 
 function createCarouselColumns(title, text, imageUrl, extra) {
   console.log('createCarouselColumns', title, text, imageUrl, extra);
-  var columnOptions = [...options.partnerProfileActions];
-  if (extra) {
-    columnOptions.map(element => {
-      console.log('columnOptions.map', element.data, extra);
-      element.data = extra;
-      return element;
-    });
-  }
+  var columnOptions = [];
+  options.partnerProfileActions.forEach(element => {
+    if (extra) element.data = element.data + '_' + extra;
+    columnOptions.push(element);
+  });
+
+  // if (extra) {
+  //   columnOptions = [];
+  //   options.partnerProfileActions.forEach(element => {
+  //     element.data = element.data + '_' + extra;
+  //     columnOptions.push();
+  //   });
+  //   // columnOptions.map(element => {
+  //   //   console.log('columnOptions.map', element.data, extra);
+  //   //   element.data = extra;
+  //   //   return element;
+  //   // });
+  // }
   return {
     thumbnailImageUrl: imageUrl,
     title: title,
