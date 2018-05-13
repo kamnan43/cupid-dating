@@ -406,7 +406,7 @@ function getProfilePath(userId) {
 }
 
 function getProfilePreviewPath(userId) {
-  return ath.join(__dirname, 'downloaded', `${userId}-profile-preview.jpg`);
+  return path.join(__dirname, 'downloaded', `${userId}-profile-preview.jpg`);
 }
 
 function saveMemberProfilePicture(userId) {
