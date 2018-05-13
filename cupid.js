@@ -249,6 +249,8 @@ function createCarouselColumns(title, text, imageUrl, extra) {
     columnOptions.forEach((element, index) => {
       columnOptions[index].data = columnOptions[index].data + '_' + extra;
     });
+    console.log(imageUrl);
+    console.log(columnOptions);
   }
   return {
     thumbnailImageUrl: imageUrl,
