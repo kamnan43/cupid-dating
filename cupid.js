@@ -182,7 +182,7 @@ module.exports = {
             })
             .then(() => {
               updateMemberData(userId, { 'nextMessageTo': '' });
-            });
+            }).catch((error) => { console.log('sendFirstMessageToPartner Error', error) });
         }
       });
 
