@@ -445,7 +445,8 @@ function sendSuggestFriend(userId) {
     console.log('getUserInfo', obj);
     try {
       membersRef.orderByChild('age')
-        .equalTo('partner_age')
+        .equalTo(obj.partner_age)
+        .limitToFirst(10)
         .once("value", function (snapshot) {
           snapshot.forEach(function (snap) {
             console.log('A', snap.val());

@@ -68,7 +68,7 @@ function handleEvent(event) {
 
     case 'postback':
       let data = event.postback.data;
-      console.log('postback', data);
+      // console.log('postback', data);
       switch (data) {
         case 'TOS_YES':
           cupid.saveNewMember(userId, replyToken);
