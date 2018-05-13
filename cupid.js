@@ -258,7 +258,6 @@ function sendSuggestFriend(userId) {
               lists.push(doc);
             }
           });
-          console.log('lists', lists);
           var columns = lists.map(element => {
             return createCarouselColumns(element.displayName || 'ไม่มีชื่อ', element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
           });

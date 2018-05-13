@@ -29,6 +29,7 @@ module.exports = {
     createPostBackOption('ดูรูป', 'ACTION-DOWNLOAD'),
     createPostBackOption('รักเลย', 'ACTION-LOVE'),
     createPostBackOption('กลัวๆ', 'ACTION-BLOCK'),
+    createPostBackOption('กลัวdddๆ', 'ACTION-BL'),
   ]
 }
 
