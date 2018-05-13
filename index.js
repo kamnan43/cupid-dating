@@ -62,10 +62,22 @@ function handleEvent(event) {
 
     case 'postback':
       let data = event.postback.data;
-      if (data === 'DATE' || data === 'TIME' || data === 'DATETIME') {
-        data += `(${JSON.stringify(event.postback.params)})`;
-      }
-      return replyText(event.replyToken, `Got postback: ${data}`);
+      console.log(data);
+      return;
+      // return cupid.saveNewMember(source.userId, replyToken, data);
+      // switch (data) {
+      //   case 'TOS_YES':
+      //     if (source.userId) {
+      //       cupid.saveNewMember(source.userId, replyToken);
+      //     } else {
+      //       return replyText(replyToken, 'Error : NO_USER_ID');
+      //     }
+      
+      //   default:
+      //     console.log(`Echo message to ${replyToken}: ${message.text}`);
+      //     return replyText(replyToken, message.text);
+      // }
+      // return replyText(event.replyToken, `Got postback: ${data}`);
 
     default:
       throw new Error(`Unknown event: ${JSON.stringify(event)}`);

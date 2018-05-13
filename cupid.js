@@ -11,18 +11,17 @@ var membersRef = database.ref("/members");
 
 module.exports = {
   sendGreetingMessage: (replyToken) => {
-    return replyText(
+    return line.replyMessage(
       replyToken,
       [
-        `ยินดีต้อนรับสู่ Cupid Dating : บริการหาคู่ทางไลน์`,
-        `เงื่อนไขการใช้บริการ\n` +
-        `1. ระบบอาจบันทึกข้อมูลส่วนตัวของคุณ ได้แก่ ชื่อโปรไฟล์ รูปโปรไฟล์ สถานะโปรไฟล์ เพื่อใช้ในการให้บริการ\n` +
-        `2. ข้อมูลส่วนตัวของคุณจะแสดงต่อผู้ใช้อื่นในระบบ เฉพาะคนที่ระบุความต้องการตรงตามที่คุณระบุเท่านั้น\n` +
-        `3. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`,
+        createTextMessage(`ยินดีต้อนรับสู่ Cupid Dating : บริการหาคู่ทางไลน์`),
+        createTextMessage(`เงื่อนไขการใช้บริการ\n` +
+          `1. ระบบอาจบันทึกข้อมูลส่วนตัวของคุณ ได้แก่ ชื่อโปรไฟล์ รูปโปรไฟล์ สถานะโปรไฟล์ เพื่อใช้ในการให้บริการ\n` +
+          `2. ข้อมูลส่วนตัวของคุณจะแสดงต่อผู้ใช้อื่นในระบบ เฉพาะคนที่ระบุความต้องการตรงตามที่คุณระบุเท่านั้น\n` +
+          `3. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`),
+        createConfirmMessage('เงื่อนไขการใช้งาน', 'คุณยอมรับเงื่อนไขการใช้งานหรือไม่', 'TOS_YES', 'TOS_NO')
       ]
-    ).then(() => {
-      replyConfirm(replyToken, 'เงื่อนไขการใช้งาน', 'คุณยอมรับเงื่อนไขการใช้งานหรือไม่', 'TOS_YES', 'TOS_NO');
-    });
+    );
   },
 
   saveNewMember: (userId, replyToken) => {
@@ -331,28 +330,21 @@ module.exports = {
   // }
 };
 // simple reply function
-function replyText(token, texts) {
-  texts = Array.isArray(texts) ? texts : [texts];
-  return line.replyMessage(
-    token,
-    texts.map((text) => ({ type: 'text', text }))
-  );
+function createTextMessage(text) {
+  return { type: 'text', text: text };
 }
 
-function replyConfirm(token, title, text, yesKey, noKey) {
-  return line.replyMessage(
-    token,
-    {
-      type: 'template',
-      altText: title,
-      template: {
-        type: 'confirm',
-        text: text,
-        actions: [
-          { label: 'Yes', type: 'message', text: yesKey },
-          { label: 'No', type: 'message', text: noKey },
-        ],
-      },
-    }
-  )
+function createConfirmMessage(title, text, yesKey, noKey) {
+  return {
+    type: 'template',
+    altText: title,
+    template: {
+      type: 'confirm',
+      text: text,
+      actions: [
+        { label: 'Yes', type: 'message', text: yesKey },
+        { label: 'No', type: 'message', text: noKey },
+      ],
+    },
+  };
 }
