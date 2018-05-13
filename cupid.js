@@ -282,12 +282,11 @@ function createCarouselMessage(title, columns) {
 
 function createCarouselColumns(title, text, imageUrl, extra) {
   console.log('createCarouselColumns', title, text, imageUrl, extra);
-  var columnOptions = [];
   var dup_array = JSON.parse(JSON.stringify(options.partnerProfileActions))
-  dup_array.forEach(element => {
+  columnOptions = dup_array.map(element => {
     var el = element;
     if (extra) el.data = el.data + '_' + extra;
-    columnOptions.push(el);
+    return el;
   });
 
   // if (extra) {
