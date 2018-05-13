@@ -134,6 +134,7 @@ module.exports = {
         alrealdyHasRelationShip(userId, partnerUserId);
       })
       .then((isLove) => {
+        console.log('isLove', isLove);
         if (isLove) {
           updateMemberData(userId, { 'nextMessageTo': partnerUserId });
           line.replyMessage(
