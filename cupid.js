@@ -1,5 +1,3 @@
-import { tosActions } from './cupid-options';
-
 const config = require('./config.json');
 const options = require('./cupid-options.js');
 const baseURL = config.BASE_URL;
