@@ -281,9 +281,11 @@ function createCarouselMessage(title, columns) {
 }
 
 function createCarouselColumns(title, text, imageUrl, extra) {
+  console.log('createCarouselColumns', title, text, imageUrl, extra);
   var columnOptions = [...options.partnerProfileActions];
   if (extra) {
     columnOptions.map(element => {
+      console.log('columnOptions.map', element.data, extra);
       element.data = extra;
       return element;
     });
@@ -344,8 +346,7 @@ function sendSuggestFriend(userId) {
               }
             });
             var columns = lists.map(element => {
-              var column = createCarouselColumns(element.displayName || 'ไม่มีชื่อ', element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
-              return column;
+              return createCarouselColumns(element.displayName || 'ไม่มีชื่อ', element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
             });
             console.log('columns', JSON.stringify(columns));
 
