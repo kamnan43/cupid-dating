@@ -481,7 +481,7 @@ function createCarouselMessage(title, columns) {
 }
 
 function createCarouselColumns(imageUrl) {
-  return { imageUrl: imageUrl, actions: options.partnerProfileActions };
+  return { imageUrl: imageUrl, action: options.partnerProfileActions };
 }
 
 function updateMemberData(userId, object) {
