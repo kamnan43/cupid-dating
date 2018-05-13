@@ -128,27 +128,31 @@ module.exports = {
     var obj = {};
     obj['relations/' + partnerUserId] = { 'love': true };
     updateMemberData(userId, obj);
-    getUserInfo(partnerUserId, (profile) => {
-      partnerName = profile.displayName;
-      if (alrealdyHasRelationShip(userId, partnerUserId)) {
-        updateMemberData(userId, { 'nextMessageTo': partnerUserId });
-        return line.replyMessage(
-          replyToken,
-          [
-            createTextMessage(`ว้าววว ยินดีด้วย คนนี้ก็ถูกใจคุณเหมือนกัน`),
-            createTextMessage(`คุณสามารถส่งข้อความไปถึง ${partnerName} ได้\nจะเป็นข้อความ รูปภาพ คลิปเสียง หรือแม้แต่วิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
-            createTextMessage(`มีโอกาสครั้งเดียว อย่าให้พลาดหล่ะ`),
-          ]
-        );
-      } else {
-        return line.replyMessage(
-          replyToken,
-          [
-            createTextMessage(`ถูกใจหล่ะสิ ถ้าคุณ ${partnerName} ถูกใจคุณเหมือนกัน  เราจะมาบอกข่าวดีนะ`),
-          ]
-        );
-      }
-    });
+    getUserInfo(partnerUserId)
+      .then((profile) => {
+        partnerName = profile.displayName;
+        alrealdyHasRelationShip(userId, partnerUserId);
+      })
+      .then((isLove) => {
+        if (isLove) {
+          updateMemberData(userId, { 'nextMessageTo': partnerUserId });
+          line.replyMessage(
+            replyToken,
+            [
+              createTextMessage(`ว้าววว ยินดีด้วย คนนี้ก็ถูกใจคุณเหมือนกัน`),
+              createTextMessage(`คุณสามารถส่งข้อความไปถึง ${partnerName} ได้\nจะเป็นข้อความ รูปภาพ คลิปเสียง หรือแม้แต่วิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
+              createTextMessage(`มีโอกาสครั้งเดียว อย่าให้พลาดหล่ะ`),
+            ]
+          );
+        } else {
+          line.replyMessage(
+            replyToken,
+            [
+              createTextMessage(`ถูกใจหล่ะสิ ถ้าคุณ ${partnerName} ถูกใจคุณเหมือนกัน  เราจะมาบอกข่าวดีนะ`),
+            ]
+          );
+        }
+      });
   }
 }
 
@@ -266,26 +270,30 @@ function updateMemberData(userId, object) {
   memberRef.update(object);
 }
 
-function getUserInfo(userId, cb) {
-  membersRef.orderByKey()
-    .equalTo(userId)
-    .once("value", function (snapshot) {
-      snapshot.forEach(function (snap) {
-        cb(snap.val());
+function getUserInfo(userId) {
+  return new Promise((resolve, reject) => {
+    membersRef.orderByKey()
+      .equalTo(userId)
+      .once("value", function (snapshot) {
+        snapshot.forEach(function (snap) {
+          resolve(snap.val());
+        });
       });
-    });
+  });
 }
 
 function alrealdyHasRelationShip(userId, partnerUserId) {
-  var partnerRelationRef = database.ref("/members/" + partnerUserId + "/relations");
-  partnerRelationRef.orderByKey()
-    .equalTo(userId)
-    .once("value", function (snapshot) {
-      snapshot.forEach(function (snap) {
-        var doc = snap.val();
-        cb(doc.love);
+  return new Promise((resolve, reject) => {
+    var partnerRelationRef = database.ref("/members/" + partnerUserId + "/relations");
+    partnerRelationRef.orderByKey()
+      .equalTo(userId)
+      .once("value", function (snapshot) {
+        snapshot.forEach(function (snap) {
+          var doc = snap.val();
+          resolve(doc.love);
+        });
       });
-    });
+  });
 }
 
 function sendSuggestFriend(userId) {
