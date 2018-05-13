@@ -86,7 +86,7 @@ module.exports = {
     return line.replyMessage(
       replyToken,
       [
-        createButtonMessage('ระบุอายุของคุณ', options.ageActions)
+        createButtonMessage('ระบุอายุของคนที่คุณสนใจ', options.partnerAgeActions)
       ]
     );
   },

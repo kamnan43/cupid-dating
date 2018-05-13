@@ -74,7 +74,7 @@ function handleEvent(event) {
           cupid.saveNewMember(userId, replyToken);
           break;
         case 'TOS_NO':
-          cupid.sendMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ตกลง ด้านบนได้ทุกเมื่อ');
+          cupid.sendMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ยอมรับ ด้านบนได้ทุกเมื่อ');
           break;
         case 'GENDER_M':
         case 'GENDER_F':
