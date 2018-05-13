@@ -466,5 +466,5 @@ function createButtonMessage(title, actions) {
 
 function updateMemberData(userId, object) {
   var memberRef = database.ref("/members/" + userId);
-  memberRef.update(obj);
+  memberRef.update(object);
 }
