@@ -441,13 +441,11 @@ function updateMemberData(userId, object) {
 }
 
 function sendSuggestFriend(userId) {
-  console.log('userId', userId);
   getUserInfo(userId, (obj) => {
     console.log('getUserInfo', obj);
     try {
       membersRef.orderByChild('age')
         .equalTo('partner_age')
-        .limitToFirst(10)
         .once("value", function (snapshot) {
           snapshot.forEach(function (snap) {
             console.log('A', snap.val());
@@ -455,7 +453,6 @@ function sendSuggestFriend(userId) {
         });
     } catch (e) {
       console.log(e);
-      cb();
     }
   });
 }
