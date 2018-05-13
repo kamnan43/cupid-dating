@@ -284,8 +284,9 @@ function createCarouselColumns(title, text, imageUrl, extra) {
   console.log('createCarouselColumns', title, text, imageUrl, extra);
   var columnOptions = [];
   options.partnerProfileActions.forEach(element => {
-    if (extra) element.data = element.data + '_' + extra;
-    columnOptions.push(element);
+    var el = element;
+    if (extra) el.data = el.data + '_' + extra;
+    columnOptions.push(el);
   });
 
   // if (extra) {
