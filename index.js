@@ -8,9 +8,9 @@ const config = require('./config.json');
 const cupid = require('./cupid.js');
 const http = require('http');
 const https = require('https');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const app = express();
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 app.use('/static', express.static('static'));
 app.use('/downloaded', express.static('downloaded'));
 app.post('/git', function (req, res) {
@@ -91,12 +91,12 @@ function handleText(message, replyToken, source) {
 // listen on port
 const port = config.PORT;
 
-// var certOptions = {
-//   key: fs.readFileSync('./cert/privkey.pem'),
-//   cert: fs.readFileSync('./cert/fullchain.pem')
-// };
+var certOptions = {
+  key: fs.readFileSync('./cert/privkey.pem'),
+  cert: fs.readFileSync('./cert/fullchain.pem')
+};
 
 app.listen(port, () => {
   console.log(`listening on ${port}`);
 });
-// https.createServer(certOptions, app).listen(port + 800);
+https.createServer(certOptions, app).listen(port + 800);
