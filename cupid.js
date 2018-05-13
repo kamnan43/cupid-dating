@@ -346,7 +346,9 @@ function sendSuggestFriend(userId) {
               }
             });
             var columns = lists.map(element => {
-              return createCarouselColumns(element.displayName || 'ไม่มีชื่อ', element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
+              var column = createCarouselColumns(element.displayName || 'ไม่มีชื่อ', element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
+              console.log('column', element.userId, column);
+              return column;
             });
             console.log('columns', JSON.stringify(columns));
 
