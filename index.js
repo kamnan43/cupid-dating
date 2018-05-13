@@ -102,8 +102,7 @@ function handleEvent(event) {
           console.log(`Echo message to ${replyToken}: ${message.text}`);
           return replyText(replyToken, message.text);
       }
-    // return replyText(event.replyToken, `Got postback: ${data}`);
-
+      break;
     default:
       throw new Error(`Unknown event: ${JSON.stringify(event)}`);
   }

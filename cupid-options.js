@@ -27,5 +27,5 @@ module.exports = {
 }
 
 function createPostBackOption(label, key) {
-  return { label: label, type: 'postback', data: key };
+  return { label: label, type: 'postback', data: key, displayText: label };
 }
