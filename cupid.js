@@ -52,7 +52,7 @@ module.exports = {
   },
 
   saveGender: (userId, replyToken, gender) => {
-    saveMemberData(userId, 'gender', gender);
+    updateMemberData(userId, { 'gender': gender });
     return line.replyMessage(
       replyToken,
       [
@@ -62,7 +62,14 @@ module.exports = {
   },
 
   saveAge: (userId, replyToken, age) => {
-    saveMemberData(userId, 'age', age);
+    var minAge, maxAge;
+    switch (age) {
+      case 'AGE_18': minAge = 18; maxAge = 22; break;
+      case 'AGE_23': minAge = 23; maxAge = 27; break;
+      case 'AGE_28': minAge = 28; maxAge = 32; break;
+      case 'AGE_33': minAge = 33; maxAge = 99; break;
+    }
+    updateMemberData(userId, { 'age': age, 'min_age': minAge, 'max_age': maxAge });
     return line.replyMessage(
       replyToken,
       [
@@ -73,7 +80,7 @@ module.exports = {
   },
 
   savePartnerGender: (userId, replyToken, partner_gender) => {
-    saveMemberData(userId, 'partner_gender', partner_gender);
+    updateMemberData(userId, { 'partner_gender': partner_gender });
     return line.replyMessage(
       replyToken,
       [
@@ -83,15 +90,52 @@ module.exports = {
   },
 
   savePartnerAge: (userId, replyToken, partner_age) => {
-    saveMemberData(userId, 'partner_age', partner_age);
+    var minAge, maxAge;
+    switch (partner_age.replace('PARTNER_', '')) {
+      case 'AGE_18': minAge = 18; maxAge = 22; break;
+      case 'AGE_23': minAge = 23; maxAge = 27; break;
+      case 'AGE_28': minAge = 28; maxAge = 32; break;
+      case 'AGE_33': minAge = 33; maxAge = 99; break;
+    }
+    updateMemberData(userId, { 'partner_age': partner_age, 'partner_min_age': minAge, 'partner_max_age': maxAge, 'status': 1 });
     return line.replyMessage(
       replyToken,
       [
         createTextMessage(`บันทึกข้อมูลเรียบร้อย`),
         createTextMessage(`เมื่อมีคู่เดทที่ตรงคุณสมบัติของคุณ ระบบจะส่งข้อมูลคู่เดทให้คุณทันที`),
-        createTextMessage(`ขอบคุณที่วางใจ Cupid Dating`)
       ]
-    );
+    ).then(() => {
+      setTimeout(sendSuggestFriend, 1000, userId);
+    });
+  },
+  getUserInfo: (userId, cb) => {
+    membersRef.orderByKey()
+      .equalTo(userId)
+      .once("value", function (snapshot) {
+        snapshot.forEach(function (snap) {
+          cb(snap.val());
+        });
+      });
+  },
+  sendSuggestFriend: (userId) => {
+    console.log('userId', userId);
+    getUserInfo(userId, (obj) => {
+      console.log('getUserInfo', obj);
+      try {
+        membersRef.orderByChild('age')
+          .equalTo('partner_age')
+          .limitToFirst(10)
+          .once("value", function (snapshot) {
+            snapshot.forEach(function (snap) {
+              console.log('A',snap.val());
+            });
+          });
+      } catch (e) {
+        console.log(e);
+        cb();
+      }
+    });
+
   }
 
   // handleText(message, replyToken, source) {
@@ -420,9 +464,7 @@ function createButtonMessage(title, actions) {
   };
 }
 
-function saveMemberData(userId, key, value) {
+function updateMemberData(userId, object) {
   var memberRef = database.ref("/members/" + userId);
-  var obj = {};
-  obj[key] = value;
   memberRef.update(obj);
 }

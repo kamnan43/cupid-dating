@@ -99,8 +99,7 @@ function handleEvent(event) {
           cupid.savePartnerAge(userId, replyToken, data);
           break;
         default:
-          console.log(`Echo message to ${replyToken}: ${message.text}`);
-          return replyText(replyToken, message.text);
+          return;
       }
       break;
     default:
@@ -110,16 +109,8 @@ function handleEvent(event) {
 
 function handleText(message, replyToken, source) {
   switch (message.text) {
-    case 'TOS_YES':
-      if (source.userId) {
-        cupid.saveNewMember(source.userId, replyToken);
-      } else {
-        return replyText(replyToken, 'Error : NO_USER_ID');
-      }
-
     default:
-      console.log(`Echo message to ${replyToken}: ${message.text}`);
-      return replyText(replyToken, message.text);
+      return;
   }
 }
 
