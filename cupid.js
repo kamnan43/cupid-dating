@@ -19,7 +19,7 @@ module.exports = {
           `1. ระบบอาจบันทึกข้อมูลส่วนตัวของคุณ ได้แก่ ชื่อโปรไฟล์ รูปโปรไฟล์ สถานะโปรไฟล์ เพื่อใช้ในการให้บริการ\n` +
           `2. ข้อมูลส่วนตัวของคุณจะแสดงต่อผู้ใช้อื่นในระบบ เฉพาะคนที่ระบุความต้องการตรงตามที่คุณระบุเท่านั้น\n` +
           `3. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`),
-        createConfirmMessage('เงื่อนไขการใช้งาน', 'คุณยอมรับเงื่อนไขการใช้งานหรือไม่', 'TOS_YES', 'TOS_NO')
+        createConfirmMessage('เงื่อนไขการใช้งาน', 'คุณยอมรับเงื่อนไขการใช้งานหรือไม่', 'ตกลง', 'TOS_YES', 'ยกเลิก', 'TOS_NO')
       ]
     );
   },
@@ -334,7 +334,7 @@ function createTextMessage(text) {
   return { type: 'text', text: text };
 }
 
-function createConfirmMessage(title, text, yesKey, noKey) {
+function createConfirmMessage(title, text, yesKey, yesDisplayText, noKey, noDisplayText) {
   return {
     type: 'template',
     altText: title,
@@ -342,8 +342,8 @@ function createConfirmMessage(title, text, yesKey, noKey) {
       type: 'confirm',
       text: text,
       actions: [
-        { label: 'Yes', type: 'message', text: yesKey },
-        { label: 'No', type: 'message', text: noKey },
+        { label: yesDisplayText, type: 'postback', data: yesKey, displayText: yesDisplayText },
+        { label: noDisplayText,  type: 'postback', data: noKey,  displayText: noDisplayText },
       ],
     },
   };
