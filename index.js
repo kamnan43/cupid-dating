@@ -90,6 +90,7 @@ function handleEvent(event) {
         case 'PARTNER_GENDER_M':
         case 'PARTNER_GENDER_F':
         case 'PARTNER_GENDER_X':
+          data = data.replace('PARTNER_', '')
           cupid.savePartnerGender(userId, replyToken, data);
           break;
         case 'PARTNER_AGE_18':

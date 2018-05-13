@@ -18,11 +18,16 @@ module.exports = {
     createPostBackOption('ชาย', 'PARTNER_GENDER_M'),
     createPostBackOption('หญิง', 'PARTNER_GENDER_F'),
     createPostBackOption('อื่นๆ', 'PARTNER_GENDER_X')
-  ], partnerAgeActions: [
+  ],
+  partnerAgeActions: [
     createPostBackOption('18-22 ปี', 'PARTNER_AGE_18'),
     createPostBackOption('23-27 ปี', 'PARTNER_AGE_23'),
     createPostBackOption('28-32 ปี', 'PARTNER_AGE_28'),
     createPostBackOption('33 ขึ้นไป', 'PARTNER_AGE_33')
+  ],
+  partnerProfileActions: [
+    createPostBackOption('รักเลย', 'LOVE'),
+    createPostBackOption('กลัวๆ', 'HATE'),
   ]
 }
 

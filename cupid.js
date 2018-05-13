@@ -3,6 +3,8 @@ const options = require('./cupid-options.js');
 const baseURL = config.BASE_URL;
 const lineSdk = require('@line/bot-sdk');
 const line = new lineSdk.Client(config);
+const path = require('path');
+const cp = require('child_process');
 const firebase = require("firebase-admin");
 var firebaseConfig = config.firebase;
 firebaseConfig.credential = firebase.credential.cert(require(firebaseConfig.serviceAccountFile));
@@ -40,7 +42,7 @@ module.exports = {
       userId: userId,
       status: 0,
     });
-
+    saveMemberProfilePicture(userId);
     return line.replyMessage(
       replyToken,
       [
@@ -49,6 +51,16 @@ module.exports = {
         createButtonMessage('ระบุเพศของคุณ', options.genderActions)
       ]
     );
+  },
+
+  saveMemberProfilePicture: (userId) => {
+    return client.getProfile(userId)
+      .then((profile) => {
+        updateMemberData(userId, profile);
+        downloadProfilePicture(profile.pictureUrl, getProfilePath(userId));
+        // createPreviewImage
+        cp.execSync(`convert -resize 240x jpeg:${getProfilePath(userId)} jpeg:${getProfilePreviewPath(userId)}`);
+      });
   },
 
   saveGender: (userId, replyToken, gender) => {
@@ -407,6 +419,15 @@ module.exports = {
   // }
 };
 // simple reply function
+
+function getProfilePath(userId) {
+  return path.join(__dirname, 'downloaded', `${userId}-profile.jpg`);
+}
+
+function getProfilePreviewPath(userId) {
+  return ath.join(__dirname, 'downloaded', `${userId}-profile-preview.jpg`);
+}
+
 function createTextMessage(text) {
   return { type: 'text', text: text };
 }
@@ -435,31 +456,24 @@ function createButtonMessage(title, actions) {
   };
 }
 
+function createCarouselMessage(title, columns) {
+  return {
+    type: 'template',
+    altText: title,
+    template: {
+      type: 'image_carousel',
+      columns: columns,
+    },
+  };
+}
+
+function createCarouselColumns(imageUrl) {
+  return { imageUrl: imageUrl, actions: options.partnerProfileActions };
+}
+
 function updateMemberData(userId, object) {
   var memberRef = database.ref("/members/" + userId);
   memberRef.update(object);
-}
-
-function sendSuggestFriend(userId) {
-  getUserInfo(userId, (obj) => {
-    console.log('getUserInfo', obj);
-    try {
-      membersRef.orderByChild('age')
-        .equalTo(obj.partner_age)
-        .limitToFirst(10)
-        .once("value", function (snapshot) {
-          snapshot.forEach(function (snap) {
-            var doc = snap.val();
-            // if (doc.gender === obj.partner_gender) {
-              console.log('A', doc);
-            // }
-          });
-          console.log('ALL');
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  });
 }
 
 function getUserInfo(userId, cb) {
@@ -470,4 +484,39 @@ function getUserInfo(userId, cb) {
         cb(snap.val());
       });
     });
+}
+
+function sendSuggestFriend(userId) {
+  getUserInfo(userId, (obj) => {
+    try {
+      let lists = [];
+      membersRef.orderByChild('age')
+        .equalTo(obj.partner_age)
+        .limitToFirst(10)
+        .once("value", function (snapshot) {
+          snapshot.forEach(function (snap) {
+            var doc = snap.val();
+            if (doc.userId !== userId && doc.gender === obj.partner_gender) {
+              lists.push(doc);
+            }
+          });
+          console.log('lists', lists);
+          var columns = lists.map(element => {
+            return createCarouselColumns(element.userId);
+          });
+          console.log('columns', columns);
+
+          line.replyMessage(
+            replyToken,
+            [
+              createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, columns)
+            ]
+          );
+
+
+        });
+    } catch (e) {
+      console.log(e);
+    }
+  });
 }
