@@ -449,8 +449,12 @@ function sendSuggestFriend(userId) {
         .limitToFirst(10)
         .once("value", function (snapshot) {
           snapshot.forEach(function (snap) {
-            console.log('A', snap.val());
+            var doc = snap.val();
+            if (doc.gender === obj.partner_gender) {
+              console.log('A', snap.val());
+            }
           });
+          console.log('ALL');
         });
     } catch (e) {
       console.log(e);
