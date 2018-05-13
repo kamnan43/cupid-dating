@@ -373,17 +373,6 @@ module.exports = {
   //     }));
   // }
 
-  // downloadProfilePicture(pictureUrl, downloadPath) {
-  //   return new Promise((resolve, reject) => {
-  //     http.get(pictureUrl, function (response) {
-  //       const writable = fs.createWriteStream(downloadPath);
-  //       response.pipe(writable);
-  //       response.on('end', () => resolve(downloadPath));
-  //       response.on('error', reject);
-  //     });
-  //   });
-  // }
-
   // handleLocation(message, replyToken) {
   //   return line.replyMessage(
   //     replyToken,
@@ -419,13 +408,26 @@ function getProfilePreviewPath(userId) {
 }
 
 function saveMemberProfilePicture(userId) {
-  return client.getProfile(userId)
+  return line.getProfile(userId)
     .then((profile) => {
       updateMemberData(userId, profile);
       downloadProfilePicture(profile.pictureUrl, getProfilePath(userId));
+    })
+    .then(() => {
       // createPreviewImage
       cp.execSync(`convert -resize 240x jpeg:${getProfilePath(userId)} jpeg:${getProfilePreviewPath(userId)}`);
     });
+}
+
+function downloadProfilePicture(pictureUrl, downloadPath) {
+  return new Promise((resolve, reject) => {
+    http.get(pictureUrl, function (response) {
+      const writable = fs.createWriteStream(downloadPath);
+      response.pipe(writable);
+      response.on('end', () => resolve(downloadPath));
+      response.on('error', reject);
+    });
+  });
 }
 
 function createTextMessage(text) {
