@@ -108,35 +108,6 @@ module.exports = {
       setTimeout(sendSuggestFriend, 1000, userId);
     });
   },
-  getUserInfo: (userId, cb) => {
-    membersRef.orderByKey()
-      .equalTo(userId)
-      .once("value", function (snapshot) {
-        snapshot.forEach(function (snap) {
-          cb(snap.val());
-        });
-      });
-  },
-  sendSuggestFriend: (userId) => {
-    console.log('userId', userId);
-    getUserInfo(userId, (obj) => {
-      console.log('getUserInfo', obj);
-      try {
-        membersRef.orderByChild('age')
-          .equalTo('partner_age')
-          .limitToFirst(10)
-          .once("value", function (snapshot) {
-            snapshot.forEach(function (snap) {
-              console.log('A',snap.val());
-            });
-          });
-      } catch (e) {
-        console.log(e);
-        cb();
-      }
-    });
-
-  }
 
   // handleText(message, replyToken, source) {
   //   const buttonsImageURL = `${baseURL}/static/buttons/1040.jpg`;
@@ -467,4 +438,34 @@ function createButtonMessage(title, actions) {
 function updateMemberData(userId, object) {
   var memberRef = database.ref("/members/" + userId);
   memberRef.update(object);
+}
+
+function sendSuggestFriend(userId) {
+  console.log('userId', userId);
+  getUserInfo(userId, (obj) => {
+    console.log('getUserInfo', obj);
+    try {
+      membersRef.orderByChild('age')
+        .equalTo('partner_age')
+        .limitToFirst(10)
+        .once("value", function (snapshot) {
+          snapshot.forEach(function (snap) {
+            console.log('A', snap.val());
+          });
+        });
+    } catch (e) {
+      console.log(e);
+      cb();
+    }
+  });
+}
+
+function getUserInfo(userId, cb) {
+  membersRef.orderByKey()
+    .equalTo(userId)
+    .once("value", function (snapshot) {
+      snapshot.forEach(function (snap) {
+        cb(snap.val());
+      });
+    });
 }
