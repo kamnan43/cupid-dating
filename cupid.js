@@ -410,11 +410,11 @@ function getProfilePreviewPath(userId) {
 }
 
 function getProfileUrl(userId) {
-  return config.BASE_URL + `/${userId}-profile.jpg`;
+  return config.BASE_URL + `/downloaded/${userId}-profile.jpg`;
 }
 
 function getProfilePreviewUrl(userId) {
-  return config.BASE_URL + `/${userId}-profile-preview.jpg`;
+  return config.BASE_URL + `/downloaded/${userId}-profile-preview.jpg`;
 }
 
 function saveMemberProfilePicture(userId) {

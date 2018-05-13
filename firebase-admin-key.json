@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "cupid-dating-ad68b",
+  "private_key_id": "7376255fc948ea6299f378f13dffbdb555eeab71",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQD7Zz023TnR4O/J\nJa/pqjdvz6o8U66drPJgnd2YTzaFlhSjc9oH/3S3jTalwkDKZPYk1av2a+uF9lma\nwxoDad1Lbdoy69D/t6ZhVVwpegg9quM7KVe8hahzqlX9uXfheoVSkqtWVq/ZqnXU\nrKH8WnsyRYHZlZa/SpBYzW4IdxAaWYhxw22mJc9LPj23EvbtUW4vosQ3iF3HSbH0\ndo7d2ok8vaDnV8ktJBfXZUI8VIlGoUVSQ27KDaYHETnPGNMMpE5GTpACm8mDZkw+\nmcbgWAKqFgxSHEZOhslW7MvBM5vRtipCFtjpaSZtU2ckMc4DjjTDrMTBCcTzvB3+\nxJSq65zDAgMBAAECggEAQGNboT6dvWw/3aOiX1UyJ5fnQNYp5cZSuX4VMBoxm5sp\npAda8ytxKEWplmCfGXcsN5jmFxHi24eRwXpwoikt/VCgTuRoveW6Xjlvhkvz6l9n\nHVLkXqtYzm704SvsUTqBBPn9mfpPxY7L6PFh93DxFpoIvMJ8PngJakULBm4AGM8N\nl7Ko/KW0AooCOd9tJZ8Rq4HDW4xQDQW4JeaFPZqZ+EhDp4iXsTjoOoIN27wQdpIt\nTk5xr74SyazlIC2krXSoyRIhgQIq41S9B5xU4wS0q/t/hcK2tFlNSiG9HkiwO1cA\nM1QdxxaIGcUSWsi0rTykmZI/yBpW16Bx9rkYzTKHgQKBgQD/1KB+iieicmf2opv4\nDWpPHVkYRhE9Ui1R/juRy8gR+XfrJdjKNsnEBxKrtFEaWDKs4sGR2qsq9of6NrDf\ngHkl3KkP0uxGE2JkOTQQZDT7gvzWBLZdw9v8uStTbnc3mMtWRznxMinzXpYJHbDr\noMI9KHUlEpDCA2d5L0D5gYP1gwKBgQD7kdyRQshfU5UgPFKmhU3p2XQLAJ2FfrUp\n9hkkkhUI32aIWsWjcIpZIVnEF2VcjwHtysMYPwR92B/4CH6SZIJNbsW4BUp1CEdf\n2TUkz3p4ghpVQmXi0kI1Y44FrPu1b/EiTsXjgNL0hV1qt49GYIT1LZM0dOVIwvug\nM7eHugBXwQKBgCT+lVrXFZYrHxeOOimrnvTj1I9rCnEoof8aWXji1AKtZYbuiSPs\nuk6Li0qjH5tEp8dSXxV9XoUu80jegcNAK8Sq3RO5t4sGoJLHpty78OFx9qfoNIro\nmLY5/Kbq8XhrsvO+BwX28BQOWHnm/j+ElrILWK1MuvwjS+I9UBMEhJWLAoGAW/j/\nwru/tdpA8wAa13Z0/cHagws+i8e/RBANMSmXNx81xTQqfY5vhhaDUwWasTQ3aFBw\n8zRW2Atj5LJ2U98bJGQTNSv6BL96GLi4jTStedFW/0S/KyXjvtEe40RS4gqDBh/2\niS5X8b2wYYuqffhbo6d94fe6u9dNV0yRFLYT2gECgYEA8LwCkyaPvaX6RroIXGo3\nL/v/Sl00ZBlFjZeKV5s36z2+LcMlF01R4Vd9vsQrDfOFe8KK0xuOJELJ7GfUBHZD\n9qsw5hSGstFqmBWZHqLELbsKnXbjjZyawlJ2edZXQdBMT0oCoAV37cIl4rFpl8kE\n2oslbsOlImNPjjD/mwyPB60=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-yiqjj@cupid-dating-ad68b.iam.gserviceaccount.com",
+  "client_id": "108371027970038745744",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-yiqjj%40cupid-dating-ad68b.iam.gserviceaccount.com"
+}
