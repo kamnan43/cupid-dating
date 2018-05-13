@@ -21,7 +21,7 @@ app.post('/git', function (req, res) {
   });
 });
 app.post('/webhooks', lineSdk.middleware(config), (req, res) => {
-// app.post('/webhooks', (req, res) => {
+  // app.post('/webhooks', (req, res) => {
   if (!Array.isArray(req.body.events)) {
     return res.status(500).end();
   }
@@ -34,12 +34,17 @@ app.post('/webhooks', lineSdk.middleware(config), (req, res) => {
 });
 
 function handleEvent(event) {
+  var userId = event.source.userId;
+  var replyToken = event.replyToken;
+  if (!userId) {
+    cupid.sendMessage(userId, replyToken, 'Error : NO_USER_ID');
+  }
   switch (event.type) {
     case 'message':
       const message = event.message;
       switch (message.type) {
         case 'text':
-          return handleText(message, event.replyToken, event.source);
+          return handleText(message, replyToken, event.source);
         // case 'image':
         //   return handleImage(message, event.replyToken);
         // case 'video':
@@ -55,29 +60,48 @@ function handleEvent(event) {
       }
 
     case 'follow':
-      return cupid.sendGreetingMessage(event.replyToken);
+      return cupid.sendGreetingMessage(userId, replyToken);
 
     case 'unfollow':
       return console.log(`Unfollowed this bot: ${JSON.stringify(event)}`);
 
     case 'postback':
       let data = event.postback.data;
-      console.log(data);
-      return;
-      // return cupid.saveNewMember(source.userId, replyToken, data);
-      // switch (data) {
-      //   case 'TOS_YES':
-      //     if (source.userId) {
-      //       cupid.saveNewMember(source.userId, replyToken);
-      //     } else {
-      //       return replyText(replyToken, 'Error : NO_USER_ID');
-      //     }
-      
-      //   default:
-      //     console.log(`Echo message to ${replyToken}: ${message.text}`);
-      //     return replyText(replyToken, message.text);
-      // }
-      // return replyText(event.replyToken, `Got postback: ${data}`);
+      console.log('postback', data);
+      switch (data) {
+        case 'TOS_YES':
+          cupid.saveNewMember(userId, replyToken);
+          break;
+        case 'TOS_NO':
+          cupid.sendMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ตกลง ด้านบนได้ทุกเมื่อ');
+          break;
+        case 'GENDER_M':
+        case 'GENDER_F':
+        case 'GENDER_X':
+          cupid.saveGender(userId, replyToken, data);
+          break;
+        case 'AGE_18':
+        case 'AGE_23':
+        case 'AGE_28':
+        case 'AGE_33':
+          cupid.saveAge(userId, replyToken, data);
+          break;
+        case 'PARTNER_GENDER_M':
+        case 'PARTNER_GENDER_F':
+        case 'PARTNER_GENDER_X':
+          cupid.savePartnerGender(userId, replyToken, data);
+          break;
+        case 'PARTNER_AGE_18':
+        case 'PARTNER_AGE_23':
+        case 'PARTNER_AGE_28':
+        case 'PARTNER_AGE_33':
+          cupid.savePartnerAge(userId, replyToken, data);
+          break;
+        default:
+          console.log(`Echo message to ${replyToken}: ${message.text}`);
+          return replyText(replyToken, message.text);
+      }
+    // return replyText(event.replyToken, `Got postback: ${data}`);
 
     default:
       throw new Error(`Unknown event: ${JSON.stringify(event)}`);
@@ -92,7 +116,7 @@ function handleText(message, replyToken, source) {
       } else {
         return replyText(replyToken, 'Error : NO_USER_ID');
       }
-  
+
     default:
       console.log(`Echo message to ${replyToken}: ${message.text}`);
       return replyText(replyToken, message.text);

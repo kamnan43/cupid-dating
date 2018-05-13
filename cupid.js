@@ -1,4 +1,7 @@
+import { tosActions } from './cupid-options';
+
 const config = require('./config.json');
+const options = require('./cupid-options.js');
 const baseURL = config.BASE_URL;
 const lineSdk = require('@line/bot-sdk');
 const line = new lineSdk.Client(config);
@@ -10,7 +13,16 @@ var database = firebase.database();
 var membersRef = database.ref("/members");
 
 module.exports = {
-  sendGreetingMessage: (replyToken) => {
+  sendMessage: (userId, replyToken, text) => {
+    return line.replyMessage(
+      replyToken,
+      [
+        createTextMessage(text)
+      ]
+    );
+  },
+
+  sendGreetingMessage: (userId, replyToken) => {
     return line.replyMessage(
       replyToken,
       [
@@ -19,7 +31,7 @@ module.exports = {
           `1. ระบบอาจบันทึกข้อมูลส่วนตัวของคุณ ได้แก่ ชื่อโปรไฟล์ รูปโปรไฟล์ สถานะโปรไฟล์ เพื่อใช้ในการให้บริการ\n` +
           `2. ข้อมูลส่วนตัวของคุณจะแสดงต่อผู้ใช้อื่นในระบบ เฉพาะคนที่ระบุความต้องการตรงตามที่คุณระบุเท่านั้น\n` +
           `3. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`),
-        createConfirmMessage('เงื่อนไขการใช้งาน', 'คุณยอมรับเงื่อนไขการใช้งานหรือไม่', 'TOS_YES', 'ตกลง', 'TOS_NO', 'ยกเลิก')
+        createConfirmMessage('คุณยอมรับเงื่อนไขการใช้งานหรือไม่', options.tosActions)
       ]
     );
   },
@@ -28,8 +40,73 @@ module.exports = {
     var memberRef = database.ref("/members/" + userId);
     memberRef.set({
       userId: userId,
-      status: 0
+      status: 0,
     });
+
+    return line.replyMessage(
+      replyToken,
+      [
+        createTextMessage(`ลงทะเบียนเรียบร้อยแล้ว`),
+        createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศ และ อายุ ของคุณ`),
+        createButtonMessage('ระบุเพศของคุณ', options.genderActions)
+      ]
+    );
+  },
+
+  saveGender: (userId, replyToken, gender) => {
+    var memberRef = database.ref("/members/" + userId);
+    memberRef.set({
+      gender: gender
+    });
+    return line.replyMessage(
+      replyToken,
+      [
+        createButtonMessage('ระบุอายุของคุณ', options.ageActions)
+      ]
+    );
+  },
+
+  saveAge: (userId, replyToken, age) => {
+    var memberRef = database.ref("/members/" + userId);
+    memberRef.set({
+      age: age
+    });
+    return line.replyMessage(
+      replyToken,
+      [
+        createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศที่คุณสนใจ`),
+        createButtonMessage('เพศที่คุณสนใจ', options.partnerGenderActions)
+      ]
+    );
+  },
+
+  savePartnerGender: (userId, replyToken, gender) => {
+    var memberRef = database.ref("/members/" + userId);
+    memberRef.set({
+      partner_gender: gender
+    });
+    return line.replyMessage(
+      replyToken,
+      [
+        createButtonMessage('ระบุอายุของคุณ', options.ageActions)
+      ]
+    );
+  },
+
+  savePartnerAge: (userId, replyToken, age) => {
+    var memberRef = database.ref("/members/" + userId);
+    memberRef.set({
+      partner_age: age,
+      status: 1
+    });
+    return line.replyMessage(
+      replyToken,
+      [
+        createTextMessage(`บันทึกข้อมูลเรียบร้อย`),
+        createTextMessage(`เมื่อมีคู่เดทที่ตรงคุณสมบัติของคุณ ระบบจะส่งข้อมูลคู่เดทให้คุณทันที`),
+        createTextMessage(`ขอบคุณที่วางใจ Cupid Dating`)
+      ]
+    );
   }
 
   // handleText(message, replyToken, source) {
@@ -334,17 +411,30 @@ function createTextMessage(text) {
   return { type: 'text', text: text };
 }
 
-function createConfirmMessage(title, text, yesKey, yesDisplayText, noKey, noDisplayText) {
+function createConfirmMessage(title, actions) {
   return {
     type: 'template',
     altText: title,
     template: {
       type: 'confirm',
-      text: text,
-      actions: [
-        { label: yesDisplayText, type: 'postback', data: yesKey, displayText: yesDisplayText },
-        { label: noDisplayText,  type: 'postback', data: noKey,  displayText: noDisplayText },
-      ],
+      text: title,
+      actions: actions,
     },
   };
+}
+
+function createButtonMessage(title, actions) {
+  return {
+    type: 'template',
+    altText: title,
+    template: {
+      type: 'buttons',
+      text: title,
+      actions: actions,
+    },
+  };
+}
+
+function createPostBackOption(label, key) {
+  return { label: label, type: 'postback', data: key };
 }
