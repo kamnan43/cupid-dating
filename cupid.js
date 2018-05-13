@@ -432,7 +432,3 @@ function createButtonMessage(title, actions) {
     },
   };
 }
-
-function createPostBackOption(label, key) {
-  return { label: label, type: 'postback', data: key };
-}

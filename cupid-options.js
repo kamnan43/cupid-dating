@@ -25,3 +25,7 @@ module.exports = {
     createPostBackOption('33 ขึ้นไป', 'PARTNER_AGE_33')
   ]
 }
+
+function createPostBackOption(label, key) {
+  return { label: label, type: 'postback', data: key };
+}
