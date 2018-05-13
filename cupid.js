@@ -409,6 +409,14 @@ function getProfilePreviewPath(userId) {
   return path.join(__dirname, 'downloaded', `${userId}-profile-preview.jpg`);
 }
 
+function getProfileUrl(userId) {
+  return config.BASE_URL + `/${userId}-profile.jpg`;
+}
+
+function getProfilePreviewUrl(userId) {
+  return config.BASE_URL + `/${userId}-profile-preview.jpg`;
+}
+
 function saveMemberProfilePicture(userId) {
   return line.getProfile(userId)
     .then((profile) => {
@@ -507,7 +515,7 @@ function sendSuggestFriend(userId) {
           });
           console.log('lists', lists);
           var columns = lists.map(element => {
-            return createCarouselColumns(element.pictureUrl);
+            return createCarouselColumns(getProfileUrl(element.userId));
           });
           console.log('columns', JSON.stringify(columns));
 
