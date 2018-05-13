@@ -26,8 +26,9 @@ module.exports = {
     createPostBackOption('33 ขึ้นไป', 'PARTNER_AGE_33')
   ],
   partnerProfileActions: [
-    createPostBackOption('รักเลย', 'LOVE'),
-    createPostBackOption('กลัวๆ', 'HATE'),
+    createPostBackOption('ดูรูป', 'ACTION_DOWNLOAD'),
+    createPostBackOption('รักเลย', 'ACTION_LOVE'),
+    createPostBackOption('กลัวๆ', 'ACTION_BLOCK'),
   ]
 }
 

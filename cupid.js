@@ -474,14 +474,20 @@ function createCarouselMessage(title, columns) {
     type: 'template',
     altText: title,
     template: {
-      type: 'image_carousel',
+      type: 'carousel',
       columns: columns,
     },
   };
 }
 
-function createCarouselColumns(imageUrl) {
-  return { imageUrl: imageUrl, action: options.partnerProfileActions };
+function createCarouselColumns(title, text, imageUrl) {
+  return { 
+    thumbnailImageUrl: imageUrl,
+    title: title,
+    text: text,
+    defaultAction: options.partnerProfileActions[0],
+    actions: options.partnerProfileActions
+  };
 }
 
 function updateMemberData(userId, object) {
@@ -515,7 +521,7 @@ function sendSuggestFriend(userId) {
           });
           console.log('lists', lists);
           var columns = lists.map(element => {
-            return createCarouselColumns(getProfileUrl(element.userId));
+            return createCarouselColumns(element.name, element.status, getProfileUrl(element.userId));
           });
           console.log('columns', JSON.stringify(columns));
 
