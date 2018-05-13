@@ -103,7 +103,7 @@ module.exports = {
       case '33UP': minAge = 33; maxAge = 99; break;
     }
     updateMemberData(userId, { 'partner_age': partner_age, 'partner_min_age': minAge, 'partner_max_age': maxAge, 'status': 1 });
-    return line.replyMessage(
+    line.replyMessage(
       replyToken,
       [
         createTextMessage(`บันทึกข้อมูลเรียบร้อย`),
@@ -297,33 +297,34 @@ function alrealdyHasRelationShip(userId, partnerUserId) {
 }
 
 function sendSuggestFriend(userId) {
-  getUserInfo(userId, (obj) => {
-    try {
-      let lists = [];
-      membersRef.orderByChild('age')
-        .equalTo(obj.partner_age)
-        .limitToFirst(10)
-        .once("value", function (snapshot) {
-          snapshot.forEach(function (snap) {
-            var doc = snap.val();
-            if (doc.userId !== userId && doc.gender === obj.partner_gender) {
-              lists.push(doc);
-            }
-          });
-          var columns = lists.map(element => {
-            return createCarouselColumns(element.displayName || 'ไม่มีชื่อ', element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
-          });
-          console.log('columns', JSON.stringify(columns));
+  getUserInfo(userId)
+    .then((obj) => {
+      try {
+        let lists = [];
+        membersRef.orderByChild('age')
+          .equalTo(obj.partner_age)
+          .limitToFirst(10)
+          .once("value", function (snapshot) {
+            snapshot.forEach(function (snap) {
+              var doc = snap.val();
+              if (doc.userId !== userId && doc.gender === obj.partner_gender) {
+                lists.push(doc);
+              }
+            });
+            var columns = lists.map(element => {
+              return createCarouselColumns(element.displayName || 'ไม่มีชื่อ', element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
+            });
+            console.log('columns', JSON.stringify(columns));
 
-          line.pushMessage(
-            userId,
-            [
-              createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, columns)
-            ]
-          );
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  });
+            line.pushMessage(
+              userId,
+              [
+                createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, columns)
+              ]
+            );
+          });
+      } catch (e) {
+        console.log(e);
+      }
+    });
 }
