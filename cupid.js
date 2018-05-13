@@ -91,7 +91,7 @@ module.exports = {
 
   savePartnerAge: (userId, replyToken, partner_age) => {
     var minAge, maxAge;
-    switch (partner_age.replace('PARTNER_', '')) {
+    switch (partner_age) {
       case 'AGE_18': minAge = 18; maxAge = 22; break;
       case 'AGE_23': minAge = 23; maxAge = 27; break;
       case 'AGE_28': minAge = 28; maxAge = 32; break;

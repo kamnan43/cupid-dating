@@ -96,6 +96,7 @@ function handleEvent(event) {
         case 'PARTNER_AGE_23':
         case 'PARTNER_AGE_28':
         case 'PARTNER_AGE_33':
+          data = data.replace('PARTNER_', '')
           cupid.savePartnerAge(userId, replyToken, data);
           break;
         default:
