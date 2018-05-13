@@ -507,18 +507,16 @@ function sendSuggestFriend(userId) {
           });
           console.log('lists', lists);
           var columns = lists.map(element => {
-            return createCarouselColumns(element.userId);
+            return createCarouselColumns(element.pictureUrl);
           });
-          console.log('columns', columns);
+          console.log('columns', JSON.stringify(columns));
 
-          line.replyMessage(
-            replyToken,
+          line.pushMessage(
+            userId,
             [
               createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, columns)
             ]
           );
-
-
         });
     } catch (e) {
       console.log(e);
