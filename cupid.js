@@ -276,7 +276,7 @@ function getUserInfo(userId, cb) {
 
 function alrealdyHasRelationShip(userId, partnerUserId) {
   var partnerRelationRef = database.ref("/members/" + partnerUserId + "/relations");
-  relationRef.orderByKey()
+  partnerRelationRef.orderByKey()
     .equalTo(userId)
     .once("value", function (snapshot) {
       snapshot.forEach(function (snap) {
