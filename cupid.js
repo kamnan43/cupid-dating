@@ -131,7 +131,7 @@ module.exports = {
     getUserInfo(partnerUserId)
       .then((profile) => {
         partnerName = profile.displayName;
-        alrealdyHasRelationShip(userId, partnerUserId);
+        return alrealdyHasRelationShip(userId, partnerUserId);
       })
       .then((isLove) => {
         console.log('isLove', isLove);
@@ -291,6 +291,7 @@ function alrealdyHasRelationShip(userId, partnerUserId) {
       .once("value", function (snapshot) {
         snapshot.forEach(function (snap) {
           var doc = snap.val();
+          console.log('doc', doc);
           resolve(doc.love);
         });
       });
