@@ -155,7 +155,7 @@ module.exports = {
         if (isLove) {
           updateMemberData(userId, { 'nextMessageTo': partnerUserId })
             .then(() => {
-              line.replyMessage(
+              return line.replyMessage(
                 replyToken,
                 createMatchedMessage(partnerName)
               )
@@ -275,6 +275,7 @@ function updateMemberData(userId, object) {
 }
 
 function getUserInfo(userId) {
+  console.log('getUserInfo', userId);
   return new Promise((resolve, reject) => {
     membersRef.orderByKey()
       .equalTo(userId)
@@ -364,5 +365,5 @@ function createMatchedMessage(partnerName) {
     lineHelper.createTextMessage(`ว้าววว ยินดีด้วย ${partnerName} ก็ถูกใจคุณเหมือนกัน`),
     lineHelper.createTextMessage(`คุณสามารถส่งข้อความไปถึง ${partnerName} ได้\nข้อความ รูปภาพ คลิปเสียง หรือวิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
     lineHelper.createConfirmMessage('คุณต้องการส่งข้อความเลยหรือไม่', options.sayHiActions),
-  ]
+  ];
 }
