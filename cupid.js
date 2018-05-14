@@ -265,6 +265,7 @@ function alrealdyHasRelationShip(userId, partnerUserId) {
 function sendSuggestFriend(userId) {
   getUserInfo(userId)
     .then((userInfo) => {
+      console.log('sendSuggestFriend userInfo', userInfo);
       try {
         let lists = [];
         membersRef.orderByChild('age')
