@@ -158,6 +158,7 @@ module.exports = {
   },
 
   sendFirstMessageToPartner: (userId, replyToken, message) => {
+    console.log(userId, replyToken, message);
     var partnerName;
     getUserInfo(userId)
       .then((profile) => {
