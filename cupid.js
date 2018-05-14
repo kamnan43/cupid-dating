@@ -171,7 +171,9 @@ module.exports = {
               return line.pushMessage(
                 profile.nextMessageTo,
                 [
-                  message
+                  lineHelper.createTextMessage(`มีข้อความใหม่! ด้านล่างนี้เป็นข้อความที่ ${profile.displayName} ส่งถึงคุณ`),
+                  message,
+                  lineHelper.createConfirmMessage(`คุณต้องการรับ ${profile.displayName} เป็นเพื่อนหรือไม่?`, options.friendActions)
                 ]
               );
             })

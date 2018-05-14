@@ -29,7 +29,11 @@ module.exports = {
     createPostBackOption('ดูรูป', 'ACTION-DOWNLOAD'),
     createPostBackOption('ถูกใจ', 'ACTION-LOVE'),
     createPostBackOption('ไม่ชอบ', 'ACTION-BLOCK'),
-  ]
+  ],
+  friendActions: [
+    createPostBackOption('รับ', 'FRIEND_YES'),
+    createPostBackOption('ไม่รับ', 'FRIEND_NO')
+  ],
 }
 
 function createPostBackOption(label, key) {
