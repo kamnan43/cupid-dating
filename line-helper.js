@@ -1,3 +1,5 @@
+const options = require('./cupid-options.js');
+
 function createTextMessage(text) {
   return {
     type: 'text',
