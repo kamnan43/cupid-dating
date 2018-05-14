@@ -64,7 +64,7 @@ module.exports = {
   saveGender: (userId, replyToken, gender) => {
     updateMemberData(userId, { 'gender': gender })
       .then(() => {
-        line.replyMessage(
+        return line.replyMessage(
           replyToken,
           [
             lineHelper.createButtonMessage('ระบุอายุของคุณ', options.ageActions)
