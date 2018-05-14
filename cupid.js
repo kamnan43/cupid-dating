@@ -300,8 +300,10 @@ function sendSuggestFriend(userId) {
 }
 
 function sendSuggestFriendToPartner(sendToUserId, userInfo) {
+  console.log('partner userInfo', JSON.stringify(userInfo));
   var title = (userInfo.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + userInfo.gender + ' อายุ ' + userInfo.age + ' ปี]'
   var columns = lineHelper.createCarouselColumns(title, userInfo.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(userInfo.userId), userInfo.userId);
+  console.log('columns send to partner', JSON.stringify(columns));
   line.pushMessage(
     sendToUserId,
     [
