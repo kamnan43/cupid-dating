@@ -272,8 +272,9 @@ function sendSuggestFriend(userId) {
           .once("value", function (snapshot) {
             snapshot.forEach(function (snap, index) {
               var doc = snap.val();
+              console.log('sendSuggestFriend doc', doc, index);
               if (doc.userId !== userId && doc.gender === userInfo.partner_gender) {
-                sendSuggestFriendToPartner(doc.userId, userInfo);
+                // sendSuggestFriendToPartner(doc.userId, userInfo);
                 if (index < 10) lists.push(doc);
               }
             });
