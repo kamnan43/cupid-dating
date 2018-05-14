@@ -91,7 +91,10 @@ function handleEvent(event) {
         case 'ACTION-LOVE':
           return cupid.sendLoveToPartner(userId, replyToken, data);
         case 'SAYHI':
-          return cupid.confirmedToSayHi(userId, replyToken, data);
+          if (data === 'YES') {
+            return cupid.confirmedToSayHi(userId, replyToken, data);
+          }
+          return;
         default:
           return;
       }

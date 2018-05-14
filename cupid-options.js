@@ -32,6 +32,7 @@ module.exports = {
   ],
   sayHiActions: [
     createPostBackOption('ส่งเลย', 'SAYHI_YES'),
+    createPostBackOption('ไม่ใช่ตอนนี้', 'SAYHI_NO'),
   ],
   friendActions: [
     createPostBackOption('รับ', 'FRIEND_YES'),
