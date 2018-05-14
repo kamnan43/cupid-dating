@@ -2,6 +2,7 @@ const config = require('./config.json');
 const options = require('./cupid-options.js');
 const baseURL = config.BASE_URL;
 const lineSdk = require('@line/bot-sdk');
+const lineHelper = require('./line-helper.js');
 const line = new lineSdk.Client(config);
 const path = require('path');
 const cp = require('child_process');
@@ -20,7 +21,7 @@ module.exports = {
     return line.replyMessage(
       replyToken,
       [
-        createTextMessage(text)
+        lineHelper.createTextMessage(text)
       ]
     );
   },
@@ -29,12 +30,12 @@ module.exports = {
     return line.replyMessage(
       replyToken,
       [
-        createTextMessage(`ยินดีต้อนรับสู่ Cupid Dating : บริการหาคู่ทางไลน์`),
-        createTextMessage(`เงื่อนไขการใช้บริการ\n` +
+        lineHelper.createTextMessage(`ยินดีต้อนรับสู่ Cupid Dating : บริการหาคู่ทางไลน์`),
+        lineHelper.createTextMessage(`เงื่อนไขการใช้บริการ\n` +
           `1. ระบบอาจบันทึกข้อมูลส่วนตัวของคุณ ได้แก่ ชื่อโปรไฟล์ รูปโปรไฟล์ สถานะโปรไฟล์ เพื่อใช้ในการให้บริการ\n` +
           `2. ข้อมูลส่วนตัวของคุณจะแสดงต่อผู้ใช้อื่นในระบบ เฉพาะคนที่ระบุความต้องการตรงตามที่คุณระบุเท่านั้น\n` +
           `3. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`),
-        createConfirmMessage('คุณยอมรับเงื่อนไขการใช้งานหรือไม่', options.tosActions)
+          lineHelper.createConfirmMessage('คุณยอมรับเงื่อนไขการใช้งานหรือไม่', options.tosActions)
       ]
     );
   },
@@ -49,9 +50,9 @@ module.exports = {
     return line.replyMessage(
       replyToken,
       [
-        createTextMessage(`ลงทะเบียนเรียบร้อยแล้ว`),
-        createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศ และ อายุ ของคุณ`),
-        createButtonMessage('ระบุเพศของคุณ', options.genderActions)
+        lineHelper.createTextMessage(`ลงทะเบียนเรียบร้อยแล้ว`),
+        lineHelper.createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศ และ อายุ ของคุณ`),
+        lineHelper.createButtonMessage('ระบุเพศของคุณ', options.genderActions)
       ]
     );
   },
@@ -61,7 +62,7 @@ module.exports = {
     return line.replyMessage(
       replyToken,
       [
-        createButtonMessage('ระบุอายุของคุณ', options.ageActions)
+        lineHelper.createButtonMessage('ระบุอายุของคุณ', options.ageActions)
       ]
     );
   },
@@ -78,8 +79,8 @@ module.exports = {
     return line.replyMessage(
       replyToken,
       [
-        createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศที่คุณสนใจ`),
-        createButtonMessage('เพศที่คุณสนใจ', options.partnerGenderActions)
+        lineHelper.createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศที่คุณสนใจ`),
+        lineHelper.createButtonMessage('เพศที่คุณสนใจ', options.partnerGenderActions)
       ]
     );
   },
@@ -89,7 +90,7 @@ module.exports = {
     return line.replyMessage(
       replyToken,
       [
-        createButtonMessage('ระบุอายุของคนที่คุณสนใจ', options.partnerAgeActions)
+        lineHelper.createButtonMessage('ระบุอายุของคนที่คุณสนใจ', options.partnerAgeActions)
       ]
     );
   },
@@ -106,8 +107,8 @@ module.exports = {
     line.replyMessage(
       replyToken,
       [
-        createTextMessage(`บันทึกข้อมูลเรียบร้อย`),
-        createTextMessage(`เมื่อมีคู่เดทที่ตรงคุณสมบัติของคุณ ระบบจะส่งข้อมูลคู่เดทให้คุณทันที`),
+        lineHelper.createTextMessage(`บันทึกข้อมูลเรียบร้อย`),
+        lineHelper.createTextMessage(`เมื่อมีคู่เดทที่ตรงคุณสมบัติของคุณ ระบบจะส่งข้อมูลคู่เดทให้คุณทันที`),
       ]
     ).then(() => {
       setTimeout(sendSuggestFriend, 1000, userId);
@@ -118,7 +119,7 @@ module.exports = {
     return line.replyMessage(
       replyToken,
       [
-        createImageMessage(getProfileUrl(partnerUserId), getProfilePreviewUrl(partnerUserId)),
+        lineHelper.createImageMessage(getProfileUrl(partnerUserId), getProfilePreviewUrl(partnerUserId)),
       ]
     );
   },
@@ -140,16 +141,16 @@ module.exports = {
           line.replyMessage(
             replyToken,
             [
-              createTextMessage(`ว้าววว ยินดีด้วย ${partnerName} ก็ถูกใจคุณเหมือนกัน`),
-              createTextMessage(`คุณสามารถส่งข้อความไปถึง ${partnerName} ได้\nข้อความ รูปภาพ คลิปเสียง หรือวิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
-              createTextMessage(`มีโอกาสครั้งเดียว อย่าให้พลาดหล่ะ เริ่ม`),
+              lineHelper.createTextMessage(`ว้าววว ยินดีด้วย ${partnerName} ก็ถูกใจคุณเหมือนกัน`),
+              lineHelper.createTextMessage(`คุณสามารถส่งข้อความไปถึง ${partnerName} ได้\nข้อความ รูปภาพ คลิปเสียง หรือวิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
+              lineHelper.createTextMessage(`มีโอกาสครั้งเดียว อย่าให้พลาดหล่ะ เริ่ม`),
             ]
           );
         } else {
           line.replyMessage(
             replyToken,
             [
-              createTextMessage(`ถูกใจหล่ะสิ ถ้าคุณ ${partnerName} ถูกใจคุณเหมือนกัน  เราจะมาบอกข่าวดีนะ`),
+              lineHelper.createTextMessage(`ถูกใจหล่ะสิ ถ้าคุณ ${partnerName} ถูกใจคุณเหมือนกัน  เราจะมาบอกข่าวดีนะ`),
             ]
           );
         }
@@ -175,8 +176,8 @@ module.exports = {
               return line.replyMessage(
                 replyToken,
                 [
-                  createTextMessage(`ส่งข้อความของคุณถึง ${partnerName} เรียบร้อยแล้ว`),
-                  createTextMessage(`ถ้า ${partnerName} ตอบกลับ ก็เริ่มสานสัมพันธ์กันได้เล้ยยย`),
+                  lineHelper.createTextMessage(`ส่งข้อความของคุณถึง ${partnerName} เรียบร้อยแล้ว`),
+                  lineHelper.createTextMessage(`ถ้า ${partnerName} ตอบกลับ ก็เริ่มสานสัมพันธ์กันได้เล้ยยย`),
                 ]
               );
             })
@@ -230,71 +231,6 @@ function downloadProfilePicture(pictureUrl, downloadPath) {
   });
 }
 
-function createTextMessage(text) {
-  return {
-    type: 'text',
-    text: text
-  };
-}
-
-function createImageMessage(originalContentUrl, previewImageUrl) {
-  return {
-    type: 'image',
-    originalContentUrl: originalContentUrl,
-    previewImageUrl
-  };
-}
-
-function createConfirmMessage(title, actions) {
-  return {
-    type: 'template',
-    altText: title,
-    template: {
-      type: 'confirm',
-      text: title,
-      actions: actions,
-    },
-  };
-}
-
-function createButtonMessage(title, actions) {
-  return {
-    type: 'template',
-    altText: title,
-    template: {
-      type: 'buttons',
-      text: title,
-      actions: actions,
-    },
-  };
-}
-
-function createCarouselMessage(title, columns) {
-  return {
-    type: 'template',
-    altText: title,
-    template: {
-      type: 'carousel',
-      columns: columns,
-    },
-  };
-}
-
-function createCarouselColumns(title, text, imageUrl, extra) {
-  var dup_array = JSON.parse(JSON.stringify(options.partnerProfileActions))
-  columnOptions = dup_array.map(element => {
-    if (extra) element.data = element.data + '_' + extra;
-    return element;
-  });
-  return {
-    thumbnailImageUrl: imageUrl,
-    title: title,
-    text: text,
-    defaultAction: columnOptions[0],
-    actions: columnOptions
-  };
-}
-
 function updateMemberData(userId, object) {
   var memberRef = database.ref("/members/" + userId);
   memberRef.update(object);
@@ -342,7 +278,8 @@ function sendSuggestFriend(userId) {
               }
             });
             var columns = lists.map(element => {
-              return createCarouselColumns(element.displayName || 'ไม่มีชื่อ', element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
+              var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
+              return createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
             });
             console.log('columns', JSON.stringify(columns));
 
