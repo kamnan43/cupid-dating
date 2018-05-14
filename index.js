@@ -38,12 +38,12 @@ function handleEvent(event) {
   var userId = event.source.userId;
   var replyToken = event.replyToken;
   if (!userId) {
-    cupid.sendMessage(userId, replyToken, 'Error : NO_USER_ID');
+    return cupid.sendMessage(userId, replyToken, 'Error : NO_USER_ID');
   }
   switch (event.type) {
     case 'message':
       const message = event.message;
-      cupid.sendFirstMessageToPartner(userId, replyToken, message);
+      return cupid.sendFirstMessageToPartner(userId, replyToken, message);
     // switch (message.type) {
     //   // case 'text':
     //   //   return handleText(message, replyToken, event.source);
@@ -60,7 +60,6 @@ function handleEvent(event) {
     //   default:
     //     throw new Error(`Unknown message: ${JSON.stringify(message)}`);
     // }
-
     case 'follow':
       return cupid.sendGreetingMessage(userId, replyToken);
 
@@ -75,33 +74,27 @@ function handleEvent(event) {
       switch (mode) {
         case 'TOS':
           if (data === 'YES') {
-            cupid.saveNewMember(userId, replyToken);
+            return cupid.saveNewMember(userId, replyToken);
           } else {
-            cupid.sendMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ยอมรับ ด้านบนได้ทุกเมื่อ');
+            return cupid.sendMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ยอมรับ ด้านบนได้ทุกเมื่อ');
           }
-          break;
         case 'GENDER':
-          cupid.saveGender(userId, replyToken, data);
-          break;
+          return cupid.saveGender(userId, replyToken, data);
         case 'AGE':
-          cupid.saveAge(userId, replyToken, data);
-          break;
+          return cupid.saveAge(userId, replyToken, data);
         case 'PARTNER-GENDER':
-          cupid.savePartnerGender(userId, replyToken, data);
-          break;
+          return cupid.savePartnerGender(userId, replyToken, data);
         case 'PARTNER-AGE':
-          cupid.savePartnerAge(userId, replyToken, data);
-          break;
+          return cupid.savePartnerAge(userId, replyToken, data);
         case 'ACTION-DOWNLOAD':
-          cupid.sendPartnerProfileImage(userId, replyToken, data);
-          break;
+          return cupid.sendPartnerProfileImage(userId, replyToken, data);
         case 'ACTION-LOVE':
-          cupid.sendLoveToPartner(userId, replyToken, data);
-          break;
+          return cupid.sendLoveToPartner(userId, replyToken, data);
+        case 'SAYHI':
+          return cupid.confirmedToSayHi(userId, replyToken, data);
         default:
           return;
       }
-      break;
     default:
       throw new Error(`Unknown event: ${JSON.stringify(event)}`);
   }

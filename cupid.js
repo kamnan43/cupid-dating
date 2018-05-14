@@ -18,7 +18,7 @@ var relationsRef = database.ref("/members");
 
 module.exports = {
   sendMessage: (userId, replyToken, text) => {
-    return line.replyMessage(
+    line.replyMessage(
       replyToken,
       [
         lineHelper.createTextMessage(text)
@@ -27,7 +27,7 @@ module.exports = {
   },
 
   sendGreetingMessage: (userId, replyToken) => {
-    return line.replyMessage(
+    line.replyMessage(
       replyToken,
       [
         lineHelper.createTextMessage(`ยินดีต้อนรับสู่ Cupid Dating : บริการหาคู่ทางไลน์`),
@@ -45,26 +45,32 @@ module.exports = {
     memberRef.set({
       userId: userId,
       status: 0,
-    });
-    saveMemberProfilePicture(userId);
-    return line.replyMessage(
-      replyToken,
-      [
-        lineHelper.createTextMessage(`ลงทะเบียนเรียบร้อยแล้ว`),
-        lineHelper.createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศ และ อายุ ของคุณ`),
-        lineHelper.createButtonMessage('ระบุเพศของคุณ', options.genderActions)
-      ]
-    );
+    })
+      .then(() => {
+        Promise.all([
+          saveMemberProfilePicture(userId),
+          line.replyMessage(
+            replyToken,
+            [
+              lineHelper.createTextMessage(`ลงทะเบียนเรียบร้อยแล้ว`),
+              lineHelper.createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศ และ อายุ ของคุณ`),
+              lineHelper.createButtonMessage('ระบุเพศของคุณ', options.genderActions)
+            ]
+          )]
+        );
+      });
   },
 
   saveGender: (userId, replyToken, gender) => {
-    updateMemberData(userId, { 'gender': gender });
-    return line.replyMessage(
-      replyToken,
-      [
-        lineHelper.createButtonMessage('ระบุอายุของคุณ', options.ageActions)
-      ]
-    );
+    updateMemberData(userId, { 'gender': gender })
+      .then(() => {
+        line.replyMessage(
+          replyToken,
+          [
+            lineHelper.createButtonMessage('ระบุอายุของคุณ', options.ageActions)
+          ]
+        );
+      })
   },
 
   saveAge: (userId, replyToken, age) => {
@@ -75,24 +81,28 @@ module.exports = {
       case '28-32': minAge = 28; maxAge = 32; break;
       case '33UP': minAge = 33; maxAge = 99; break;
     }
-    updateMemberData(userId, { 'age': age, 'min_age': minAge, 'max_age': maxAge });
-    return line.replyMessage(
-      replyToken,
-      [
-        lineHelper.createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศที่คุณสนใจ`),
-        lineHelper.createButtonMessage('เพศที่คุณสนใจ', options.partnerGenderActions)
-      ]
-    );
+    updateMemberData(userId, { 'age': age, 'min_age': minAge, 'max_age': maxAge })
+      .then(() => {
+        line.replyMessage(
+          replyToken,
+          [
+            lineHelper.createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศที่คุณสนใจ`),
+            lineHelper.createButtonMessage('เพศที่คุณสนใจ', options.partnerGenderActions)
+          ]
+        );
+      });
   },
 
   savePartnerGender: (userId, replyToken, partner_gender) => {
-    updateMemberData(userId, { 'partner_gender': partner_gender });
-    return line.replyMessage(
-      replyToken,
-      [
-        lineHelper.createButtonMessage('ระบุอายุของคนที่คุณสนใจ', options.partnerAgeActions)
-      ]
-    );
+    updateMemberData(userId, { 'partner_gender': partner_gender })
+      .then(() => {
+        line.replyMessage(
+          replyToken,
+          [
+            lineHelper.createButtonMessage('ระบุอายุของคนที่คุณสนใจ', options.partnerAgeActions)
+          ]
+        );
+      });
   },
 
   savePartnerAge: (userId, replyToken, partner_age) => {
@@ -103,20 +113,23 @@ module.exports = {
       case '28-32': minAge = 28; maxAge = 32; break;
       case '33UP': minAge = 33; maxAge = 99; break;
     }
-    updateMemberData(userId, { 'partner_age': partner_age, 'partner_min_age': minAge, 'partner_max_age': maxAge, 'status': 1 });
-    line.replyMessage(
-      replyToken,
-      [
-        lineHelper.createTextMessage(`บันทึกข้อมูลเรียบร้อย`),
-        lineHelper.createTextMessage(`เมื่อมีคู่เดทที่ตรงคุณสมบัติของคุณ ระบบจะส่งข้อมูลคู่เดทให้คุณทันที`),
-      ]
-    ).then(() => {
-      setTimeout(sendSuggestFriend, 1000, userId);
-    });
+    updateMemberData(userId, { 'partner_age': partner_age, 'partner_min_age': minAge, 'partner_max_age': maxAge, 'status': 1 })
+      .then(() => {
+        line.replyMessage(
+          replyToken,
+          [
+            lineHelper.createTextMessage(`บันทึกข้อมูลเรียบร้อย`),
+            lineHelper.createTextMessage(`เมื่อมีคู่เดทที่ตรงคุณสมบัติของคุณ ระบบจะส่งข้อมูลคู่เดทให้คุณทันที`),
+          ]
+        );
+      })
+      .then(() => {
+        setTimeout(sendSuggestFriend, 1000, userId);
+      });
   },
 
   sendPartnerProfileImage: (userId, replyToken, partnerUserId) => {
-    return line.replyMessage(
+    line.replyMessage(
       replyToken,
       [
         lineHelper.createImageMessage(getProfileUrl(partnerUserId), getProfilePreviewUrl(partnerUserId)),
@@ -128,32 +141,51 @@ module.exports = {
     var partnerName;
     var obj = {};
     obj['relations/' + partnerUserId] = { 'love': true };
-    updateMemberData(userId, obj);
-    getUserInfo(partnerUserId)
-      .then((profile) => {
-        partnerName = profile.displayName;
-        return alrealdyHasRelationShip(userId, partnerUserId);
+    updateMemberData(userId, obj)
+      .then(() => {
+        getUserInfo(partnerUserId)
+      })
+      .then((partnerProfile) => {
+        partnerName = partnerProfile.displayName;
+        checkAlreadyLove(userId, partnerUserId);
       })
       .then((isLove) => {
         console.log('isLove', isLove);
         if (isLove) {
-          updateMemberData(userId, { 'nextMessageTo': partnerUserId });
-          line.replyMessage(
-            replyToken,
-            [
-              lineHelper.createTextMessage(`ว้าววว ยินดีด้วย ${partnerName} ก็ถูกใจคุณเหมือนกัน`),
-              lineHelper.createTextMessage(`คุณสามารถส่งข้อความไปถึง ${partnerName} ได้\nข้อความ รูปภาพ คลิปเสียง หรือวิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
-              lineHelper.createTextMessage(`มีโอกาสครั้งเดียว อย่าให้พลาดหล่ะ เริ่ม`),
-            ]
-          );
+          updateMemberData(userId, { 'nextMessageTo': partnerUserId })
+            .then(() => {
+              line.replyMessage(
+                replyToken,
+                createMatchedMessage(partnerName)
+              )
+            })
+            .then(() => {
+              getUserInfo(userId)
+            })
+            .then((profile) => {
+              line.pushMessage(
+                partnerUserId,
+                createMatchedMessage(profile.displayName)
+              )
+            });
         } else {
           line.replyMessage(
             replyToken,
             [
-              lineHelper.createTextMessage(`ถูกใจหล่ะสิ ถ้าคุณ ${partnerName} ถูกใจคุณเหมือนกัน  เราจะมาบอกข่าวดีนะ`),
+              lineHelper.createTextMessage(`ถูกใจหล่ะสิ ถ้าคุณ ${partnerName} ถูกใจคุณเหมือนกัน ถึงจะเริ่มคุยกันได้นะ`),
             ]
           );
         }
+      });
+  },
+
+  confirmedToSayHi: (userId, replyToken, partnerUserId) => {
+    updateMemberData(userId, { 'nextMessageTo': partnerUserId })
+      .then(() => {
+        line.replyMessage(
+          replyToken,
+          lineHelper.createTextMessage(`มีโอกาสครั้งเดียว อย่าให้พลาดหล่ะ เริ่ม`),
+        )
       });
   },
 
@@ -168,7 +200,7 @@ module.exports = {
             .then((partnerProfile) => {
               console.log('sendFirstMessageToPartner:partner profile', JSON.stringify(partnerProfile));
               partnerName = partnerProfile.displayName;
-              return line.pushMessage(
+              line.pushMessage(
                 profile.nextMessageTo,
                 [
                   lineHelper.createTextMessage(`มีข้อความใหม่! ด้านล่างนี้เป็นข้อความที่ ${profile.displayName} ส่งถึงคุณ`),
@@ -178,11 +210,11 @@ module.exports = {
               );
             })
             .then(() => {
-              return line.replyMessage(
+              line.replyMessage(
                 replyToken,
                 [
                   lineHelper.createTextMessage(`ส่งข้อความของคุณถึง ${partnerName} เรียบร้อยแล้ว`),
-                  lineHelper.createTextMessage(`ถ้า ${partnerName} ตอบกลับ ก็เริ่มสานสัมพันธ์กันได้เล้ยยย`),
+                  lineHelper.createTextMessage(`ถ้า ${partnerName} รับคุณเป็นเพื่อน ก็เริ่มสานสัมพันธ์กันได้เล้ยยย`),
                 ]
               );
             })
@@ -212,11 +244,12 @@ function getProfilePreviewUrl(userId) {
 }
 
 function saveMemberProfilePicture(userId) {
-  return line.getProfile(userId)
+  line.getProfile(userId)
     .then((profile) => {
-      console.log(profile);
-      updateMemberData(userId, profile);
-      return downloadProfilePicture(profile.pictureUrl, getProfilePath(userId));
+      Promise.all([
+        downloadProfilePicture(profile.pictureUrl, getProfilePath(userId)),
+        updateMemberData(userId, profile)
+      ])
     })
     .then(() => {
       // createPreviewImage
@@ -226,7 +259,6 @@ function saveMemberProfilePicture(userId) {
 
 function downloadProfilePicture(pictureUrl, downloadPath) {
   return new Promise((resolve, reject) => {
-    console.log(pictureUrl);
     http.get(pictureUrl, function (response) {
       const writable = fs.createWriteStream(downloadPath);
       response.pipe(writable);
@@ -237,8 +269,10 @@ function downloadProfilePicture(pictureUrl, downloadPath) {
 }
 
 function updateMemberData(userId, object) {
-  var memberRef = database.ref("/members/" + userId);
-  memberRef.update(object);
+  return new Promise((resolve, reject) => {
+    var memberRef = database.ref("/members/" + userId);
+    memberRef.update(object);
+  });
 }
 
 function getUserInfo(userId) {
@@ -255,7 +289,7 @@ function getUserInfo(userId) {
   });
 }
 
-function alrealdyHasRelationShip(userId, partnerUserId) {
+function checkAlreadyLove(userId, partnerUserId) {
   return new Promise((resolve, reject) => {
     var partnerRelationRef = database.ref("/members/" + partnerUserId + "/relations");
     partnerRelationRef.orderByKey()
@@ -323,4 +357,12 @@ function sendSuggestFriendToPartner(sendToUserId, userInfo) {
       lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, [columns])
     ]
   );
+}
+
+function createMatchedMessage(partnerName) {
+  return [
+    lineHelper.createTextMessage(`ว้าววว ยินดีด้วย ${partnerName} ก็ถูกใจคุณเหมือนกัน`),
+    lineHelper.createTextMessage(`คุณสามารถส่งข้อความไปถึง ${partnerName} ได้\nข้อความ รูปภาพ คลิปเสียง หรือวิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
+    lineHelper.createConfirmMessage('คุณต้องการส่งข้อความเลยหรือไม่', options.sayHiActions),
+  ]
 }

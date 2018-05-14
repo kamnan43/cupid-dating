@@ -30,6 +30,9 @@ module.exports = {
     createPostBackOption('ถูกใจ', 'ACTION-LOVE'),
     createPostBackOption('ไม่ชอบ', 'ACTION-BLOCK'),
   ],
+  sayHiActions: [
+    createPostBackOption('ส่งเลย', 'SAYHI_YES'),
+  ],
   friendActions: [
     createPostBackOption('รับ', 'FRIEND_YES'),
     createPostBackOption('ไม่รับ', 'FRIEND_NO')
