@@ -146,6 +146,7 @@ module.exports = {
         getUserInfo(partnerUserId)
       })
       .then((partnerProfile) => {
+        console.log(partnerProfile);
         partnerName = partnerProfile.displayName;
         checkAlreadyLove(userId, partnerUserId);
       })
