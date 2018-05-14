@@ -155,7 +155,7 @@ module.exports = {
         if (isLove) {
           updateMemberData(userId, { 'nextMessageTo': partnerUserId })
             .then(() => {
-              var ms = createMatchedMessage(partnerName);
+              var ms = createMatchedMessage(partnerName, partnerUserId);
               console.log(ms);
               return line.replyMessage(
                 replyToken,
@@ -168,7 +168,7 @@ module.exports = {
             .then((profile) => {
               line.pushMessage(
                 partnerUserId,
-                createMatchedMessage(profile.displayName)
+                createMatchedMessage(profile.displayName, userId)
               )
             });
         } else {
@@ -362,10 +362,15 @@ function sendSuggestFriendToPartner(sendToUserId, userInfo) {
   );
 }
 
-function createMatchedMessage(partnerName) {
+function createMatchedMessage(partnerName, partnerId) {
+  var dup_array = JSON.parse(JSON.stringify(options.sayHiActions))
+  actionsOptions = dup_array.map(element => {
+    element.data = element.data + '_' + partnerId;
+    return element;
+  });
   return [
     lineHelper.createTextMessage(`ว้าววว ยินดีด้วย ${partnerName} ก็ถูกใจคุณเหมือนกัน`),
     lineHelper.createTextMessage(`คุณสามารถส่งข้อความไปถึง ${partnerName} ได้\nข้อความ รูปภาพ คลิปเสียง หรือวิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
-    lineHelper.createConfirmMessage('คุณต้องการส่งข้อความเลยหรือไม่', options.sayHiActions),
+    lineHelper.createConfirmMessage('คุณต้องการส่งข้อความเลยหรือไม่', actionsOptions),
   ];
 }

@@ -90,11 +90,8 @@ function handleEvent(event) {
           return cupid.sendPartnerProfileImage(userId, replyToken, data);
         case 'ACTION-LOVE':
           return cupid.sendLoveToPartner(userId, replyToken, data);
-        case 'SAYHI':
-          if (data === 'YES') {
-            return cupid.confirmedToSayHi(userId, replyToken, data);
-          }
-          return;
+        case 'SAYHI-YES':
+          return cupid.confirmedToSayHi(userId, replyToken, data);
         default:
           return;
       }

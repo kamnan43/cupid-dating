@@ -31,8 +31,8 @@ module.exports = {
     createPostBackOption('ไม่ชอบ', 'ACTION-BLOCK'),
   ],
   sayHiActions: [
-    createPostBackOption('ส่งเลย', 'SAYHI_YES'),
-    createPostBackOption('ไม่ใช่ตอนนี้', 'SAYHI_NO'),
+    createPostBackOption('ส่งเลย', 'SAYHI-YES'),
+    createPostBackOption('ไม่ใช่ตอนนี้', 'SAYHI-NO'),
   ],
   friendActions: [
     createPostBackOption('รับ', 'FRIEND_YES'),
