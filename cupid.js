@@ -62,7 +62,7 @@ module.exports = {
   },
 
   saveGender: (userId, replyToken, gender) => {
-    updateMemberData(userId, { 'gender': gender })
+    return updateMemberData(userId, { 'gender': gender })
       .then(() => {
         return line.replyMessage(
           replyToken,
