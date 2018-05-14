@@ -35,7 +35,7 @@ module.exports = {
           `1. ระบบอาจบันทึกข้อมูลส่วนตัวของคุณ ได้แก่ ชื่อโปรไฟล์ รูปโปรไฟล์ สถานะโปรไฟล์ เพื่อใช้ในการให้บริการ\n` +
           `2. ข้อมูลส่วนตัวของคุณจะแสดงต่อผู้ใช้อื่นในระบบ เฉพาะคนที่ระบุความต้องการตรงตามที่คุณระบุเท่านั้น\n` +
           `3. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`),
-          lineHelper.createConfirmMessage('คุณยอมรับเงื่อนไขการใช้งานหรือไม่', options.tosActions)
+        lineHelper.createConfirmMessage('คุณยอมรับเงื่อนไขการใช้งานหรือไม่', options.tosActions)
       ]
     );
   },
@@ -269,13 +269,12 @@ function sendSuggestFriend(userId) {
         let lists = [];
         membersRef.orderByChild('age')
           .equalTo(userInfo.partner_age)
-          .limitToFirst(10)
           .once("value", function (snapshot) {
-            snapshot.forEach(function (snap) {
+            snapshot.forEach(function (snap, index) {
               var doc = snap.val();
               if (doc.userId !== userId && doc.gender === userInfo.partner_gender) {
                 sendSuggestFriendToPartner(doc.userId, userInfo);
-                lists.push(doc);
+                if (index < 10) lists.push(doc);
               }
             });
             var columns = lists.map(element => {
@@ -299,7 +298,7 @@ function sendSuggestFriend(userId) {
 
 function sendSuggestFriendToPartner(sendToUserId, userInfo) {
   var title = (userInfo.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + userInfo.gender + ' อายุ ' + userInfo.age + ' ปี]'
-  var columns =  lineHelper.createCarouselColumns(title, userInfo.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(userInfo.userId), userInfo.userId);
+  var columns = lineHelper.createCarouselColumns(title, userInfo.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(userInfo.userId), userInfo.userId);
   line.pushMessage(
     sendToUserId,
     [
