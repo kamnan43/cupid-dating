@@ -282,13 +282,14 @@ function sendSuggestFriend(userId) {
               return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
             });
             console.log('columns', JSON.stringify(columns));
-
-            line.pushMessage(
-              userId,
-              [
-                lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, columns)
-              ]
-            );
+            if (columns.length > 0) {
+              line.pushMessage(
+                userId,
+                [
+                  lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, columns)
+                ]
+              );
+            }
           });
       } catch (e) {
         console.log(e);
