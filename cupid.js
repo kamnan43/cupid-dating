@@ -143,12 +143,12 @@ module.exports = {
     obj['relations/' + partnerUserId] = { 'love': true };
     updateMemberData(userId, obj)
       .then(() => {
-        getUserInfo(partnerUserId)
+        return getUserInfo(partnerUserId)
       })
       .then((partnerProfile) => {
         console.log(partnerProfile);
         partnerName = partnerProfile.displayName;
-        checkAlreadyLove(userId, partnerUserId);
+        return checkAlreadyLove(userId, partnerUserId);
       })
       .then((isLove) => {
         console.log('isLove', isLove);
@@ -284,6 +284,7 @@ function getUserInfo(userId) {
         });
       }, (error) => {
         console.error(error + '');
+        reject();
       });
   });
 }
