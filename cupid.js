@@ -155,10 +155,12 @@ module.exports = {
         if (isLove) {
           updateMemberData(userId, { 'nextMessageTo': partnerUserId })
             .then(() => {
+              var ms = createMatchedMessage(partnerName);
+              console.log(ms);
               return line.replyMessage(
                 replyToken,
-                createMatchedMessage(partnerName)
-              )
+                ms
+              );
             })
             .then(() => {
               return getUserInfo(userId)
