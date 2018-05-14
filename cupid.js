@@ -161,10 +161,12 @@ module.exports = {
     var partnerName;
     getUserInfo(userId)
       .then((profile) => {
+        console.log('sendFirstMessageToPartner:sender profile', JSON.stringify(profile));
         if (profile.nextMessageTo) {
           getUserInfo(profile.nextMessageTo)
-            .then((profile) => {
-              partnerName = profile.displayName;
+            .then((partnerProfile) => {
+              console.log('sendFirstMessageToPartner:partner profile', JSON.stringify(partnerProfile));
+              partnerName = partnerProfile.displayName;
               return line.pushMessage(
                 profile.nextMessageTo,
                 [
