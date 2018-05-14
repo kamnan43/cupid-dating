@@ -265,18 +265,18 @@ function alrealdyHasRelationShip(userId, partnerUserId) {
 function sendSuggestFriend(userId) {
   getUserInfo(userId)
     .then((userInfo) => {
-      console.log('sendSuggestFriend userInfo', userInfo);
       try {
         let lists = [];
+        let count = 0;
         membersRef.orderByChild('age')
           .equalTo(userInfo.partner_age)
           .once("value", function (snapshot) {
-            snapshot.forEach(function (snap, index) {
+            snapshot.forEach(function (snap) {
               var doc = snap.val();
-              console.log('sendSuggestFriend doc', doc, index);
+              count++;
               if (doc.userId !== userId && doc.gender === userInfo.partner_gender) {
-                // sendSuggestFriendToPartner(doc.userId, userInfo);
-                if (index < 10) lists.push(doc);
+                sendSuggestFriendToPartner(doc.userId, userInfo);
+                if (count <= 10) lists.push(doc);
               }
             });
             var columns = lists.map(element => {
