@@ -62,9 +62,9 @@ module.exports = {
   },
 
   saveGender: (userId, replyToken, gender) => {
-    return updateMemberData(userId, { 'gender': gender })
+    updateMemberData(userId, { 'gender': gender })
       .then(() => {
-        return line.replyMessage(
+        line.replyMessage(
           replyToken,
           [
             lineHelper.createButtonMessage('ระบุอายุของคุณ', options.ageActions)
@@ -161,7 +161,7 @@ module.exports = {
               )
             })
             .then(() => {
-              getUserInfo(userId)
+              return getUserInfo(userId)
             })
             .then((profile) => {
               line.pushMessage(
@@ -201,7 +201,7 @@ module.exports = {
             .then((partnerProfile) => {
               console.log('sendFirstMessageToPartner:partner profile', JSON.stringify(partnerProfile));
               partnerName = partnerProfile.displayName;
-              line.pushMessage(
+              return line.pushMessage(
                 profile.nextMessageTo,
                 [
                   lineHelper.createTextMessage(`มีข้อความใหม่! ด้านล่างนี้เป็นข้อความที่ ${profile.displayName} ส่งถึงคุณ`),
@@ -211,7 +211,7 @@ module.exports = {
               );
             })
             .then(() => {
-              line.replyMessage(
+              return line.replyMessage(
                 replyToken,
                 [
                   lineHelper.createTextMessage(`ส่งข้อความของคุณถึง ${partnerName} เรียบร้อยแล้ว`),
@@ -247,7 +247,7 @@ function getProfilePreviewUrl(userId) {
 function saveMemberProfilePicture(userId) {
   line.getProfile(userId)
     .then((profile) => {
-      Promise.all([
+      return Promise.all([
         downloadProfilePicture(profile.pictureUrl, getProfilePath(userId)),
         updateMemberData(userId, profile)
       ])
