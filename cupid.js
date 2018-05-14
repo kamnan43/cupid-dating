@@ -264,16 +264,17 @@ function alrealdyHasRelationShip(userId, partnerUserId) {
 
 function sendSuggestFriend(userId) {
   getUserInfo(userId)
-    .then((obj) => {
+    .then((userInfo) => {
       try {
         let lists = [];
         membersRef.orderByChild('age')
-          .equalTo(obj.partner_age)
+          .equalTo(userInfo.partner_age)
           .limitToFirst(10)
           .once("value", function (snapshot) {
             snapshot.forEach(function (snap) {
               var doc = snap.val();
-              if (doc.userId !== userId && doc.gender === obj.partner_gender) {
+              if (doc.userId !== userId && doc.gender === userInfo.partner_gender) {
+                sendSuggestFriendToPartner(doc.userId, userInfo);
                 lists.push(doc);
               }
             });
@@ -294,4 +295,15 @@ function sendSuggestFriend(userId) {
         console.log(e);
       }
     });
+}
+
+function sendSuggestFriendToPartner(sendToUserId, userInfo) {
+  var title = (userInfo.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + userInfo.gender + ' อายุ ' + userInfo.age + ' ปี]'
+  var columns =  lineHelper.createCarouselColumns(title, userInfo.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(userInfo.userId), userInfo.userId);
+  line.pushMessage(
+    sendToUserId,
+    [
+      lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, columns)
+    ]
+  );
 }
