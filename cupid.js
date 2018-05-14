@@ -132,6 +132,7 @@ module.exports = {
     getUserInfo(partnerUserId)
       .then((profile) => {
         partnerName = profile.displayName;
+        console.log(partnerName);
         return alrealdyHasRelationShip(userId, partnerUserId);
       })
       .then((isLove) => {
@@ -240,10 +241,12 @@ function getUserInfo(userId) {
   return new Promise((resolve, reject) => {
     membersRef.orderByKey()
       .equalTo(userId)
-      .once("value", function (snapshot) {
+      .once("value", (snapshot) => {
         snapshot.forEach(function (snap) {
           resolve(snap.val());
         });
+      }, (error) => {
+        console.error(error + '');
       });
   });
 }
@@ -253,11 +256,13 @@ function alrealdyHasRelationShip(userId, partnerUserId) {
     var partnerRelationRef = database.ref("/members/" + partnerUserId + "/relations");
     partnerRelationRef.orderByKey()
       .equalTo(userId)
-      .once("value", function (snapshot) {
+      .once("value", (snapshot) => {
         snapshot.forEach(function (snap) {
           var doc = snap.val();
           resolve(doc.love);
         });
+      }, (error) => {
+        console.error(error + '');
       });
   });
 }
@@ -307,7 +312,7 @@ function sendSuggestFriendToPartner(sendToUserId, userInfo) {
   line.pushMessage(
     sendToUserId,
     [
-      lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, columns)
+      lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, [columns])
     ]
   );
 }
