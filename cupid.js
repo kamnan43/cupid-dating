@@ -269,10 +269,8 @@ function downloadProfilePicture(pictureUrl, downloadPath) {
 }
 
 function updateMemberData(userId, object) {
-  return new Promise((resolve, reject) => {
-    var memberRef = database.ref("/members/" + userId);
-    return memberRef.update(object);
-  });
+  var memberRef = database.ref("/members/" + userId);
+  return memberRef.update(object);
 }
 
 function getUserInfo(userId) {
