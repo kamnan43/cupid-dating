@@ -50,6 +50,7 @@ module.exports = {
     var memberRef = database.ref("/members/" + userId);
     memberRef.set({
       userId: userId,
+      lastActionDate: Date.now(),
       status: 0,
     })
       .then(() => {
