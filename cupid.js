@@ -27,24 +27,26 @@ module.exports = {
   },
 
   sendGreetingMessage: (userId, replyToken) => {
-    let blindCandidate = createBlindCandidateBeforeRegisterMessage();
-    let messages = [
-      lineHelper.createTextMessage(`ยินดีต้อนรับสู่ Cupid Dating : บริการหาคู่ทางไลน์`),
-      lineHelper.createTextMessage(`เงื่อนไขการใช้บริการ\n` +
-        `1. ระบบอาจบันทึกข้อมูลส่วนตัวของคุณ ได้แก่ ชื่อโปรไฟล์ รูปโปรไฟล์ สถานะโปรไฟล์ เพื่อใช้ในการให้บริการ\n` +
-        `2. ข้อมูลส่วนตัวของคุณ จะใช้แสดงต่อผู้ใช้อื่นภายในระบบนี้เท่านั้น\n` +
-        `3. ระบบให้บริการอย่างเต็มประสิทธิภาพบน Smart Phone เท่านั้น\n` +
-        `4. เมื่อเริ่มใช้งาน ถือว่าผู้ใช้ยอมรับเงื่อนไขการใช้งานของระบบ\n` +
-        `5. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`)
-    ];
-    if (blindCandidate) {
-      messages.push(blindCandidate);
-      messages.push(lineHelper.createTextMessage(`ด้านบนนี้คือตัวอย่างของผู้ใช้ในระบบของเรา\n` +
-        `คุณจะสามารถใช้งานได้เต็มที่ หลังจากตั้งค่าตัวเลือกส่วนตัวของคุณ`));
-    }
-    messages.push(lineHelper.createConfirmMessage(`ต้องการเริ่มต้นใช้งาน เดี๋ยวนี้เลยหรือไม่`, options.tosActions));
-    console.log('messages',messages);
-    line.replyMessage(replyToken, messages);
+    createBlindCandidateBeforeRegisterMessage()
+      .then((candidateMessage) => {
+        let messages = [
+          lineHelper.createTextMessage(`ยินดีต้อนรับสู่ Cupid Dating : บริการหาคู่ทางไลน์`),
+          lineHelper.createTextMessage(`เงื่อนไขการใช้บริการ\n` +
+            `1. ระบบอาจบันทึกข้อมูลส่วนตัวของคุณ ได้แก่ ชื่อโปรไฟล์ รูปโปรไฟล์ สถานะโปรไฟล์ เพื่อใช้ในการให้บริการ\n` +
+            `2. ข้อมูลส่วนตัวของคุณ จะใช้แสดงต่อผู้ใช้อื่นภายในระบบนี้เท่านั้น\n` +
+            `3. ระบบให้บริการอย่างเต็มประสิทธิภาพบน Smart Phone เท่านั้น\n` +
+            `4. เมื่อเริ่มใช้งาน ถือว่าผู้ใช้ยอมรับเงื่อนไขการใช้งานของระบบ\n` +
+            `5. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`)
+        ];
+        if (candidateMessage) {
+          messages.push(candidateMessage);
+          messages.push(lineHelper.createTextMessage(`ด้านบนนี้คือตัวอย่างของผู้ใช้ในระบบของเรา\n` +
+            `คุณจะสามารถใช้งานได้เต็มที่ หลังจากตั้งค่าตัวเลือกส่วนตัวของคุณ`));
+        }
+        messages.push(lineHelper.createConfirmMessage(`ต้องการเริ่มต้นใช้งาน เดี๋ยวนี้เลยหรือไม่`, options.tosActions));
+        console.log('messages', messages);
+        line.replyMessage(replyToken, messages);
+      });
   },
 
   saveNewMember: (userId, replyToken) => {
@@ -243,30 +245,32 @@ module.exports = {
 //////////////////////////////////////////////////////////////////////////////
 
 function createBlindCandidateBeforeRegisterMessage() {
-  try {
-    let lists = [];
-    membersRef.orderByChild('lastActionDate')
-      .limitToLast(10)
-      .once("value", function (snapshot) {
-        snapshot.forEach(function (snap) {
-          var doc = snap.val();
-          console.log(doc);
-          if (doc.status == 1) {
-            lists.push(doc);
+  return new Promise((resolve, reject) => {
+    try {
+      let lists = [];
+      membersRef.orderByChild('lastActionDate')
+        .limitToLast(10)
+        .once("value", function (snapshot) {
+          snapshot.forEach(function (snap) {
+            var doc = snap.val();
+            console.log(doc);
+            if (doc.status == 1) {
+              lists.push(doc);
+            }
+          });
+          var columns = lists.map(element => {
+            var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
+            return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', config.BASE_URL + `/static/cupid.png`);
+          });
+          console.log('columns', JSON.stringify(columns));
+          if (columns.length > 0) {
+            resolve(lineHelper.createCarouselMessage(`ตัวอย่างคนที่อาจเป็นเพื่อนใหม่ของคุณ`, columns));
           }
         });
-        var columns = lists.map(element => {
-          var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
-          return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', config.BASE_URL + `/static/cupid.png`);
-        });
-        console.log('columns', JSON.stringify(columns));
-        if (columns.length > 0) {
-          return lineHelper.createCarouselMessage(`ตัวอย่างคนที่อาจเป็นเพื่อนใหม่ของคุณ`, columns);
-        }
-      });
-  } catch (e) {
-    console.log(e);
-  }
+    } catch (e) {
+      reject();
+    }
+  });
 }
 
 
