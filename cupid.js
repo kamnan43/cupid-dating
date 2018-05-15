@@ -27,22 +27,23 @@ module.exports = {
   },
 
   sendGreetingMessage: (userId, replyToken) => {
-    line.replyMessage(
-      replyToken,
-      [
-        lineHelper.createTextMessage(`ยินดีต้อนรับสู่ Cupid Dating : บริการหาคู่ทางไลน์`),
-        lineHelper.createTextMessage(`เงื่อนไขการใช้บริการ\n` +
-          `1. ระบบอาจบันทึกข้อมูลส่วนตัวของคุณ ได้แก่ ชื่อโปรไฟล์ รูปโปรไฟล์ สถานะโปรไฟล์ เพื่อใช้ในการให้บริการ\n` +
-          `2. ข้อมูลส่วนตัวของคุณ จะใช้แสดงต่อผู้ใช้อื่นภายในระบบนี้เท่านั้น\n` +
-          `3. ระบบให้บริการอย่างเต็มประสิทธิภาพบน Smart Phone เท่านั้น` +
-          `4. เมื่อเริ่มใช้งาน ถือว่าผู้ใช้ยอมรับเงื่อนไขการใช้งานของระบบ` +
-          `5. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`),
-        createBlindCandidateBeforeRegisterMessage(),
-        lineHelper.createTextMessage(`ด้านบนนี้คือตัวอย่างของผู้ใช้ในระบบของเรา\n` +
-          `คุณจะสามารถใช้งานได้เต็มที่ หลังจากตั้งค่าตัวเลือกส่วนตัวของคุณ`),
-        lineHelper.createConfirmMessage(`ต้องการเริ่มต้นใช้งาน เดี๋ยวนี้เลยหรือไม่`, options.tosActions)
-      ]
-    );
+    let blindCandidate = createBlindCandidateBeforeRegisterMessage();
+    let messages = [
+      lineHelper.createTextMessage(`ยินดีต้อนรับสู่ Cupid Dating : บริการหาคู่ทางไลน์`),
+      lineHelper.createTextMessage(`เงื่อนไขการใช้บริการ\n` +
+        `1. ระบบอาจบันทึกข้อมูลส่วนตัวของคุณ ได้แก่ ชื่อโปรไฟล์ รูปโปรไฟล์ สถานะโปรไฟล์ เพื่อใช้ในการให้บริการ\n` +
+        `2. ข้อมูลส่วนตัวของคุณ จะใช้แสดงต่อผู้ใช้อื่นภายในระบบนี้เท่านั้น\n` +
+        `3. ระบบให้บริการอย่างเต็มประสิทธิภาพบน Smart Phone เท่านั้น\n` +
+        `4. เมื่อเริ่มใช้งาน ถือว่าผู้ใช้ยอมรับเงื่อนไขการใช้งานของระบบ\n` +
+        `5. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`)
+    ];
+    if (blindCandidate) {
+      messages.push(blindCandidate);
+      messages.push(lineHelper.createTextMessage(`ด้านบนนี้คือตัวอย่างของผู้ใช้ในระบบของเรา\n` +
+        `คุณจะสามารถใช้งานได้เต็มที่ หลังจากตั้งค่าตัวเลือกส่วนตัวของคุณ`));
+    }
+    messages.push(lineHelper.createConfirmMessage(`ต้องการเริ่มต้นใช้งาน เดี๋ยวนี้เลยหรือไม่`, options.tosActions));
+    line.replyMessage(replyToken, messages);
   },
 
   saveNewMember: (userId, replyToken) => {
@@ -257,12 +258,7 @@ function createBlindCandidateBeforeRegisterMessage() {
         });
         console.log('columns', JSON.stringify(columns));
         if (columns.length > 0) {
-          line.pushMessage(
-            userId,
-            [
-              lineHelper.createCarouselMessage(`ตัวอย่างคนที่อาจเป็นเพื่อนใหม่ของคุณ`, columns)
-            ]
-          );
+          return lineHelper.createCarouselMessage(`ตัวอย่างคนที่อาจเป็นเพื่อนใหม่ของคุณ`, columns);
         }
       });
   } catch (e) {
