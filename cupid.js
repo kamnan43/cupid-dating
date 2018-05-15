@@ -249,7 +249,7 @@ function createBlindCandidateBeforeRegisterMessage() {
         snapshot.forEach(function (snap) {
           var doc = snap.val();
           console.log(doc);
-          if (doc.status === '1') {
+          if (doc.status == 1) {
             lists.push(doc);
           }
         });
