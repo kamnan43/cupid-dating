@@ -281,19 +281,19 @@ function createBlindCandidateBeforeRegisterMessage() {
 //////////////////////////////////////////////////////////////////////////////
 
 function getProfilePath(userId) {
-  return path.join(__dirname, 'downloaded', `${userId} - profile.jpg`);
+  return path.join(__dirname, 'downloaded', `${userId}-profile.jpg`);
 }
 
 function getProfilePreviewPath(userId) {
-  return path.join(__dirname, 'downloaded', `${userId} - profile - preview.jpg`);
+  return path.join(__dirname, 'downloaded', `${userId}-profile-preview.jpg`);
 }
 
 function getProfileUrl(userId) {
-  return config.BASE_URL + `/ downloaded / ${userId} - profile.jpg`;
+  return config.BASE_URL + `/downloaded/${userId}-profile.jpg`;
 }
 
 function getProfilePreviewUrl(userId) {
-  return config.BASE_URL + `/ downloaded / ${userId} - profile - preview.jpg`;
+  return config.BASE_URL + `/downloaded/${userId}-profile-preview.jpg`;
 }
 
 function saveMemberProfilePicture(userId) {
@@ -322,6 +322,7 @@ function downloadProfilePicture(pictureUrl, downloadPath) {
 }
 
 function updateMemberData(userId, object) {
+  object['lastActionDate'] = Date.now();
   var memberRef = database.ref("/members/" + userId);
   return memberRef.update(object);
 }
