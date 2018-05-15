@@ -43,6 +43,7 @@ module.exports = {
         `คุณจะสามารถใช้งานได้เต็มที่ หลังจากตั้งค่าตัวเลือกส่วนตัวของคุณ`));
     }
     messages.push(lineHelper.createConfirmMessage(`ต้องการเริ่มต้นใช้งาน เดี๋ยวนี้เลยหรือไม่`, options.tosActions));
+    console.log('messages',messages);
     line.replyMessage(replyToken, messages);
   },
 
