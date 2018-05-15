@@ -248,6 +248,7 @@ function createBlindCandidateBeforeRegisterMessage() {
       .once("value", function (snapshot) {
         snapshot.forEach(function (snap) {
           var doc = snap.val();
+          console.log(doc);
           if (doc.status === '1') {
             lists.push(doc);
           }
