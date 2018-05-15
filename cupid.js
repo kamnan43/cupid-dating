@@ -33,9 +33,14 @@ module.exports = {
         lineHelper.createTextMessage(`ยินดีต้อนรับสู่ Cupid Dating : บริการหาคู่ทางไลน์`),
         lineHelper.createTextMessage(`เงื่อนไขการใช้บริการ\n` +
           `1. ระบบอาจบันทึกข้อมูลส่วนตัวของคุณ ได้แก่ ชื่อโปรไฟล์ รูปโปรไฟล์ สถานะโปรไฟล์ เพื่อใช้ในการให้บริการ\n` +
-          `2. ข้อมูลส่วนตัวของคุณจะแสดงต่อผู้ใช้อื่นในระบบ เฉพาะคนที่ระบุความต้องการตรงตามที่คุณระบุเท่านั้น\n` +
-          `3. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`),
-        lineHelper.createConfirmMessage('คุณยอมรับเงื่อนไขการใช้งานหรือไม่', options.tosActions)
+          `2. ข้อมูลส่วนตัวของคุณ จะใช้แสดงต่อผู้ใช้อื่นภายในระบบนี้เท่านั้น\n` +
+          `3. ระบบให้บริการอย่างเต็มประสิทธิภาพบน Smart Phone เท่านั้น` +
+          `4. เมื่อเริ่มใช้งาน ถือว่าผู้ใช้ยอมรับเงื่อนไขการใช้งานของระบบ` +
+          `5. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`),
+        createBlindCandidateBeforeRegisterMessage(),
+        lineHelper.createTextMessage(`ด้านบนนี้คือตัวอย่างของผู้ใช้ในระบบของเรา\n` +
+          `คุณจะสามารถใช้งานได้เต็มที่ หลังจากตั้งค่าตัวเลือกส่วนตัวของคุณ`),
+        lineHelper.createConfirmMessage(`ต้องการเริ่มต้นใช้งาน เดี๋ยวนี้เลยหรือไม่`, options.tosActions)
       ]
     );
   },
@@ -208,7 +213,7 @@ module.exports = {
                 [
                   lineHelper.createTextMessage(`มีข้อความใหม่! ด้านล่างนี้เป็นข้อความที่ ${profile.displayName} ส่งถึงคุณ`),
                   message,
-                  lineHelper.createConfirmMessage(`คุณต้องการรับ ${profile.displayName} เป็นเพื่อนหรือไม่?`, options.friendActions)
+                  lineHelper.createConfirmMessage(`คุณต้องการรับ ${profile.displayName} เป็นเพื่อนหรือไม่ ? `, options.friendActions)
                 ]
               );
             })
@@ -230,20 +235,67 @@ module.exports = {
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+function createBlindCandidateBeforeRegisterMessage() {
+  try {
+    let lists = [];
+    membersRef.orderByChild('lastActionDate')
+      .limitToLast(10)
+      .once("value", function (snapshot) {
+        snapshot.forEach(function (snap) {
+          var doc = snap.val();
+          if (doc.active === true) {
+            lists.push(doc);
+          }
+        });
+        var columns = lists.map(element => {
+          var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
+          return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', config.BASE_URL + `/static/cupid.png`);
+        });
+        console.log('columns', JSON.stringify(columns));
+        if (columns.length > 0) {
+          line.pushMessage(
+            userId,
+            [
+              lineHelper.createCarouselMessage(`ตัวอย่างคนที่อาจเป็นเพื่อนใหม่ของคุณ`, columns)
+            ]
+          );
+        }
+      });
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
 function getProfilePath(userId) {
-  return path.join(__dirname, 'downloaded', `${userId}-profile.jpg`);
+  return path.join(__dirname, 'downloaded', `${userId} - profile.jpg`);
 }
 
 function getProfilePreviewPath(userId) {
-  return path.join(__dirname, 'downloaded', `${userId}-profile-preview.jpg`);
+  return path.join(__dirname, 'downloaded', `${userId} - profile - preview.jpg`);
 }
 
 function getProfileUrl(userId) {
-  return config.BASE_URL + `/downloaded/${userId}-profile.jpg`;
+  return config.BASE_URL + `/ downloaded / ${userId} - profile.jpg`;
 }
 
 function getProfilePreviewUrl(userId) {
-  return config.BASE_URL + `/downloaded/${userId}-profile-preview.jpg`;
+  return config.BASE_URL + `/ downloaded / ${userId} - profile - preview.jpg`;
 }
 
 function saveMemberProfilePicture(userId) {
@@ -256,7 +308,7 @@ function saveMemberProfilePicture(userId) {
     })
     .then(() => {
       // createPreviewImage
-      cp.execSync(`convert -resize 240x jpeg:${getProfilePath(userId)} jpeg:${getProfilePreviewPath(userId)}`);
+      cp.execSync(`convert - resize 240x jpeg: ${getProfilePath(userId)} jpeg: ${getProfilePreviewPath(userId)}`);
     }).catch((error) => { console.log('saveMemberProfilePicture Error', error + '') });
 }
 

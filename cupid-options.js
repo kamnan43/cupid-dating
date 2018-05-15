@@ -1,7 +1,7 @@
 module.exports = {
   tosActions: [
-    createPostBackOption('ยอมรับ', 'TOS_YES'),
-    createPostBackOption('ไม่ยอมรับ', 'TOS_NO')
+    createPostBackOption('เริ่มกันเลย', 'TOS_YES'),
+    createPostBackOption('ยกเลิก', 'TOS_NO')
   ],
   genderActions: [
     createPostBackOption('ชาย', 'GENDER_M'),
