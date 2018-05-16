@@ -26,6 +26,15 @@ module.exports = {
     );
   },
 
+  sendPleaseRegisterMessage: (userId, replyToken, text) => {
+    line.replyMessage(
+      replyToken,
+      [
+        lineHelper.createConfirmMessage(`ต้องการเริ่มต้นใช้งาน เดี๋ยวนี้เลยหรือไม่`, options.tosActions)
+      ]
+    );
+  },
+
   sendGreetingMessage: (userId, replyToken) => {
     createBlindCandidateBeforeRegisterMessage()
       .then((candidateMessage) => {
@@ -139,6 +148,7 @@ module.exports = {
   },
 
   sendPartnerProfileImage: (userId, replyToken, partnerUserId) => {
+    if (!partnerUserId) sendPleaseRegisterMessage(userId, replyToken);
     line.replyMessage(
       replyToken,
       [
@@ -148,9 +158,10 @@ module.exports = {
   },
 
   sendLoveToPartner: (userId, replyToken, partnerUserId) => {
+    if (!partnerUserId) sendPleaseRegisterMessage(userId, replyToken);
     var partnerName;
     var obj = {};
-    obj['relations/' + partnerUserId] = { 'love': true };
+    obj['relations/' + partnerUserId] = { 'relation': 'LOVE' };
     updateMemberData(userId, obj)
       .then(() => {
         return getUserInfo(partnerUserId)
@@ -158,11 +169,11 @@ module.exports = {
       .then((partnerProfile) => {
         console.log(partnerProfile);
         partnerName = partnerProfile.displayName;
-        return checkAlreadyLove(userId, partnerUserId);
+        return readPartnerRelation(userId, partnerUserId);
       })
-      .then((isLove) => {
-        console.log('isLove', isLove);
-        if (isLove) {
+      .then((relation) => {
+        console.log('relation', relation);
+        if (relation === 'LOVE') {
           updateMemberData(userId, { 'nextMessageTo': partnerUserId })
             .then(() => {
               var ms = createMatchedMessage(partnerName, partnerUserId);
@@ -190,6 +201,13 @@ module.exports = {
           );
         }
       });
+  },
+
+  blockCandidate: (userId, replyToken, partnerUserId) => {
+    if (!partnerUserId) sendPleaseRegisterMessage(userId, replyToken);
+    var obj = {};
+    obj['relations/' + partnerUserId] = { 'relation': 'BLOCK' };
+    updateMemberData(userId, obj);
   },
 
   confirmedToSayHi: (userId, replyToken, partnerUserId) => {
@@ -237,6 +255,10 @@ module.exports = {
         }
       });
 
+  },
+
+  disableMember: (userId) => {
+    updateMemberData(userId, { 'status': -1 });
   }
 }
 
@@ -248,14 +270,16 @@ function createBlindCandidateBeforeRegisterMessage() {
   return new Promise((resolve, reject) => {
     try {
       let lists = [];
+      let count = 0;
       membersRef.orderByChild('lastActionDate')
-        .limitToLast(10)
+        .limitToLast(50)
         .once("value", function (snapshot) {
           snapshot.forEach(function (snap) {
             var doc = snap.val();
             console.log(doc);
             if (doc.status == 1) {
-              lists.push(doc);
+              count++;
+              if (count <= lineHelper.maxCarouselColumns) lists.push(doc);
             }
           });
           var columns = lists.map(element => {
@@ -273,13 +297,84 @@ function createBlindCandidateBeforeRegisterMessage() {
   });
 }
 
+function sendSuggestFriend(userId) {
+  getUserInfo(userId)
+    .then((userInfo) => {
+      try {
+        let lists = [];
+        let count = 0;
+        let nextFriend = userInfo.nextFriend;
+        let query = membersRef.orderByChild('age')
+          .equalTo(userInfo.partner_age);
+        if (nextFriend) {
+          query = query.startAt(nextFriend.value, nextFriend.key);
+        }
+        query.once("value", function (snapshot) {
+          snapshot.forEach(function (snap) {
+            var doc = snap.val();
+            count++;
+            if (doc.userId !== userId && doc.gender === userInfo.partner_gender && doc.status == 1) {
+              // sendSuggestFriendToPartner(doc.userId, userInfo);
+              if (count <= lineHelper.maxCarouselColumns) {
+                lists.push(doc);
+              } else {
+                if (!nextFriend) nextFriend = doc;
+              }
+            }
+          });
+          if (nextFriend) updateMemberData(userId, { 'nextFriend': nextFriend })
+          var columns = lists.map(element => {
+            var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
+            return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
+          });
+          console.log('columns', JSON.stringify(columns));
+          if (columns.length > 0) {
+            line.pushMessage(
+              userId,
+              [
+                lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, columns)
+              ]
+            );
+          }
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    });
+}
 
+function sendSuggestFriendToPartner(sendToUserId, userInfo) {
+  console.log('partner userInfo', JSON.stringify(userInfo));
+  var title = (userInfo.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + userInfo.gender + ' อายุ ' + userInfo.age + ' ปี]'
+  var columns = lineHelper.createCarouselColumns(title, userInfo.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(userInfo.userId), userInfo.userId);
+  console.log('columns send to partner', JSON.stringify(columns));
+  line.pushMessage(
+    sendToUserId,
+    [
+      lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, [columns])
+    ]
+  );
+}
 
-
-
-
-
-
+function readPartnerRelation(userId, partnerUserId) {
+  return new Promise((resolve, reject) => {
+    var partnerRelationRef = database.ref("/members/" + partnerUserId + "/relations");
+    partnerRelationRef.orderByKey()
+      .equalTo(userId)
+      .once("value", (snapshot) => {
+        if (snapshot.val() !== null) {
+          snapshot.forEach(function (snap) {
+            var doc = snap.val();
+            resolve(doc.relation);
+          });
+        } else {
+          resolve(false);
+        }
+      }, (error) => {
+        console.error(error + '');
+      });
+  });
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -346,76 +441,6 @@ function getUserInfo(userId) {
         reject();
       });
   });
-}
-
-function checkAlreadyLove(userId, partnerUserId) {
-  return new Promise((resolve, reject) => {
-    var partnerRelationRef = database.ref("/members/" + partnerUserId + "/relations");
-    partnerRelationRef.orderByKey()
-      .equalTo(userId)
-      .once("value", (snapshot) => {
-        if (snapshot.val() !== null) {
-          snapshot.forEach(function (snap) {
-            var doc = snap.val();
-            resolve(doc.love);
-          });
-        } else {
-          resolve(false);
-        }
-      }, (error) => {
-        console.error(error + '');
-      });
-  });
-}
-
-function sendSuggestFriend(userId) {
-  getUserInfo(userId)
-    .then((userInfo) => {
-      try {
-        let lists = [];
-        let count = 0;
-        membersRef.orderByChild('age')
-          .equalTo(userInfo.partner_age)
-          .once("value", function (snapshot) {
-            snapshot.forEach(function (snap) {
-              var doc = snap.val();
-              count++;
-              if (doc.userId !== userId && doc.gender === userInfo.partner_gender) {
-                sendSuggestFriendToPartner(doc.userId, userInfo);
-                if (count <= 10) lists.push(doc);
-              }
-            });
-            var columns = lists.map(element => {
-              var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
-              return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
-            });
-            console.log('columns', JSON.stringify(columns));
-            if (columns.length > 0) {
-              line.pushMessage(
-                userId,
-                [
-                  lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, columns)
-                ]
-              );
-            }
-          });
-      } catch (e) {
-        console.log(e);
-      }
-    });
-}
-
-function sendSuggestFriendToPartner(sendToUserId, userInfo) {
-  console.log('partner userInfo', JSON.stringify(userInfo));
-  var title = (userInfo.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + userInfo.gender + ' อายุ ' + userInfo.age + ' ปี]'
-  var columns = lineHelper.createCarouselColumns(title, userInfo.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(userInfo.userId), userInfo.userId);
-  console.log('columns send to partner', JSON.stringify(columns));
-  line.pushMessage(
-    sendToUserId,
-    [
-      lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, [columns])
-    ]
-  );
 }
 
 function createMatchedMessage(partnerName, partnerId) {

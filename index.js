@@ -43,7 +43,11 @@ function handleEvent(event) {
   switch (event.type) {
     case 'message':
       const message = event.message;
-      return cupid.sendFirstMessageToPartner(userId, replyToken, message);
+      if (message.type === 'text' && message.text.startsWith('!')) {
+        return handleText(message, replyToken, event.source);
+      } else {
+        return cupid.sendFirstMessageToPartner(userId, replyToken, message);
+      }
     // switch (message.type) {
     //   // case 'text':
     //   //   return handleText(message, replyToken, event.source);
@@ -64,7 +68,7 @@ function handleEvent(event) {
       return cupid.sendGreetingMessage(userId, replyToken);
 
     case 'unfollow':
-      return console.log(`Unfollowed this bot: ${JSON.stringify(event)}`);
+      return cupid.disableMember(userId);
 
     case 'postback':
       let postbackData = event.postback.data.split("_", 2);
@@ -90,6 +94,8 @@ function handleEvent(event) {
           return cupid.sendPartnerProfileImage(userId, replyToken, data);
         case 'ACTION-LOVE':
           return cupid.sendLoveToPartner(userId, replyToken, data);
+        case 'ACTION-BLOCK':
+          return cupid.blockCandidate(userId, replyToken, data);
         case 'SAYHI-YES':
           return cupid.confirmedToSayHi(userId, replyToken, data);
         default:
@@ -101,7 +107,20 @@ function handleEvent(event) {
 }
 
 function handleText(message, replyToken, source) {
-  switch (message.text) {
+  let postbackData = message.text.replace('!', '').split("_", 2);
+  let mode = postbackData[0];
+  let data = postbackData[1];
+
+  switch (mode) {
+    case 'TOS':
+      if (data === 'YES') {
+        return cupid.saveNewMember(userId, replyToken);
+      } else {
+        return cupid.sendMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ยอมรับ ด้านบนได้ทุกเมื่อ');
+      }
+    case 'GENDER':
+      return cupid.saveGender(userId, replyToken, data);
+
     default:
       return;
   }

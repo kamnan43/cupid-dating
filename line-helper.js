@@ -1,5 +1,5 @@
 const options = require('./cupid-options.js');
-
+const maxCarouselColumns = 10;
 function createTextMessage(text) {
   return {
     type: 'text',
@@ -71,5 +71,6 @@ module.exports = {
   createButtonMessage: createButtonMessage,
   createConfirmMessage: createConfirmMessage,
   createCarouselMessage: createCarouselMessage,
-  createCarouselColumns: createCarouselColumns
+  createCarouselColumns: createCarouselColumns,
+  maxCarouselColumns: maxCarouselColumns
 };
