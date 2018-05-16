@@ -27,8 +27,8 @@ module.exports = {
   },
 
   sendGreetingMessage: (userId, replyToken) => {
-    createBlindCandidateBeforeRegisterMessage()
-      .then((candidateMessage) => {
+    // createBlindCandidateBeforeRegisterMessage()
+    //   .then((candidateMessage) => {
         let messages = [
           lineHelper.createTextMessage(`ยินดีต้อนรับสู่ Cupid Dating : บริการหาคู่ทางไลน์`),
           lineHelper.createTextMessage(`เงื่อนไขการใช้บริการ\n` +
@@ -38,15 +38,15 @@ module.exports = {
             `4. เมื่อเริ่มใช้งาน ถือว่าผู้ใช้ยอมรับเงื่อนไขการใช้งานของระบบ\n` +
             `5. ระบบอยู่ในช่วงระหว่างการทดสอบให้บริการ`)
         ];
-        if (candidateMessage) {
-          messages.push(candidateMessage);
-          messages.push(lineHelper.createTextMessage(`ด้านบนนี้คือตัวอย่างของผู้ใช้ในระบบของเรา\n` +
-            `คุณจะสามารถใช้งานได้เต็มที่ หลังจากตั้งค่าตัวเลือกส่วนตัวของคุณ`));
-        }
+        // if (candidateMessage) {
+        //   messages.push(candidateMessage);
+        //   messages.push(lineHelper.createTextMessage(`ด้านบนนี้คือตัวอย่างของผู้ใช้ในระบบของเรา\n` +
+        //     `คุณจะสามารถใช้งานได้เต็มที่ หลังจากตั้งค่าตัวเลือกส่วนตัวของคุณ`));
+        // }
         messages.push(lineHelper.createConfirmMessage(`ต้องการเริ่มต้นใช้งาน เดี๋ยวนี้เลยหรือไม่`, options.tosActions));
         console.log('messages', messages);
         line.replyMessage(replyToken, messages);
-      });
+      // });
   },
 
   saveNewMember: (userId, replyToken) => {
