@@ -58,7 +58,7 @@ module.exports = {
     })
       .then(() => {
         Promise.all([
-          // saveMemberProfilePicture(userId),
+          saveMemberProfilePicture(userId),
           line.replyMessage(
             replyToken,
             [
@@ -399,12 +399,15 @@ function sendPleaseRegisterMessage(userId, replyToken, text) {
 function saveMemberProfilePicture(userId) {
   line.getProfile(userId)
     .then((profile) => {
-      // updateMemberData(userId, profile);
+      updateMemberData(userId, profile);
       return downloadProfilePicture(profile.pictureUrl, getProfilePath(userId));
     })
     .then(() => {
+      setTimeout(()=>{
+        cp.execSync(`convert -resize 240x jpeg: ${getProfilePath(userId)} jpeg: ${getProfilePreviewPath(userId)}`);
+      }, 500, userId);
       // createPreviewImage
-      cp.execSync(`convert -resize 240x jpeg: ${getProfilePath(userId)} jpeg: ${getProfilePreviewPath(userId)}`);
+      // cp.execSync(`convert -resize 240x jpeg: ${getProfilePath(userId)} jpeg: ${getProfilePreviewPath(userId)}`);
     }).catch((error) => { console.log('saveMemberProfilePicture Error', error + '') });
 }
 
