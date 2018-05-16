@@ -58,7 +58,7 @@ module.exports = {
     })
       .then(() => {
         Promise.all([
-          saveMemberProfilePicture(userId),
+          // saveMemberProfilePicture(userId),
           line.replyMessage(
             replyToken,
             [
