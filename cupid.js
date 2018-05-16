@@ -359,7 +359,7 @@ function viewFriendList(userId) {
           snapshot.forEach(function (snap) {
             var doc = snap.val();
             count++;
-            if (doc.userId !== userId && doc[].relation === 'LOVE' && doc.status == 1) {
+            if (doc.userId !== userId && doc.relation === 'LOVE' && doc.status == 1) {
               if (count <= lineHelper.maxCarouselColumns) {
                 lists.push(doc);
               } else {
