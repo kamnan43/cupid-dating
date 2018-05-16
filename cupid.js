@@ -404,7 +404,7 @@ function saveMemberProfilePicture(userId) {
     })
     .then(() => {
       // createPreviewImage
-      cp.execSync(`convert - resize 240x jpeg: ${getProfilePath(userId)} jpeg: ${getProfilePreviewPath(userId)}`);
+      cp.execSync(`convert -resize 240x jpeg: ${getProfilePath(userId)} jpeg: ${getProfilePreviewPath(userId)}`);
     }).catch((error) => { console.log('saveMemberProfilePicture Error', error + '') });
 }
 
