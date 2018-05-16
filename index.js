@@ -113,9 +113,9 @@ function handleText(message, replyToken, source) {
 
   switch (mode) {
     case 'SETTINGS':
-    return cupid.saveNewMember(userId, replyToken);
+    return cupid.saveNewMember(event.source.userId, replyToken);
     case 'GENDER':
-      return cupid.saveGender(userId, replyToken, data);
+      return cupid.saveGender(event.source.userId, replyToken, data);
 
     default:
       return;
