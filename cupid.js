@@ -97,33 +97,33 @@ module.exports = {
           replyToken,
           [
             lineHelper.createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศที่คุณสนใจ`),
-            lineHelper.createButtonMessage('เพศที่คุณสนใจ', options.partnerGenderActions)
+            lineHelper.createButtonMessage('เพศที่คุณสนใจ', options.candidateGenderActions)
           ]
         );
       });
   },
 
-  savePartnerGender: (userId, replyToken, partner_gender) => {
-    updateMemberData(userId, { 'partner_gender': partner_gender })
+  saveCandidateGender: (userId, replyToken, candidate_gender) => {
+    updateMemberData(userId, { 'candidate_gender': candidate_gender })
       .then(() => {
         line.replyMessage(
           replyToken,
           [
-            lineHelper.createButtonMessage('ระบุอายุของคนที่คุณสนใจ', options.partnerAgeActions)
+            lineHelper.createButtonMessage('ระบุอายุของคนที่คุณสนใจ', options.candidateAgeActions)
           ]
         );
       });
   },
 
-  savePartnerAge: (userId, replyToken, partner_age) => {
+  saveCandidateAge: (userId, replyToken, candidate_age) => {
     var minAge, maxAge;
-    switch (partner_age) {
+    switch (candidate_age) {
       case '18-22': minAge = 18; maxAge = 22; break;
       case '23-27': minAge = 23; maxAge = 27; break;
       case '28-32': minAge = 28; maxAge = 32; break;
       case '33UP': minAge = 33; maxAge = 99; break;
     }
-    updateMemberData(userId, { 'partner_age': partner_age, 'partner_min_age': minAge, 'partner_max_age': maxAge, 'status': 1 })
+    updateMemberData(userId, { 'candidate_age': candidate_age, 'candidate_min_age': minAge, 'candidate_max_age': maxAge, 'status': 1 })
       .then(() => {
         line.replyMessage(
           replyToken,
@@ -134,40 +134,48 @@ module.exports = {
         );
       })
       .then(() => {
-        setTimeout(sendSuggestFriend, 1000, userId);
+        setTimeout(viewCandidateList, 1000, userId, true);
       });
   },
 
-  sendPartnerProfileImage: (userId, replyToken, partnerUserId) => {
-    if (!partnerUserId) sendPleaseRegisterMessage(userId, replyToken);
+  sendCandidateList: (userId, replyToken) => {
+    viewCandidateList(userId, replyToken);
+  },
+
+  sendFriendList: (userId, replyToken) => {
+    viewFriendList(userId, replyToken);
+  },
+
+  sendCandidateProfileImage: (userId, replyToken, candidateUserId) => {
+    if (!candidateUserId) sendPleaseRegisterMessage(userId, replyToken);
     line.replyMessage(
       replyToken,
       [
-        lineHelper.createImageMessage(getProfileUrl(partnerUserId), getProfilePreviewUrl(partnerUserId)),
+        lineHelper.createImageMessage(getProfileUrl(candidateUserId), getProfilePreviewUrl(candidateUserId)),
       ]
     );
   },
 
-  sendLoveToPartner: (userId, replyToken, partnerUserId) => {
-    if (!partnerUserId) sendPleaseRegisterMessage(userId, replyToken);
-    var partnerName;
+  sendLoveToCandidate: (userId, replyToken, candidateUserId) => {
+    if (!candidateUserId) sendPleaseRegisterMessage(userId, replyToken);
+    var candidateName;
     var obj = {};
-    obj['relations/' + partnerUserId] = { 'relation': 'LOVE' };
+    obj['relations/' + candidateUserId] = { 'relation': 'LOVE' };
     updateMemberData(userId, obj)
       .then(() => {
-        return getUserInfo(partnerUserId)
+        return getUserInfo(candidateUserId)
       })
-      .then((partnerProfile) => {
-        console.log(partnerProfile);
-        partnerName = partnerProfile.displayName;
-        return readPartnerRelation(userId, partnerUserId);
+      .then((candidateProfile) => {
+        console.log(candidateProfile);
+        candidateName = candidateProfile.displayName;
+        return readCandidateRelation(userId, candidateUserId);
       })
       .then((relation) => {
         console.log('relation', relation);
         if (relation === 'LOVE') {
-          updateMemberData(userId, { 'nextMessageTo': partnerUserId })
+          updateMemberData(userId, { 'nextMessageTo': candidateUserId })
             .then(() => {
-              var ms = createMatchedMessage(partnerName, partnerUserId);
+              var ms = createMatchedMessage(candidateName, candidateUserId);
               console.log(ms);
               return line.replyMessage(
                 replyToken,
@@ -179,7 +187,7 @@ module.exports = {
             })
             .then((profile) => {
               line.pushMessage(
-                partnerUserId,
+                candidateUserId,
                 createMatchedMessage(profile.displayName, userId)
               )
             });
@@ -187,22 +195,24 @@ module.exports = {
           line.replyMessage(
             replyToken,
             [
-              lineHelper.createTextMessage(`ถูกใจหล่ะสิ ถ้าคุณ ${partnerName} ถูกใจคุณเหมือนกัน ถึงจะเริ่มคุยกันได้นะ`),
+              lineHelper.createTextMessage(`ถูกใจหล่ะสิ ถ้าคุณ ${candidateName} ถูกใจคุณเหมือนกัน ถึงจะเริ่มคุยกันได้นะ`),
             ]
           );
         }
       });
   },
 
-  blockCandidate: (userId, replyToken, partnerUserId) => {
-    if (!partnerUserId) sendPleaseRegisterMessage(userId, replyToken);
+  blockCandidate: (userId, replyToken, candidateUserId) => {
+    if (!candidateUserId) sendPleaseRegisterMessage(userId, replyToken);
     var obj = {};
-    obj['relations/' + partnerUserId] = { 'relation': 'BLOCK' };
+    obj['relations/' + candidateUserId] = { 'relation': 'BLOCK' };
     updateMemberData(userId, obj);
   },
 
-  confirmedToSayHi: (userId, replyToken, partnerUserId) => {
-    updateMemberData(userId, { 'nextMessageTo': partnerUserId })
+
+
+  confirmedToSayHi: (userId, replyToken, candidateUserId) => {
+    updateMemberData(userId, { 'nextMessageTo': candidateUserId })
       .then(() => {
         line.replyMessage(
           replyToken,
@@ -211,17 +221,17 @@ module.exports = {
       });
   },
 
-  sendFirstMessageToPartner: (userId, replyToken, message) => {
+  sendFirstMessageToCandidate: (userId, replyToken, message) => {
     console.log(userId, replyToken, message);
-    var partnerName;
+    var candidateName;
     getUserInfo(userId)
       .then((profile) => {
-        console.log('sendFirstMessageToPartner:sender profile', JSON.stringify(profile));
+        console.log('sendFirstMessageToCandidate:sender profile', JSON.stringify(profile));
         if (profile.nextMessageTo) {
           getUserInfo(profile.nextMessageTo)
-            .then((partnerProfile) => {
-              console.log('sendFirstMessageToPartner:partner profile', JSON.stringify(partnerProfile));
-              partnerName = partnerProfile.displayName;
+            .then((candidateProfile) => {
+              console.log('sendFirstMessageToCandidate:candidate profile', JSON.stringify(candidateProfile));
+              candidateName = candidateProfile.displayName;
               return line.pushMessage(
                 profile.nextMessageTo,
                 [
@@ -235,14 +245,14 @@ module.exports = {
               return line.replyMessage(
                 replyToken,
                 [
-                  lineHelper.createTextMessage(`ส่งข้อความของคุณถึง ${partnerName} เรียบร้อยแล้ว`),
-                  lineHelper.createTextMessage(`ถ้า ${partnerName} รับคุณเป็นเพื่อน ก็เริ่มสานสัมพันธ์กันได้เล้ยยย`),
+                  lineHelper.createTextMessage(`ส่งข้อความของคุณถึง ${candidateName} เรียบร้อยแล้ว`),
+                  lineHelper.createTextMessage(`ถ้า ${candidateName} รับคุณเป็นเพื่อน ก็เริ่มสานสัมพันธ์กันได้เล้ยยย`),
                 ]
               );
             })
             .then(() => {
               updateMemberData(userId, { 'nextMessageTo': '' });
-            }).catch((error) => { console.log('sendFirstMessageToPartner Error', error + '') });
+            }).catch((error) => { console.log('sendFirstMessageToCandidate Error', error + '') });
         }
       });
 
@@ -288,15 +298,60 @@ function createBlindCandidateBeforeRegisterMessage() {
   });
 }
 
-function sendSuggestFriend(userId) {
+function viewCandidateList(userId, broadcast = false) {
+  getUserInfo(userId)
+    .then((userInfo) => {
+      try {
+        let lists = [];
+        let count = 0;
+        let nextCandidate = userInfo.nextCandidate;
+        let query = membersRef.orderByChild('age')
+          .equalTo(userInfo.candidate_age);
+        if (nextCandidate) {
+          query = query.startAt(nextCandidate.value, nextCandidate.key);
+        }
+        query.once("value", function (snapshot) {
+          snapshot.forEach(function (snap) {
+            var doc = snap.val();
+            count++;
+            if (doc.userId !== userId && doc.gender === userInfo.candidate_gender && doc.status == 1) {
+              if (broadcast) sendSuggestFriendToCandidate(doc.userId, userInfo);
+              if (count <= lineHelper.maxCarouselColumns) {
+                lists.push(doc);
+              } else {
+                if (!nextCandidate) nextCandidate = doc;
+              }
+            }
+          });
+          if (nextCandidate) updateMemberData(userId, { 'nextCandidate': nextCandidate })
+          var columns = lists.map(element => {
+            var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
+            return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
+          });
+          console.log('columns', JSON.stringify(columns));
+          if (columns.length > 0) {
+            line.pushMessage(
+              userId,
+              [
+                lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, columns)
+              ]
+            );
+          }
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    });
+};
+
+function viewFriendList(userId) {
   getUserInfo(userId)
     .then((userInfo) => {
       try {
         let lists = [];
         let count = 0;
         let nextFriend = userInfo.nextFriend;
-        let query = membersRef.orderByChild('age')
-          .equalTo(userInfo.partner_age);
+        let query = membersRef.orderByChild('lastActionDate')
         if (nextFriend) {
           query = query.startAt(nextFriend.value, nextFriend.key);
         }
@@ -304,8 +359,7 @@ function sendSuggestFriend(userId) {
           snapshot.forEach(function (snap) {
             var doc = snap.val();
             count++;
-            if (doc.userId !== userId && doc.gender === userInfo.partner_gender && doc.status == 1) {
-              // sendSuggestFriendToPartner(doc.userId, userInfo);
+            if (doc.userId !== userId && doc[].relation === 'LOVE' && doc.status == 1) {
               if (count <= lineHelper.maxCarouselColumns) {
                 lists.push(doc);
               } else {
@@ -332,13 +386,13 @@ function sendSuggestFriend(userId) {
         console.log(e);
       }
     });
-}
+};
 
-function sendSuggestFriendToPartner(sendToUserId, userInfo) {
-  console.log('partner userInfo', JSON.stringify(userInfo));
+function sendSuggestFriendToCandidate(sendToUserId, userInfo) {
+  console.log('candidate userInfo', JSON.stringify(userInfo));
   var title = (userInfo.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + userInfo.gender + ' อายุ ' + userInfo.age + ' ปี]'
   var columns = lineHelper.createCarouselColumns(title, userInfo.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(userInfo.userId), userInfo.userId);
-  console.log('columns send to partner', JSON.stringify(columns));
+  console.log('columns send to candidate', JSON.stringify(columns));
   line.pushMessage(
     sendToUserId,
     [
@@ -347,10 +401,10 @@ function sendSuggestFriendToPartner(sendToUserId, userInfo) {
   );
 }
 
-function readPartnerRelation(userId, partnerUserId) {
+function readCandidateRelation(userId, candidateUserId) {
   return new Promise((resolve, reject) => {
-    var partnerRelationRef = database.ref("/members/" + partnerUserId + "/relations");
-    partnerRelationRef.orderByKey()
+    var candidateRelationRef = database.ref("/members/" + candidateUserId + "/relations");
+    candidateRelationRef.orderByKey()
       .equalTo(userId)
       .once("value", (snapshot) => {
         if (snapshot.val() !== null) {
@@ -444,15 +498,15 @@ function getUserInfo(userId) {
   });
 }
 
-function createMatchedMessage(partnerName, partnerId) {
+function createMatchedMessage(candidateName, candidateId) {
   var dup_array = JSON.parse(JSON.stringify(options.sayHiActions))
   actionsOptions = dup_array.map(element => {
-    element.data = element.data + '_' + partnerId;
+    element.data = element.data + '_' + candidateId;
     return element;
   });
   return [
-    lineHelper.createTextMessage(`ว้าววว ยินดีด้วย ${partnerName} ก็ถูกใจคุณเหมือนกัน`),
-    lineHelper.createTextMessage(`คุณสามารถส่งข้อความไปถึง ${partnerName} ได้\nข้อความ รูปภาพ คลิปเสียง หรือวิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
+    lineHelper.createTextMessage(`ว้าววว ยินดีด้วย ${candidateName} ก็ถูกใจคุณเหมือนกัน`),
+    lineHelper.createTextMessage(`คุณสามารถส่งข้อความไปถึง ${candidateName} ได้\nข้อความ รูปภาพ คลิปเสียง หรือวิดีโอก็ได้\nแต่อย่าลืมว่า ได้ 1 ข้อความเท่านั้น`),
     lineHelper.createConfirmMessage('คุณต้องการส่งข้อความเลยหรือไม่', actionsOptions),
   ];
 }

@@ -14,18 +14,18 @@ module.exports = {
     createPostBackOption('28-32 ปี', 'AGE_28-32'),
     createPostBackOption('33 ขึ้นไป', 'AGE_33UP')
   ],
-  partnerGenderActions: [
-    createPostBackOption('ชาย', 'PARTNER-GENDER_M'),
-    createPostBackOption('หญิง', 'PARTNER-GENDER_F'),
-    createPostBackOption('อื่นๆ', 'PARTNER-GENDER_X')
+  candidateGenderActions: [
+    createPostBackOption('ชาย', 'CANDIDATE-GENDER_M'),
+    createPostBackOption('หญิง', 'CANDIDATE-GENDER_F'),
+    createPostBackOption('อื่นๆ', 'CANDIDATE-GENDER_X')
   ],
-  partnerAgeActions: [
-    createPostBackOption('18-22 ปี', 'PARTNER-AGE_18-22'),
-    createPostBackOption('23-27 ปี', 'PARTNER-AGE_23-27'),
-    createPostBackOption('28-32 ปี', 'PARTNER-AGE_28-32'),
-    createPostBackOption('33 ขึ้นไป', 'PARTNER-AGE_33UP')
+  candidateAgeActions: [
+    createPostBackOption('18-22 ปี', 'CANDIDATE-AGE_18-22'),
+    createPostBackOption('23-27 ปี', 'CANDIDATE-AGE_23-27'),
+    createPostBackOption('28-32 ปี', 'CANDIDATE-AGE_28-32'),
+    createPostBackOption('33 ขึ้นไป', 'CANDIDATE-AGE_33UP')
   ],
-  partnerProfileActions: [
+  candidateProfileActions: [
     createPostBackOption('ดูรูป', 'ACTION-DOWNLOAD'),
     createPostBackOption('ถูกใจ', 'ACTION-LOVE'),
     createPostBackOption('ไม่ชอบ', 'ACTION-BLOCK'),

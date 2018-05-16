@@ -86,14 +86,14 @@ function handleEvent(event) {
           return cupid.saveGender(userId, replyToken, data);
         case 'AGE':
           return cupid.saveAge(userId, replyToken, data);
-        case 'PARTNER-GENDER':
-          return cupid.savePartnerGender(userId, replyToken, data);
-        case 'PARTNER-AGE':
-          return cupid.savePartnerAge(userId, replyToken, data);
+        case 'CANDIDATE-GENDER':
+          return cupid.saveCandidateGender(userId, replyToken, data);
+        case 'CANDIDATE-AGE':
+          return cupid.saveCandidateAge(userId, replyToken, data);
         case 'ACTION-DOWNLOAD':
-          return cupid.sendPartnerProfileImage(userId, replyToken, data);
+          return cupid.sendCandidateProfileImage(userId, replyToken, data);
         case 'ACTION-LOVE':
-          return cupid.sendLoveToPartner(userId, replyToken, data);
+          return cupid.sendLoveToCandidate(userId, replyToken, data);
         case 'ACTION-BLOCK':
           return cupid.blockCandidate(userId, replyToken, data);
         case 'SAYHI-YES':
@@ -112,13 +112,14 @@ function handleText(message, replyToken, source) {
   let data = postbackData[1];
 
   switch (mode) {
-    case 'SETTINGS':
-    return cupid.saveNewMember(source.userId, replyToken);
-    case 'GENDER':
-      return cupid.saveGender(source.userId, replyToken, data);
-
+    case 'FILTER':
+      return cupid.saveNewMember(source.userId, replyToken);
+    case 'EXPLORE':
+      return cupid.sendCandidateList(source.userId, replyToken);
+    case 'FRIENDS':
+      return cupid.sendFriendList(source.userId, replyToken);
     default:
-      return;
+      return;ก
   }
 }
 
