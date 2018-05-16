@@ -384,7 +384,8 @@ function getProfileUrl(userId) {
 }
 
 function getProfilePreviewUrl(userId) {
-  return config.BASE_URL + `/downloaded/${userId}-profile-preview.jpg`;
+  return config.BASE_URL + `/downloaded/${userId}-profile.jpg`;
+  // return config.BASE_URL + `/downloaded/${userId}-profile-preview.jpg`;
 }
 
 function sendPleaseRegisterMessage(userId, replyToken, text) {
@@ -399,15 +400,14 @@ function sendPleaseRegisterMessage(userId, replyToken, text) {
 function saveMemberProfilePicture(userId) {
   line.getProfile(userId)
     .then((profile) => {
-      updateMemberData(userId, profile);
-      return downloadProfilePicture(profile.pictureUrl, getProfilePath(userId));
+      return Promise.all([
+        downloadProfilePicture(profile.pictureUrl, getProfilePath(userId)),
+        updateMemberData(userId, profile)
+      ])
     })
     .then(() => {
-      setTimeout(()=>{
-        cp.execSync(`convert -resize 240x jpeg: ${getProfilePath(userId)} jpeg: ${getProfilePreviewPath(userId)}`);
-      }, 2000, userId);
       // createPreviewImage
-      // cp.execSync(`convert -resize 240x jpeg: ${getProfilePath(userId)} jpeg: ${getProfilePreviewPath(userId)}`);
+      cp.execSync(`convert -resize 240x jpeg: ${getProfilePath(userId)} jpeg: ${getProfilePreviewPath(userId)}`);
     }).catch((error) => { console.log('saveMemberProfilePicture Error', error + '') });
 }
 
