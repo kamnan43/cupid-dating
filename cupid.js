@@ -384,8 +384,8 @@ function getProfileUrl(userId) {
 }
 
 function getProfilePreviewUrl(userId) {
-  return config.BASE_URL + `/downloaded/${userId}-profile.jpg`;
-  // return config.BASE_URL + `/downloaded/${userId}-profile-preview.jpg`;
+  // return config.BASE_URL + `/downloaded/${userId}-profile.jpg`;
+  return config.BASE_URL + `/downloaded/${userId}-profile-preview.jpg`;
 }
 
 function sendPleaseRegisterMessage(userId, replyToken, text) {
