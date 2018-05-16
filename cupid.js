@@ -399,7 +399,7 @@ function sendPleaseRegisterMessage(userId, replyToken, text) {
 function saveMemberProfilePicture(userId) {
   line.getProfile(userId)
     .then((profile) => {
-      updateMemberData(userId, profile);
+      // updateMemberData(userId, profile);
       return downloadProfilePicture(profile.pictureUrl, getProfilePath(userId));
     })
     .then(() => {
