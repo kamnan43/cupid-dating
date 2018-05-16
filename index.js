@@ -112,12 +112,8 @@ function handleText(message, replyToken, source) {
   let data = postbackData[1];
 
   switch (mode) {
-    case 'TOS':
-      if (data === 'YES') {
-        return cupid.saveNewMember(userId, replyToken);
-      } else {
-        return cupid.sendMessage(userId, replyToken, 'ไหนๆก็แวะมาแล้ว ไม่ลองดูหน่อยเหรอ อ่ะ! ให้ตอบใหม่');
-      }
+    case 'SETTINGS':
+    return cupid.saveNewMember(userId, replyToken);
     case 'GENDER':
       return cupid.saveGender(userId, replyToken, data);
 
