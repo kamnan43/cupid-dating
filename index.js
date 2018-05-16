@@ -116,7 +116,7 @@ function handleText(message, replyToken, source) {
       if (data === 'YES') {
         return cupid.saveNewMember(userId, replyToken);
       } else {
-        return cupid.sendMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ยอมรับ ด้านบนได้ทุกเมื่อ');
+        return cupid.sendMessage(userId, replyToken, 'ไหนๆก็แวะมาแล้ว ไม่ลองดูหน่อยเหรอ อ่ะ! ให้ตอบใหม่');
       }
     case 'GENDER':
       return cupid.saveGender(userId, replyToken, data);
