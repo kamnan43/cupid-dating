@@ -26,15 +26,6 @@ module.exports = {
     );
   },
 
-  sendPleaseRegisterMessage: (userId, replyToken, text) => {
-    line.replyMessage(
-      replyToken,
-      [
-        lineHelper.createConfirmMessage(`ต้องการเริ่มต้นใช้งาน เดี๋ยวนี้เลยหรือไม่`, options.tosActions)
-      ]
-    );
-  },
-
   sendGreetingMessage: (userId, replyToken) => {
     createBlindCandidateBeforeRegisterMessage()
       .then((candidateMessage) => {
@@ -394,6 +385,15 @@ function getProfileUrl(userId) {
 
 function getProfilePreviewUrl(userId) {
   return config.BASE_URL + `/downloaded/${userId}-profile-preview.jpg`;
+}
+
+function sendPleaseRegisterMessage(userId, replyToken, text) {
+  line.replyMessage(
+    replyToken,
+    [
+      lineHelper.createConfirmMessage(`ต้องการเริ่มต้นใช้งาน เดี๋ยวนี้เลยหรือไม่`, options.tosActions)
+    ]
+  );
 }
 
 function saveMemberProfilePicture(userId) {
