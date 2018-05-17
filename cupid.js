@@ -312,8 +312,7 @@ function viewCandidateList(userId, replyToken, broadcast) {
         let lists = [];
         let count = 0;
         let nextCandidate = userInfo.nextCandidate;
-        let query = membersRef.orderByChild('age')
-          .equalTo(userInfo.candidate_age);
+        let query = membersRef.orderByChild('age');
         if (nextCandidate) {
           query = query.startAt(nextCandidate.age, nextCandidate.userId);
         }
