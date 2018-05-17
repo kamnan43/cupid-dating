@@ -344,7 +344,7 @@ function viewCandidateList(userId, replyToken, broadcast) {
               console.log('B', doc);
               // if (broadcast) sendSuggestFriendToCandidate(doc.userId, userInfo);
               // if (count <= lineHelper.maxCarouselColumns) {
-              if (count <= 1) {
+              if (count <= lineHelper.maxCarouselColumns) {
                 console.log('C', doc);
                 lists.push(doc);
               } else {
