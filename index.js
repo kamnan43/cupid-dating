@@ -46,7 +46,7 @@ function handleEvent(event) {
       if (message.type === 'text' && message.text.startsWith('!')) {
         return handleText(message, replyToken, event.source);
       } else {
-        return cupid.sendFirstMessageToPartner(userId, replyToken, message);
+        return cupid.sendMessageToFriend(userId, replyToken, message);
       }
     // switch (message.type) {
     //   // case 'text':
@@ -96,8 +96,10 @@ function handleEvent(event) {
           return cupid.sendLoveToCandidate(userId, replyToken, data);
         case 'ACTION-BLOCK':
           return cupid.blockCandidate(userId, replyToken, data);
-        case 'SAYHI-YES':
-          return cupid.confirmedToSayHi(userId, replyToken, data);
+        // case 'ACTION-CHAT':
+        //   return cupid.send(userId, replyToken, data);
+        // case 'SAYHI-YES':
+        //   return cupid.confirmedToSayHi(userId, replyToken, data);
         default:
           return;
       }
@@ -119,10 +121,9 @@ function handleText(message, replyToken, source) {
     case 'FRIENDS':
       return cupid.sendFriendList(source.userId, replyToken);
     default:
-      return;ก
+      return;
   }
 }
-
 
 // listen on port
 const port = config.PORT;

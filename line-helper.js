@@ -50,17 +50,18 @@ function createCarouselMessage(title, columns) {
   };
 }
 
-function createCarouselColumns(title, text, imageUrl, extra) {
-  var dup_array = JSON.parse(JSON.stringify(options.partnerProfileActions))
-  columnOptions = dup_array.map(element => {
-    if (extra) element.data = element.data + '_' + extra;
-    return element;
-  });
+function createCarouselColumns(title, text, imageUrl, extra, isFreind) {
+  // var dup_array = JSON.parse(JSON.stringify(options.candidateProfileActions))
+  // columnOptions = dup_array.map(element => {
+  //   if (extra) element.data = element.data + '_' + extra;
+  //   return element;
+  // });
+  let columnOps = options.getCandidateProfileAction(extra, isFriend);
   return {
     thumbnailImageUrl: imageUrl,
     title: title,
     text: text,
-    defaultAction: columnOptions[0],
+    defaultAction: options.imageAction,
     actions: columnOptions
   };
 }
