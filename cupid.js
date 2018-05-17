@@ -163,14 +163,15 @@ module.exports = {
   sendLoveToCandidate: (userId, replyToken, candidateUserId) => {
     if (!candidateUserId) sendPleaseRegisterMessage(userId, replyToken);
     var candidateName;
+    var candidateProfile;
     var obj = {};
     obj['relations/' + candidateUserId] = { 'relation': 'LOVE' };
     updateMemberData(userId, obj)
       .then(() => {
         return getUserInfo(candidateUserId)
       })
-      .then((candidateProfile) => {
-        console.log(candidateProfile);
+      .then((profile) => {
+        candidateProfile = profile;
         delete candidateProfile.relations;
         delete candidateProfile.nextCandidate;
         candidateName = candidateProfile.displayName;
@@ -220,7 +221,7 @@ module.exports = {
       .then(() => {
         line.replyMessage(
           replyToken,
-          lineHelper.createTextMessage(`เรียบร้อย จากกันชั่วนิรันดร์`),
+          lineHelper.createTextMessage(`บล็อคเรียบร้อย จากกันชั่วนิรันดร์ '_'`),
         );
       });
   },
