@@ -322,7 +322,7 @@ function viewCandidateList(userId, replyToken, broadcast) {
             var doc = snap.val();
             console.log('A', doc);
             count++;
-            if (doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
+            if (doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
               console.log('B', doc);
               // if (broadcast) sendSuggestFriendToCandidate(doc.userId, userInfo);
               // if (count <= lineHelper.maxCarouselColumns) {
