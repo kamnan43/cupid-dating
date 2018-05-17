@@ -321,7 +321,7 @@ function viewCandidateList(userId, replyToken, broadcast) {
           snapshot.forEach(function (snap) {
             var doc = snap.val();
             count++;
-            if (doc.userId !== userId && doc.gender === userInfo.candidate_gender && doc.status == 1 && userInfo.relations[doc.userId].relation !== 'LOVE') {
+            if (doc.userId !== userId && doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
               // if (broadcast) sendSuggestFriendToCandidate(doc.userId, userInfo);
               // if (count <= lineHelper.maxCarouselColumns) {
               if (count <= 1) {
@@ -501,7 +501,9 @@ function getUserInfo(userId) {
       .equalTo(userId)
       .once("value", (snapshot) => {
         snapshot.forEach(function (snap) {
-          resolve(snap.val());
+          let profile = snap.val();
+          console.log('getUserInfo', profile);
+          resolve(profile);
         });
       }, (error) => {
         console.error(error + '');
