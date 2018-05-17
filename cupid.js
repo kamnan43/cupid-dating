@@ -344,7 +344,7 @@ function viewCandidateList(userId, replyToken, broadcast) {
             if (replyToken) {
               line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, userId, false)]);
             } else {
-              line.pushMessage(userId, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, list, userId, false)]);
+              line.pushMessage(userId, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, userId, false)]);
             }
           }
         });
