@@ -322,7 +322,7 @@ function viewCandidateList(userId, replyToken, broadcast) {
             var doc = snap.val();
             console.log('A', doc);
             count++;
-            if (doc.userId !== userId && doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
+            if (doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
               console.log('B', doc);
               // if (broadcast) sendSuggestFriendToCandidate(doc.userId, userInfo);
               // if (count <= lineHelper.maxCarouselColumns) {
@@ -532,7 +532,7 @@ function createCarouselMessage(title, lists, userId, isFriend) {
     // let isFreind = true;
     //check userId isfriend with element.userId
     var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
-    return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', config.BASE_URL + `/static/cupid.png`, element.userId, isFriend);
+    return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId, isFriend);
   });
 
   return lineHelper.createCarouselMessage(title, columns)
