@@ -315,7 +315,7 @@ function viewCandidateList(userId, replyToken, broadcast) {
         let query = membersRef.orderByChild('age')
           .equalTo(userInfo.candidate_age);
         if (nextCandidate) {
-          query = query.startAt(nextCandidate.value, nextCandidate.key);
+          query = query.startAt(nextCandidate.age, nextCandidate.userId);
         }
         query.once("value", function (snapshot) {
           snapshot.forEach(function (snap) {
