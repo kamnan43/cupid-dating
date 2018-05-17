@@ -320,11 +320,14 @@ function viewCandidateList(userId, replyToken, broadcast) {
         query.once("value", function (snapshot) {
           snapshot.forEach(function (snap) {
             var doc = snap.val();
+            console.log('A', doc);
             count++;
             if (doc.userId !== userId && doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
+              console.log('B', doc);
               // if (broadcast) sendSuggestFriendToCandidate(doc.userId, userInfo);
               // if (count <= lineHelper.maxCarouselColumns) {
               if (count <= 1) {
+                console.log('C', doc);
                 lists.push(doc);
               } else {
                 if (!nextCandidate) nextCandidate = doc;
@@ -495,14 +498,13 @@ function updateMemberRelationData(userId, candidateProfile) {
 }
 
 function getUserInfo(userId) {
-  console.log('getUserInfo', userId);
   return new Promise((resolve, reject) => {
     membersRef.orderByKey()
       .equalTo(userId)
       .once("value", (snapshot) => {
         snapshot.forEach(function (snap) {
           let profile = snap.val();
-          console.log('getUserInfo', profile);
+          console.log('getUserInfo', userId, profile);
           resolve(profile);
         });
       }, (error) => {
