@@ -90,7 +90,9 @@ function handleEvent(event) {
           return cupid.saveCandidateGender(userId, replyToken, data);
         case 'CANDIDATE-AGE':
           return cupid.saveCandidateAge(userId, replyToken, data);
-        case 'ACTION-DOWNLOAD':
+        case 'ACTION-PROFILE':
+          return cupid.sendCandidateProfile(userId, replyToken, data);
+        case 'ACTION-IMAGE':
           return cupid.sendCandidateProfileImage(userId, replyToken, data);
         case 'ACTION-LOVE':
           return cupid.sendLoveToCandidate(userId, replyToken, data);

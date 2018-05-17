@@ -51,11 +51,6 @@ function createCarouselMessage(title, columns) {
 }
 
 function createCarouselColumns(title, text, imageUrl, extra, isFriend) {
-  // var dup_array = JSON.parse(JSON.stringify(options.candidateProfileActions))
-  // columnOptions = dup_array.map(element => {
-  //   if (extra) element.data = element.data + '_' + extra;
-  //   return element;
-  // });
   let columnOptions = options.getCandidateProfileAction(extra, isFriend);
   return {
     thumbnailImageUrl: imageUrl,
@@ -67,6 +62,24 @@ function createCarouselColumns(title, text, imageUrl, extra, isFriend) {
   };
 }
 
+function createImageCarouselMessage(title, columns) {
+  return {
+    type: 'template',
+    altText: title,
+    template: {
+      type: 'image_carousel',
+      columns: columns,
+    },
+  };
+}
+
+function createImageCarouselColumns(actionText, imageUrl, extra) {
+  return {
+    imageUrl: imageUrl,
+    action: options.getCandidateImageAction(actionText, extra)
+  };
+}
+
 module.exports = {
   createTextMessage: createTextMessage,
   createImageMessage: createImageMessage,
@@ -74,5 +87,7 @@ module.exports = {
   createConfirmMessage: createConfirmMessage,
   createCarouselMessage: createCarouselMessage,
   createCarouselColumns: createCarouselColumns,
+  createImageCarouselMessage: createImageCarouselMessage,
+  createImageCarouselColumns: createImageCarouselColumns,
   maxCarouselColumns: maxCarouselColumns
 };

@@ -138,6 +138,10 @@ module.exports = {
       });
   },
 
+  sendCandidateProfile: (userId, replyToken, candidateUserId) => {
+    viewCandidateProfile(userId, replyToken, candidateUserId);
+  },
+
   sendCandidateList: (userId, replyToken) => {
     viewCandidateList(userId, replyToken);
   },
@@ -167,6 +171,8 @@ module.exports = {
       })
       .then((candidateProfile) => {
         console.log(candidateProfile);
+        delete candidateProfile.relations;
+        delete candidateProfile.nextCandidate;
         candidateName = candidateProfile.displayName;
         return updateMemberRelationData(userId, candidateProfile);
       })
@@ -178,11 +184,12 @@ module.exports = {
         if (relation === 'LOVE') {
           updateMemberData(userId, { 'nextMessageTo': candidateUserId })
             .then(() => {
-              var ms = createMatchedMessage(candidateName, candidateUserId);
-              console.log(ms);
               return line.replyMessage(
                 replyToken,
-                ms
+                [
+                  createMatchedMessage(candidateName, candidateUserId),
+                  createCarouselMessage(`เพื่อนคนนี้ถูกใจคุณเหมือนกัน`, [candidateProfile], true)
+                ]
               );
             })
             .then(() => {
@@ -191,7 +198,7 @@ module.exports = {
             .then((profile) => {
               line.pushMessage(
                 candidateUserId,
-                createMatchedMessage(profile.displayName, userId)
+                [createMatchedMessage(profile.displayName, userId)]
               )
             });
         } else {
@@ -305,6 +312,17 @@ function viewCandidateListAndBraodcast(userId) {
   viewCandidateList(userId, undefined, false);
 }
 
+function viewCandidateProfile(userId, replyToken, candidateUserId) {
+  getUserInfo(candidateUserId)
+    .then((candidateInfo) => {
+      try {
+        line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, [candidateInfo], false)]);
+      } catch (e) {
+        console.log(e);
+      }
+    });
+};
+
 function viewCandidateList(userId, replyToken, broadcast) {
   getUserInfo(userId)
     .then((userInfo) => {
@@ -321,6 +339,7 @@ function viewCandidateList(userId, replyToken, broadcast) {
             var doc = snap.val();
             console.log('A', doc);
             count++;
+            // if (doc.age === userInfo.candidate_age && doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
             if (doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
               console.log('B', doc);
               // if (broadcast) sendSuggestFriendToCandidate(doc.userId, userInfo);
@@ -333,17 +352,17 @@ function viewCandidateList(userId, replyToken, broadcast) {
               }
             }
           });
-          if (nextCandidate) updateMemberData(userId, { 'nextCandidate': nextCandidate })
-          // var columns = lists.map(element => {
-          //   var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
-          //   return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
-          // });
-          // console.log('columns', JSON.stringify(columns));
+          if (nextCandidate) {
+            delete nextCandidate.relations;
+            delete nextCandidate.nextCandidate;
+            delete nextCandidate.nextFriend;
+            updateMemberData(userId, { 'nextCandidate': nextCandidate })
+          }
           if (lists.length > 0) {
             if (replyToken) {
-              line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, userId, false)]);
+              line.replyMessage(replyToken, [createImageCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, false)]);
             } else {
-              line.pushMessage(userId, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, userId, false)]);
+              line.pushMessage(userId, [createImageCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, false)]);
             }
           }
         });
@@ -376,17 +395,17 @@ function viewFriendList(userId, replyToken) {
               }
             }
           });
-          if (nextFriend) updateMemberData(userId, { 'nextFriend': nextFriend })
-          // var columns = lists.map(element => {
-          //   var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
-          //   return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId);
-          // });
-          // console.log('columns', JSON.stringify(columns));
+          if (nextFriend) {
+            delete nextFriend.relations;
+            delete nextFriend.nextCandidate;
+            delete nextFriend.nextFriend;
+            updateMemberData(userId, { 'nextFriend': nextFriend })
+          }
           if (lists.length > 0) {
             if (replyToken) {
-              line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, userId, true)]);
+              line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, true)]);
             } else {
-              line.pushMessage(userId, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, list, userId, true)]);
+              line.pushMessage(userId, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, list, true)]);
             }
           }
         });
@@ -404,7 +423,7 @@ function sendSuggestFriendToCandidate(sendToUserId, userInfo) {
   line.pushMessage(
     sendToUserId,
     [
-      lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, [userInfo], sendToUserId, false)
+      lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, [userInfo], false)
     ]
   );
 }
@@ -519,20 +538,24 @@ function createMatchedMessage(candidateName, candidateId) {
     element.data = element.data + '_' + candidateId;
     return element;
   });
-  return [
-    lineHelper.createTextMessage(`ว้าววว ยินดีด้วย ${candidateName} ก็ถูกใจคุณเหมือนกัน`),
-    lineHelper.createTextMessage(`คุณสามารถส่งข้อความไปถึง ${candidateName} ได้แล้ว\nข้อความ รูปภาพ คลิปเสียง หรือวิดีโอก็ได้\nเริ่มเลย ขอให้โชคดี`),
+  return 
+    lineHelper.createTextMessage(`ว้าววว ยินดีด้วย ${candidateName} ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง ${candidateName} ได้เลย`);
     // lineHelper.createConfirmMessage('คุณต้องการส่งข้อความเลยหรือไม่', actionsOptions),
-  ];
+  ;
 }
 
-function createCarouselMessage(title, lists, userId, isFriend) {
+function createCarouselMessage(altText, lists, isFriend) {
   var columns = lists.map(element => {
-    // let isFreind = true;
-    //check userId isfriend with element.userId
     var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
     return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId, isFriend);
   });
+  return lineHelper.createCarouselMessage(altText, columns)
+}
 
-  return lineHelper.createCarouselMessage(title, columns)
+function createImageCarouselMessage(altText, lists) {
+  var columns = lists.map(element => {
+    var title = (element.displayName || 'ไม่มีชื่อ');
+    return lineHelper.createImageCarouselColumns(title, getProfileUrl(element.userId), element.userId);
+  });
+  return lineHelper.createImageCarouselMessage(altText, columns)
 }

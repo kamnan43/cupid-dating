@@ -34,14 +34,9 @@ module.exports = {
     createPostBackOption('ไม่รับ', 'FRIEND_NO')
   ],
   imageAction: () => {
-    createPostBackOption('ดูรูป', 'ACTION-DOWNLOAD');
+    createPostBackOption('ดูรูป', 'ACTION-IMAGE');
   },
-  getCandidateProfileAction: (extra, isFriend, isBlock) => {
-    // var dup_array = JSON.parse(JSON.stringify(candidateProfileActions))
-    // let options = dup_array.map(element => {
-    //   if (extra) element.data = element.data + '_' + extra;
-    //   return element;
-    // });
+  getCandidateProfileAction: (extra, isFriend) => {
     let options = [];
     if (isFriend) {
       options = [
@@ -57,6 +52,9 @@ module.exports = {
       ]
     }
     return options;
+  },
+  getCandidateImageAction: (actionText, extra) => {
+    return createPostBackOption(actionText, 'ACTION-PROFILE', extra);
   }
 }
 
