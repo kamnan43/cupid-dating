@@ -56,13 +56,14 @@ function createCarouselColumns(title, text, imageUrl, extra, isFriend) {
   //   if (extra) element.data = element.data + '_' + extra;
   //   return element;
   // });
-  let columnOps = options.getCandidateProfileAction(extra, isFriend);
+  let columnOptions = options.getCandidateProfileAction(extra, isFriend);
   return {
     thumbnailImageUrl: imageUrl,
     title: title,
     text: text,
     defaultAction: options.imageAction,
     actions: columnOptions
+
   };
 }
 
