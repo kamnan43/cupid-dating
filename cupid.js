@@ -218,7 +218,10 @@ module.exports = {
     obj['relations/' + candidateUserId] = { 'relation': 'BLOCK' };
     updateMemberData(userId, obj)
       .then(() => {
-        viewCandidateList(userId, replyToken, false);
+        line.replyMessage(
+          replyToken,
+          lineHelper.createTextMessage(`เรียบร้อย จากกันชั่วนิรันดร์`),
+        );
       });
   },
 
@@ -538,9 +541,9 @@ function createMatchedMessage(candidateName, candidateId) {
     element.data = element.data + '_' + candidateId;
     return element;
   });
-  return 
-    lineHelper.createTextMessage(`ว้าววว ยินดีด้วย ${candidateName} ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง ${candidateName} ได้เลย`);
-    // lineHelper.createConfirmMessage('คุณต้องการส่งข้อความเลยหรือไม่', actionsOptions),
+  return
+  lineHelper.createTextMessage(`ว้าววว ยินดีด้วย ${candidateName} ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง ${candidateName} ได้เลย`);
+  // lineHelper.createConfirmMessage('คุณต้องการส่งข้อความเลยหรือไม่', actionsOptions),
   ;
 }
 
