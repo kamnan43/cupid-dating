@@ -532,7 +532,7 @@ function createCarouselMessage(title, lists, userId, isFriend) {
     // let isFreind = true;
     //check userId isfriend with element.userId
     var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
-    return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', config.BASE_URL + `/static/cupid.png`, element.userId, isFreind);
+    return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', config.BASE_URL + `/static/cupid.png`, element.userId, isFriend);
   });
 
   return lineHelper.createCarouselMessage(title, columns)
