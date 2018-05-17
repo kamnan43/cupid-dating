@@ -50,7 +50,7 @@ function createCarouselMessage(title, columns) {
   };
 }
 
-function createCarouselColumns(title, text, imageUrl, extra, isFreind) {
+function createCarouselColumns(title, text, imageUrl, extra, isFriend) {
   // var dup_array = JSON.parse(JSON.stringify(options.candidateProfileActions))
   // columnOptions = dup_array.map(element => {
   //   if (extra) element.data = element.data + '_' + extra;
