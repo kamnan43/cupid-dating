@@ -242,18 +242,21 @@ module.exports = {
   sendMessageToFriend: (userId, replyToken, message) => {
     console.log(userId, replyToken, message);
     var candidateName;
+    var userProfile;
     getUserInfo(userId)
       .then((profile) => {
         console.log('sendMessageToFriend:sender profile', JSON.stringify(profile));
+        userProfile = profile;
         if (profile.nextMessageTo) {
           getUserInfo(profile.nextMessageTo)
             .then((candidateProfile) => {
+              console.log('sendMessageToFriend:sender profile', JSON.stringify(profile));
               console.log('sendMessageToFriend:candidate profile', JSON.stringify(candidateProfile));
               candidateName = candidateProfile.displayName;
               return line.pushMessage(
-                profile.nextMessageTo,
+                userProfile.nextMessageTo,
                 [
-                  lineHelper.createTextMessage(`ข้อความจาก [${profile.displayName}] ==>`),
+                  lineHelper.createTextMessage(`ข้อความจาก [${userProfile.displayName}] ==>`),
                   message,
                 ]
               );
