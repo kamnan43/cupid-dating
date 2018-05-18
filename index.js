@@ -38,32 +38,31 @@ function handleEvent(event) {
   var userId = event.source.userId;
   var replyToken = event.replyToken;
   if (!userId) {
-    return cupid.sendMessage(userId, replyToken, 'Error : NO_USER_ID');
+    return cupid.sendTextMessage(userId, replyToken, 'Error : NO_USER_ID');
   }
   switch (event.type) {
     case 'message':
       const message = event.message;
-      if (message.type === 'text' && message.text.startsWith('!')) {
-        return handleText(message, replyToken, event.source);
-      } else {
-        return cupid.sendMessageToFriend(userId, replyToken, message);
+      switch (message.type) {
+        case 'text':
+          if (message.text.startsWith('!')) {
+            return handleCommand(message, replyToken, event.source);
+          } else {
+            return cupid.sendTextMessage(userId, replyToken, message.text);
+          }
+        case 'image':
+          return cupid.sendImageMessage(userId, replyToken, message);
+        case 'video':
+          return cupid.sendVideoMessage(userId, replyToken, message);
+        case 'audio':
+          return cupid.sendAudioMessage(userId, replyToken, message);
+        // case 'location':
+        //   return handleLocation(message, event.replyToken);
+        // case 'sticker':
+        //   return handleSticker(message, event.replyToken);
+        default:
+          return cupid.sendTextMessage(userId, replyToken, 'ขออภัย ระบบยังไม่รองรับข้อความประเภทนี้');
       }
-    // switch (message.type) {
-    //   // case 'text':
-    //   //   return handleText(message, replyToken, event.source);
-    //   // case 'image':
-    //   //   return handleImage(message, event.replyToken);
-    //   // case 'video':
-    //   //   return handleVideo(message, event.replyToken);
-    //   // case 'audio':
-    //   //   return handleAudio(message, event.replyToken);
-    //   // case 'location':
-    //   //   return handleLocation(message, event.replyToken);
-    //   // case 'sticker':
-    //   //   return handleSticker(message, event.replyToken);
-    //   default:
-    //     throw new Error(`Unknown message: ${JSON.stringify(message)}`);
-    // }
     case 'follow':
       return cupid.sendGreetingMessage(userId, replyToken);
 
@@ -80,7 +79,7 @@ function handleEvent(event) {
           if (data === 'YES') {
             return cupid.saveNewMember(userId, replyToken);
           } else {
-            return cupid.sendMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ยอมรับ ด้านบนได้ทุกเมื่อ');
+            return cupid.sendTextMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ยอมรับ ด้านบนได้ทุกเมื่อ');
           }
         case 'GENDER':
           return cupid.saveGender(userId, replyToken, data);
@@ -110,7 +109,31 @@ function handleEvent(event) {
   }
 }
 
-function handleText(message, replyToken, source) {
+// function handleLocation(message, replyToken) {
+//   return client.replyMessage(
+//     replyToken,
+//     {
+//       type: 'location',
+//       title: message.title,
+//       address: message.address,
+//       latitude: message.latitude,
+//       longitude: message.longitude,
+//     }
+//   );
+// }
+
+// function handleSticker(message, replyToken) {
+//   return client.replyMessage(
+//     replyToken,
+//     {
+//       type: 'sticker',
+//       packageId: message.packageId,
+//       stickerId: message.stickerId,
+//     }
+//   );
+// }
+
+function handleCommand(message, replyToken, source) {
   let postbackData = message.text.replace('!', '').split("_", 2);
   let mode = postbackData[0];
   let data = postbackData[1];

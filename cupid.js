@@ -17,13 +17,69 @@ var membersRef = database.ref("/members");
 var relationsRef = database.ref("/members");
 
 module.exports = {
-  sendMessage: (userId, replyToken, text) => {
+  sendTextMessage: (userId, replyToken, text) => {
     line.replyMessage(
       replyToken,
       [
         lineHelper.createTextMessage(text)
       ]
     );
+  },
+
+  sendImageMessage: (userId, replyToken, message) => {
+    const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.jpg`);
+    const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
+    return downloadContent(message.id, downloadPath)
+      .then((downloadPath) => {
+        cp.execSync(`convert -resize 240x jpeg:${downloadPath} jpeg:${previewPath}`);
+        return line.replyMessage(
+          replyToken,
+          {
+            type: 'image',
+            originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
+            previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
+          }
+        );
+      });
+  },
+
+  sendVideoMessage: (userId, replyToken, message) => {
+    const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.mp4`);
+    const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
+    return downloadContent(message.id, downloadPath)
+      .then((downloadPath) => {
+        cp.execSync(`convert mp4:${downloadPath}[0] jpeg:${previewPath}`);
+        return line.replyMessage(
+          replyToken,
+          {
+            type: 'video',
+            originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
+            previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
+          }
+        );
+      });
+  },
+
+  sendAudioMessage: (userId, replyToken, message) => {
+    const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.m4a`);
+    return downloadContent(message.id, downloadPath)
+      .then((downloadPath) => {
+        var getDuration = require('get-audio-duration');
+        var audioDuration;
+        getDuration(downloadPath)
+          .then((duration) => { audioDuration = duration; })
+          .catch((error) => { audioDuration = 1; })
+          .finally(() => {
+            return line.replyMessage(
+              replyToken,
+              {
+                type: 'audio',
+                originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
+                duration: audioDuration * 1000,
+              }
+            );
+          });
+      });
   },
 
   sendGreetingMessage: (userId, replyToken) => {
@@ -221,7 +277,7 @@ module.exports = {
       .then(() => {
         line.replyMessage(
           replyToken,
-          lineHelper.createTextMessage(`บล็อคเรียบร้อย จากกันชั่วนิรันดร์ '_'`),
+          lineHelper.createTextMessage(`บล็อคเรียบร้อย จากกันชั่วนิรันดร์ '_'\nถ้าเปลี่ยนใจ ก็กลับมากด ถูกใจ ใหม่ได้นะ`),
         );
       });
   },
@@ -272,7 +328,7 @@ module.exports = {
               // })
               // .then(() => {
               //   updateMemberData(userId, { 'nextMessageTo': '' });
-            }).catch((error) => { console.log('sendFirstMessageToCandidate Error', error + '') });
+            }).catch((error) => { console.log('sendMessageToFriend Error', error + '') });
         }
       });
 
@@ -559,4 +615,14 @@ function createImageCarouselMessage(altText, lists) {
     return lineHelper.createImageCarouselColumns(title, getProfileUrl(element.userId), element.userId);
   });
   return lineHelper.createImageCarouselMessage(altText, columns)
+}
+
+function downloadContent(messageId, downloadPath) {
+  return line.getMessageContent(messageId)
+    .then((stream) => new Promise((resolve, reject) => {
+      const writable = fs.createWriteStream(downloadPath);
+      stream.pipe(writable);
+      stream.on('end', () => resolve(downloadPath));
+      stream.on('error', reject);
+    }));
 }
