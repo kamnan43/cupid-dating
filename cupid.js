@@ -146,7 +146,11 @@ module.exports = {
   },
 
   sendFriendList: (userId, replyToken) => {
-    viewFriendList(userId, replyToken);
+    viewFriendList(userId, replyToken, false);
+  },
+
+  sendLoveList: (userId, replyToken) => {
+    viewLoveList(userId, replyToken, true);
   },
 
   sendCandidateProfileImage: (userId, replyToken, candidateUserId) => {
@@ -260,6 +264,8 @@ module.exports = {
             // default:
             //   return line.replyMessage(replyToken, [lineHelper.createTextMessage('ขออภัย ระบบยังไม่รองรับข้อความประเภทนี้')]);
           }
+        } else {
+          return line.replyMessage(replyToken, [lineHelper.createTextMessage('ไม่เอา ไม่คุย ไม่ต้องมาพูด')]);
         }
       })
       .then((messageToSend) => {
@@ -289,7 +295,6 @@ module.exports = {
 //   return new Promise((resolve, reject) => {
 //     try {
 //       let lists = [];
-//       let count = 0;
 //       membersRef.orderByChild('lastActionDate')
 //         .limitToLast(50)
 //         .once("value", function (snapshot) {
@@ -297,8 +302,7 @@ module.exports = {
 //             var doc = snap.val();
 //             console.log(doc);
 //             if (doc.status == 1) {
-//               count++;
-//               if (count <= lineHelper.maxCarouselColumns) lists.push(doc);
+//               if (lists.length < lineHelper.maxCarouselColumns) lists.push(doc);
 //             }
 //           });
 //           var columns = lists.map(element => {
@@ -336,7 +340,6 @@ function viewCandidateList(userId, replyToken, broadcast) {
     .then((userInfo) => {
       try {
         let lists = [];
-        let count = 0;
         let nextCandidate = userInfo.nextCandidate;
         let query = membersRef.orderByChild('age');
         if (nextCandidate) {
@@ -345,13 +348,12 @@ function viewCandidateList(userId, replyToken, broadcast) {
         query.once("value", function (snapshot) {
           snapshot.forEach(function (snap) {
             var doc = snap.val();
-            count++;
-            if (doc.age === userInfo.candidate_age && doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
+            if (doc.userId !== userInfo.userId && doc.age === userInfo.candidate_age && doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
               // if (doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
               if (broadcast && userInfo.age === doc.candidate_age && userInfo.gender === doc.candidate_gender) {
                 sendSuggestFriendToCandidate(doc.userId, userInfo);
               }
-              if (count <= lineHelper.maxCarouselColumns) {
+              if (lists.length < lineHelper.maxCarouselColumns) {
                 lists.push(doc);
               } else {
                 if (!nextCandidate) nextCandidate = doc;
@@ -387,15 +389,13 @@ function viewCandidateList(userId, replyToken, broadcast) {
 function viewFriendList(userId, replyToken) {
   try {
     let lists = [];
-    let count = 0;
     var memberRelationRef = database.ref("/members/" + userId + "/relations");
-    let query = memberRelationRef.orderByChild('lastActionDate')
+    let query = memberRelationRef.orderByChild('lastActionDate');
     query.once("value", function (snapshot) {
       snapshot.forEach(function (snap) {
         var doc = snap.val();
-        count++;
         if (doc.userId !== userId && doc.relation === 'LOVE' && doc.status == 1) {
-          if (count <= lineHelper.maxCarouselColumns) {
+          if (lists.length < lineHelper.maxCarouselColumns) {
             lists.push(doc);
           }
         }
@@ -403,9 +403,62 @@ function viewFriendList(userId, replyToken) {
       if (lists.length > 0) {
         line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, true)]);
       } else {
-        line.replyMessage(replyToken, [lineHelper.createTextMessage(`ยังไม่มีเพื่อนตอนนี้`)]);
+        line.replyMessage(replyToken, [lineHelper.createTextMessage(`ไม่มีเจ้าค่ะ ไม่มีเลยเจ้าค่ะ`)]);
       }
     });
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+function viewLoveList(userId, replyToken) {
+  try {
+    let lists = [];
+    var memberRelationRef = database.ref("/members/" + userId + "/relations");
+    let query = memberRelationRef
+      .orderByKey()
+      .once("value", function (snapshot) {
+        snapshot.forEach(function (snap) {
+          var doc = snap.val();
+          if (doc.userId !== userId && doc.relation === 'LOVE' && doc.status == 1) {
+
+
+
+            let relation = await readCandidateRelation(doc.userId, userId);
+            console.log('relation', relation, doc.userId, userId);
+            if (relation === 'LOVE') {
+              if (lists.length < lineHelper.maxCarouselColumns) {
+                lists.push(doc);
+              }
+            }
+
+
+            // var candidateRelationRef = database.ref("/members/" + doc.userId + "/relations");
+            // let candidateQuery = candidateRelationRef.orderByKey()
+            //   .equalTo(userId)
+            //   .once("value", function (candidateSnapshot) {
+            //     candidateSnapshot.forEach(function (candidateSnap) {
+            //       var candidateProfile = candidateSnap.val();
+            //       if (candidateProfile.relation === 'LOVE') {
+            //         if (lists.length < lineHelper.maxCarouselColumns) {
+            //           lists.push(doc);
+            //         }
+            //       }
+            //     });
+            //   });
+
+
+
+
+
+          }
+        });
+        if (lists.length > 0) {
+          line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, true)]);
+        } else {
+          line.replyMessage(replyToken, [lineHelper.createTextMessage(`ไม่มีเจ้าค่ะ ไม่มีเลยเจ้าค่ะ`)]);
+        }
+      });
   } catch (e) {
     console.log(e);
   }

@@ -45,7 +45,7 @@ function handleEvent(event) {
       const message = event.message;
       switch (message.type) {
         case 'text':
-          if (message.text.startsWith('!')) {
+          if (['ตั้งค่าสเปค', 'หาเพื่อนใหม่', 'คนที่คุณถูกใจ', 'เพื่อนของคุณ'].indexOf(message.text) > -1) {
             return handleCommand(message, replyToken, event.source);
           }
         // case 'image':
@@ -132,17 +132,15 @@ function handleEvent(event) {
 // }
 
 function handleCommand(message, replyToken, source) {
-  let postbackData = message.text.replace('!', '').split("_", 2);
-  let mode = postbackData[0];
-  let data = postbackData[1];
-
-  switch (mode) {
-    case 'FILTER':
+  switch (message.text) {
+    case 'ตั้งค่าสเปค':
       return cupid.saveNewMember(source.userId, replyToken);
-    case 'EXPLORE':
+    case 'หาเพื่อนใหม่':
       return cupid.sendCandidateList(source.userId, replyToken);
-    case 'FRIENDS':
+    case 'คนที่คุณถูกใจ':
       return cupid.sendFriendList(source.userId, replyToken);
+    case 'เพื่อนของคุณ':
+      return cupid.sendLoveList(source.userId, replyToken);
     default:
       return;
   }
