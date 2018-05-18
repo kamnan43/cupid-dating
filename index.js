@@ -32,6 +32,10 @@ app.post('/webhooks', lineSdk.middleware(config), (req, res) => {
       res.status(500).end();
     });
 });
+app.post('/broadcast', (req, res) => {
+  console.log(req.body);
+  res.end();
+});
 
 function handleEvent(event) {
   console.log(event);
