@@ -459,7 +459,7 @@ function sendNewFriendToCandidate(sendToUserId, userInfo) {
   );
 }
 
-function readCandidateRelation(candidateUserId, userId) {
+async function readCandidateRelation(candidateUserId, userId) {
   return new Promise((resolve, reject) => {
     var candidateRelationRef = database.ref("/members/" + candidateUserId + "/relations");
     candidateRelationRef.orderByKey()
