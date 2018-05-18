@@ -369,6 +369,8 @@ function viewCandidateList(userId, replyToken, broadcast) {
             } else {
               line.pushMessage(userId, [createImageCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, false)]);
             }
+          } else {
+            line.replyMessage(replyToken, [lineHelper.createTextMessage(`ยังไม่มีรายใหม่ตอนนี้`)]);
           }
         });
       } catch (e) {
@@ -539,7 +541,6 @@ function getUserInfo(userId) {
 
 function createMatchedMessage(candidateName, candidateId) {
   return lineHelper.createTextMessage(`ว้าววว ยินดีด้วย [${candidateName}] ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง [${candidateName}] ได้เลย`);
-  // lineHelper.createConfirmMessage('คุณต้องการส่งข้อความเลยหรือไม่', actionsOptions),
   ;
 }
 
