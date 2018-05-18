@@ -98,8 +98,8 @@ function handleEvent(event) {
           return cupid.sendLoveToCandidate(userId, replyToken, data);
         case 'ACTION-BLOCK':
           return cupid.blockCandidate(userId, replyToken, data);
-        // case 'ACTION-CHAT':
-        //   return cupid.send(userId, replyToken, data);
+        case 'ACTION-CHAT':
+          return cupid.chatCandidate(userId, replyToken, data);
         // case 'SAYHI-YES':
         //   return cupid.confirmedToSayHi(userId, replyToken, data);
         default:

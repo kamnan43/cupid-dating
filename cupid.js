@@ -206,7 +206,7 @@ module.exports = {
           line.replyMessage(
             replyToken,
             [
-              lineHelper.createTextMessage(`ถูกใจหล่ะสิ ถ้าคุณ ${candidateName} ถูกใจคุณเหมือนกัน ถึงจะเริ่มคุยกันได้นะ`),
+              lineHelper.createTextMessage(`ถูกใจหล่ะสิ ถ้าคุณ [${candidateName}] ถูกใจคุณเหมือนกัน เราจะบอกให้คุณรู้ทันที`),
             ]
           );
         }
@@ -226,15 +226,18 @@ module.exports = {
       });
   },
 
-  // confirmedToSayHi: (userId, replyToken, candidateUserId) => {
-  //   updateMemberData(userId, { 'nextMessageTo': candidateUserId })
-  //     .then(() => {
-  //       line.replyMessage(
-  //         replyToken,
-  //         lineHelper.createTextMessage(`ขอให้โชคดี เริ่มคุยได้เลย`),
-  //       )
-  //     });
-  // },
+  chatCandidate: (userId, replyToken, candidateUserId) => {
+    updateMemberData(userId, { 'nextMessageTo': candidateUserId })
+      .then(() => {
+        return getUserInfo(candidateUserId)
+      })
+      .then((profile) => {
+        line.replyMessage(
+          replyToken,
+          lineHelper.createTextMessage(`เริ่มส่งข้อความถึง [${profile.displayName}] ได้เลย`),
+        )
+      });
+  },
 
   sendMessageToFriend: (userId, replyToken, message) => {
     console.log(userId, replyToken, message);
@@ -250,22 +253,22 @@ module.exports = {
               return line.pushMessage(
                 profile.nextMessageTo,
                 [
-                  lineHelper.createTextMessage(`ข้อความจาก ${profile.displayName}`),
+                  lineHelper.createTextMessage(`ข้อความจาก [${profile.displayName}] ==>`),
                   message,
                 ]
               );
-            })
-            .then(() => {
-              return line.replyMessage(
-                replyToken,
-                [
-                  lineHelper.createTextMessage(`ส่งข้อความของคุณถึง ${candidateName} เรียบร้อยแล้ว`),
-                  lineHelper.createTextMessage(`ถ้า ${candidateName} รับคุณเป็นเพื่อน ก็เริ่มสานสัมพันธ์กันได้เล้ยยย`),
-                ]
-              );
-            })
-            .then(() => {
-              updateMemberData(userId, { 'nextMessageTo': '' });
+              // })
+              // .then(() => {
+              //   return line.replyMessage(
+              //     replyToken,
+              //     [
+              //       lineHelper.createTextMessage(`ส่งข้อความของคุณถึง [${candidateName}] เรียบร้อยแล้ว`),
+              //       lineHelper.createTextMessage(`ถ้า [${candidateName}] รับคุณเป็นเพื่อน ก็เริ่มสานสัมพันธ์กันได้เล้ยยย`),
+              //     ]
+              //   );
+              // })
+              // .then(() => {
+              //   updateMemberData(userId, { 'nextMessageTo': '' });
             }).catch((error) => { console.log('sendFirstMessageToCandidate Error', error + '') });
         }
       });
@@ -313,7 +316,7 @@ module.exports = {
 // }
 
 function viewCandidateListAndBraodcast(userId) {
-  viewCandidateList(userId, undefined, false);
+  viewCandidateList(userId, undefined, true);
 }
 
 function viewCandidateProfile(userId, replyToken, candidateUserId) {
@@ -341,15 +344,11 @@ function viewCandidateList(userId, replyToken, broadcast) {
         query.once("value", function (snapshot) {
           snapshot.forEach(function (snap) {
             var doc = snap.val();
-            console.log('A', doc);
             count++;
-            // if (doc.age === userInfo.candidate_age && doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
-            if (doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
-              console.log('B', doc);
-              // if (broadcast) sendSuggestFriendToCandidate(doc.userId, userInfo);
-              // if (count <= lineHelper.maxCarouselColumns) {
+            if (doc.age === userInfo.candidate_age && doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
+              // if (doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
+              if (broadcast) sendSuggestFriendToCandidate(doc.userId, userInfo);
               if (count <= lineHelper.maxCarouselColumns) {
-                console.log('C', doc);
                 lists.push(doc);
               } else {
                 if (!nextCandidate) nextCandidate = doc;
@@ -543,7 +542,7 @@ function createMatchedMessage(candidateName, candidateId) {
     return element;
   });
   return
-  lineHelper.createTextMessage(`ว้าววว ยินดีด้วย ${candidateName} ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง ${candidateName} ได้เลย`);
+  lineHelper.createTextMessage(`ว้าววว ยินดีด้วย [${candidateName}] ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง [${candidateName}] ได้เลย`);
   // lineHelper.createConfirmMessage('คุณต้องการส่งข้อความเลยหรือไม่', actionsOptions),
   ;
 }
