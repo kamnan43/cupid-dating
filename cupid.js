@@ -419,14 +419,14 @@ function viewFriendList(userId, replyToken) {
 };
 
 function sendSuggestFriendToCandidate(sendToUserId, userInfo) {
-  console.log('candidate userInfo', JSON.stringify(userInfo));
+  console.log('candidate userInfo', sendToUserId, JSON.stringify(userInfo));
   // var title = (userInfo.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + userInfo.gender + ' อายุ ' + userInfo.age + ' ปี]'
   // var columns = lineHelper.createCarouselColumns(title, userInfo.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(userInfo.userId), userInfo.userId);
   // console.log('columns send to candidate', JSON.stringify(columns));
   line.pushMessage(
     sendToUserId,
     [
-      lineHelper.createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, [userInfo], false)
+      createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, [userInfo], false)
     ]
   );
 }
