@@ -44,13 +44,13 @@ module.exports = {
       options = [
         createPostBackOption('ทักทาย', 'ACTION-CHAT', extra),
         createPostBackOption('บล็อค', 'ACTION-BLOCK', extra),
-        createPostBackOption('แนะนำให้เพื่อน', 'ACTION-SHARE', extra),
+        // createPostBackOption('แนะนำให้เพื่อน', 'ACTION-SHARE', extra),
       ];
     } else {
       options = [
         createPostBackOption('ถูกใจ', 'ACTION-LOVE', extra),
         createPostBackOption('บล็อค', 'ACTION-BLOCK', extra),
-        createPostBackOption('แนะนำให้เพื่อน', 'ACTION-SHARE', extra),
+        // createPostBackOption('แนะนำให้เพื่อน', 'ACTION-SHARE', extra),
       ]
     }
     return options;
