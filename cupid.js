@@ -197,11 +197,12 @@ module.exports = {
               return getUserInfo(userId)
             })
             .then((profile) => {
+              profile.isFriend = true;
               line.pushMessage(
                 candidateUserId,
                 [
                   createMatchedMessage(profile.displayName, userId),
-                  createCarouselMessage(`เพื่อนคนนี้ถูกใจคุณเหมือนกัน`, [profile], true)
+                  createCarouselMessage(`เพื่อนคนนี้ถูกใจคุณเหมือนกัน`, [profile])
                 ]
               )
             });
@@ -325,10 +326,21 @@ function viewCandidateListAndBraodcast(userId) {
 }
 
 function viewCandidateProfile(userId, replyToken, candidateUserId) {
-  getUserInfo(candidateUserId)
+  let candidateRelation;
+  let memberRelation;
+  readCandidateRelation(candidateUserId, userId)
+    .then((relation) => {
+      candidateRelation = relation;
+      return readCandidateRelation(userId, candidateUserId)
+    })
+    .then((relation) => {
+      memberRelation = relation;
+      return getUserInfo(candidateUserId)
+    })
     .then((candidateInfo) => {
+      candidateInfo.isFreind = (candidateRelation === 'LOVE' && memberRelation === candidateRelation);
       try {
-        line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, [candidateInfo], false)]);
+        line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, [candidateInfo])]);
       } catch (e) {
         console.log(e);
       }
@@ -351,7 +363,7 @@ function viewCandidateList(userId, replyToken, broadcast) {
             if (doc.userId !== userInfo.userId && doc.age === userInfo.candidate_age && doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
               // if (doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
               if (broadcast && userInfo.age === doc.candidate_age && userInfo.gender === doc.candidate_gender) {
-                sendSuggestFriendToCandidate(doc.userId, userInfo);
+                sendNewFriendToCandidate(doc.userId, userInfo);
               }
               if (lists.length < lineHelper.maxCarouselColumns) {
                 lists.push(doc);
@@ -390,31 +402,6 @@ function viewFriendList(userId, replyToken) {
   try {
     let lists = [];
     var memberRelationRef = database.ref("/members/" + userId + "/relations");
-    let query = memberRelationRef.orderByChild('lastActionDate');
-    query.once("value", function (snapshot) {
-      snapshot.forEach(function (snap) {
-        var doc = snap.val();
-        if (doc.userId !== userId && doc.relation === 'LOVE' && doc.status == 1) {
-          if (lists.length < lineHelper.maxCarouselColumns) {
-            lists.push(doc);
-          }
-        }
-      });
-      if (lists.length > 0) {
-        line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, true)]);
-      } else {
-        line.replyMessage(replyToken, [lineHelper.createTextMessage(`ไม่มีเจ้าค่ะ ไม่มีเลยเจ้าค่ะ`)]);
-      }
-    });
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-function viewLoveList(userId, replyToken) {
-  try {
-    let lists = [];
-    var memberRelationRef = database.ref("/members/" + userId + "/relations");
     let query = memberRelationRef
       .orderByKey()
       .once("value", function (snapshot) {
@@ -423,18 +410,16 @@ function viewLoveList(userId, replyToken) {
           if (doc.userId !== userId && doc.relation === 'LOVE' && doc.status == 1) {
 
 
-
             readCandidateRelation(doc.userId, userId)
               .then((relation) => {
                 console.log('relation', relation, doc.userId, userId);
-                if (relation === 'LOVE') {
+                if (relation !== 'BLOCK') {
                   if (lists.length < lineHelper.maxCarouselColumns) {
+                    doc.isFriend = (relation === 'LOVE');
                     lists.push(doc);
                   }
                 }
               });
-
-
             // var candidateRelationRef = database.ref("/members/" + doc.userId + "/relations");
             // let candidateQuery = candidateRelationRef.orderByKey()
             //   .equalTo(userId)
@@ -450,14 +435,11 @@ function viewLoveList(userId, replyToken) {
             //   });
 
 
-
-
-
           }
         });
-        console.log('lists',lists);
+        console.log('lists', lists);
         if (lists.length > 0) {
-          line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, true)]);
+          line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
         } else {
           line.replyMessage(replyToken, [lineHelper.createTextMessage(`ไม่มีเจ้าค่ะ ไม่มีเลยเจ้าค่ะ`)]);
         }
@@ -467,12 +449,12 @@ function viewLoveList(userId, replyToken) {
   }
 };
 
-function sendSuggestFriendToCandidate(sendToUserId, userInfo) {
+function sendNewFriendToCandidate(sendToUserId, userInfo) {
   console.log('candidate userInfo', sendToUserId, JSON.stringify(userInfo));
   line.pushMessage(
     sendToUserId,
     [
-      createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, [userInfo], false)
+      createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, [userInfo])
     ]
   );
 }
@@ -585,10 +567,10 @@ function createMatchedMessage(candidateName, candidateId) {
   ;
 }
 
-function createCarouselMessage(altText, lists, isFriend) {
+function createCarouselMessage(altText, lists) {
   var columns = lists.map(element => {
     var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
-    return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId, isFriend);
+    return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId, element.isFriend);
   });
   console.log(createCarouselMessage, columns);
   return lineHelper.createCarouselMessage(altText, columns)

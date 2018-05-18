@@ -45,7 +45,7 @@ function handleEvent(event) {
       const message = event.message;
       switch (message.type) {
         case 'text':
-          if (['ตั้งค่าสเปค', 'หาเพื่อนใหม่', 'คนที่คุณถูกใจ', 'เพื่อนของคุณ'].indexOf(message.text) > -1) {
+          if (['ตั้งค่าสเปค', 'หาเพื่อนใหม่', 'คนที่คุณถูกใจ', 'เพื่อนของคุณ', 'บอกว่ายังไม่ได้ทำไง'].indexOf(message.text) > -1) {
             return handleCommand(message, replyToken, event.source);
           }
         // case 'image':
@@ -139,8 +139,8 @@ function handleCommand(message, replyToken, source) {
       return cupid.sendCandidateList(source.userId, replyToken);
     case 'คนที่คุณถูกใจ':
       return cupid.sendFriendList(source.userId, replyToken);
-    case 'เพื่อนของคุณ':
-      return cupid.sendLoveList(source.userId, replyToken);
+    // case 'เพื่อนของคุณ':
+    //   return cupid.sendLoveList(source.userId, replyToken);
     default:
       return;
   }
