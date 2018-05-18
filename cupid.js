@@ -275,11 +275,11 @@ module.exports = {
       }).catch((error) => { console.log('sendMessageToFriend Error', error + '') });
 
 
-},
+  },
 
-disableMember: (userId) => {
-  updateMemberData(userId, { 'status': -1 });
-}
+  disableMember: (userId) => {
+    updateMemberData(userId, { 'status': -1 });
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -380,53 +380,34 @@ function viewCandidateList(userId, replyToken, broadcast) {
 };
 
 function viewFriendList(userId, replyToken) {
-  getUserInfo(userId)
-    .then((userInfo) => {
-      try {
-        let lists = [];
-        let count = 0;
-        let nextFriend = userInfo.nextFriend;
-        let query = membersRef.orderByChild('lastActionDate')
-        if (nextFriend) {
-          query = query.startAt(nextFriend.value, nextFriend.key);
+  try {
+    let lists = [];
+    let count = 0;
+    var memberRelationRef = database.ref("/members/" + userId + "/relations");
+    let query = memberRelationRef.orderByChild('lastActionDate')
+    query.once("value", function (snapshot) {
+      snapshot.forEach(function (snap) {
+        var doc = snap.val();
+        count++;
+        if (doc.userId !== userId && doc.relation === 'LOVE' && doc.status == 1) {
+          if (count <= lineHelper.maxCarouselColumns) {
+            lists.push(doc);
+          }
         }
-        query.once("value", function (snapshot) {
-          snapshot.forEach(function (snap) {
-            var doc = snap.val();
-            count++;
-            if (doc.userId !== userId && doc.relation === 'LOVE' && doc.status == 1) {
-              if (count <= lineHelper.maxCarouselColumns) {
-                lists.push(doc);
-              } else {
-                if (!nextFriend) nextFriend = doc;
-              }
-            }
-          });
-          if (nextFriend) {
-            delete nextFriend.relations;
-            delete nextFriend.nextCandidate;
-            delete nextFriend.nextFriend;
-            updateMemberData(userId, { 'nextFriend': nextFriend })
-          }
-          if (lists.length > 0) {
-            if (replyToken) {
-              line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, true)]);
-            } else {
-              line.pushMessage(userId, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, list, true)]);
-            }
-          }
-        });
-      } catch (e) {
-        console.log(e);
+      });
+      if (lists.length > 0) {
+        line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, true)]);
+      } else {
+        line.replyMessage(replyToken, [lineHelper.createTextMessage(`ยังไม่มีเพื่อนตอนนี้`)]);
       }
     });
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 function sendSuggestFriendToCandidate(sendToUserId, userInfo) {
   console.log('candidate userInfo', sendToUserId, JSON.stringify(userInfo));
-  // var title = (userInfo.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + userInfo.gender + ' อายุ ' + userInfo.age + ' ปี]'
-  // var columns = lineHelper.createCarouselColumns(title, userInfo.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(userInfo.userId), userInfo.userId);
-  // console.log('columns send to candidate', JSON.stringify(columns));
   line.pushMessage(
     sendToUserId,
     [
@@ -472,7 +453,6 @@ function getProfileUrl(userId) {
 }
 
 function getProfilePreviewUrl(userId) {
-  // return config.BASE_URL + `/downloaded/${userId}-profile.jpg`;
   return config.BASE_URL + `/downloaded/${userId}-profile-preview.jpg`;
 }
 
