@@ -399,7 +399,7 @@ function viewCandidateList(userId, replyToken, broadcast) {
     });
 };
 
-function viewFriendList(userId, replyToken) {
+async function viewFriendList(userId, replyToken) {
   try {
     let lists = [];
     var memberRelationRef = database.ref("/members/" + userId + "/relations");
@@ -408,19 +408,18 @@ function viewFriendList(userId, replyToken) {
       .once("value", function (snapshot) {
         snapshot.forEach(function (snap) {
           var doc = snap.val();
+          console.log('viewFriendList A', doc);
           if (doc.userId !== userId && doc.relation === 'LOVE' && doc.status == 1) {
 
 
-            readCandidateRelation(doc.userId, userId)
-              .then((relation) => {
-                console.log('relation', relation, doc.userId, userId);
-                if (relation !== 'BLOCK') {
-                  if (lists.length < lineHelper.maxCarouselColumns) {
-                    doc.isFriend = (relation === 'LOVE');
-                    lists.push(doc);
-                  }
-                }
-              });
+            let relation = await readCandidateRelation(doc.userId, userId);
+            console.log('relation', relation, doc.userId, userId);
+            if (relation !== 'BLOCK') {
+              if (lists.length < lineHelper.maxCarouselColumns) {
+                doc.isFriend = (relation === 'LOVE');
+                lists.push(doc);
+              }
+            }
             // var candidateRelationRef = database.ref("/members/" + doc.userId + "/relations");
             // let candidateQuery = candidateRelationRef.orderByKey()
             //   .equalTo(userId)
