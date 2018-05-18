@@ -31,7 +31,7 @@ module.exports = {
       .once("value", function (snapshot) {
         snapshot.forEach(function (snap) {
           var doc = snap.val();
-          if (doc.status == 1 && (doc.userId === 'U0a1863e598bc3279ce2473d839f65d74' || doc.userId === 'Ue92506033759d7cc9bc06750927d96aa')) {
+          if (doc.status == 1) {
             line.pushMessage(doc.userId, [lineHelper.createTextMessage(text)]);
           }
         });
