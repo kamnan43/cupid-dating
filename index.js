@@ -47,21 +47,19 @@ function handleEvent(event) {
         case 'text':
           if (message.text.startsWith('!')) {
             return handleCommand(message, replyToken, event.source);
-          } else {
-            return cupid.sendTextMessage(userId, replyToken, message.text);
           }
-        case 'image':
-          return cupid.sendImageMessage(userId, replyToken, message);
-        case 'video':
-          return cupid.sendVideoMessage(userId, replyToken, message);
-        case 'audio':
-          return cupid.sendAudioMessage(userId, replyToken, message);
+        // case 'image':
+        //   return cupid.sendImageMessage(userId, replyToken, message);
+        // case 'video':
+        //   return cupid.sendVideoMessage(userId, replyToken, message);
+        // case 'audio':
+        //   return cupid.sendAudioMessage(userId, replyToken, message);
         // case 'location':
         //   return handleLocation(message, event.replyToken);
         // case 'sticker':
         //   return handleSticker(message, event.replyToken);
         default:
-          return cupid.sendTextMessage(userId, replyToken, 'ขออภัย ระบบยังไม่รองรับข้อความประเภทนี้');
+          return cupid.sendMessageToFriend(userId, replyToken, message);
       }
     case 'follow':
       return cupid.sendGreetingMessage(userId, replyToken);

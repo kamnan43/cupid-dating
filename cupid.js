@@ -26,62 +26,6 @@ module.exports = {
     );
   },
 
-  sendImageMessage: (userId, replyToken, message) => {
-    const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.jpg`);
-    const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
-    return downloadContent(message.id, downloadPath)
-      .then((downloadPath) => {
-        cp.execSync(`convert -resize 240x jpeg:${downloadPath} jpeg:${previewPath}`);
-        return line.replyMessage(
-          replyToken,
-          {
-            type: 'image',
-            originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
-            previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
-          }
-        );
-      });
-  },
-
-  sendVideoMessage: (userId, replyToken, message) => {
-    const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.mp4`);
-    const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
-    return downloadContent(message.id, downloadPath)
-      .then((downloadPath) => {
-        cp.execSync(`convert mp4:${downloadPath}[0] jpeg:${previewPath}`);
-        return line.replyMessage(
-          replyToken,
-          {
-            type: 'video',
-            originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
-            previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
-          }
-        );
-      });
-  },
-
-  sendAudioMessage: (userId, replyToken, message) => {
-    const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.m4a`);
-    return downloadContent(message.id, downloadPath)
-      .then((downloadPath) => {
-        var getDuration = require('get-audio-duration');
-        var audioDuration;
-        getDuration(downloadPath)
-          .then((duration) => { audioDuration = duration; })
-          .catch((error) => { audioDuration = 1; })
-          .finally(() => {
-            return line.replyMessage(
-              replyToken,
-              {
-                type: 'audio',
-                originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
-                duration: audioDuration * 1000,
-              }
-            );
-          });
-      });
-  },
-
   sendGreetingMessage: (userId, replyToken) => {
     // createBlindCandidateBeforeRegisterMessage()
     //   .then((candidateMessage) => {
@@ -296,47 +240,46 @@ module.exports = {
   },
 
   sendMessageToFriend: (userId, replyToken, message) => {
-    console.log(userId, replyToken, message);
-    var candidateName;
-    var userProfile;
+    var senderProfile;
     getUserInfo(userId)
       .then((profile) => {
-        console.log('sendMessageToFriend:sender profile', JSON.stringify(profile));
-        userProfile = profile;
         if (profile.nextMessageTo) {
-          getUserInfo(profile.nextMessageTo)
-            .then((candidateProfile) => {
-              console.log('sendMessageToFriend: message', JSON.stringify(message));
-              console.log('sendMessageToFriend:candidate profile', JSON.stringify(candidateProfile));
-              candidateName = candidateProfile.displayName;
-              return line.pushMessage(
-                profile.nextMessageTo,
-                [
-                  lineHelper.createTextMessage(`ข้อความจาก [${profile.displayName}] ==>`),
-                  message,
-                ]
-              );
-              // })
-              // .then(() => {
-              //   return line.replyMessage(
-              //     replyToken,
-              //     [
-              //       lineHelper.createTextMessage(`ส่งข้อความของคุณถึง [${candidateName}] เรียบร้อยแล้ว`),
-              //       lineHelper.createTextMessage(`ถ้า [${candidateName}] รับคุณเป็นเพื่อน ก็เริ่มสานสัมพันธ์กันได้เล้ยยย`),
-              //     ]
-              //   );
-              // })
-              // .then(() => {
-              //   updateMemberData(userId, { 'nextMessageTo': '' });
-            }).catch((error) => { console.log('sendMessageToFriend Error', error + '') });
+          senderProfile = profile;
+          switch (message.type) {
+            case 'text':
+              return getTextMessage(message);
+            case 'image':
+              return getImageMessage(message);
+            // case 'video':
+            //   return pushVideoMessage(userId, replyToken, message);
+            // case 'audio':
+            //   return pushAudioMessage(userId, replyToken, message);
+            // case 'location':
+            //   return handleLocation(message, event.replyToken);
+            // case 'sticker':
+            //   return handleSticker(message, event.replyToken);
+            // default:
+            //   return line.replyMessage(replyToken, [lineHelper.createTextMessage('ขออภัย ระบบยังไม่รองรับข้อความประเภทนี้')]);
+          }
         }
-      });
+      })
+      .then((messageToSend) => {
+        console.log('sendMessageToFriend: message', JSON.stringify(messageToSend));
+        return line.pushMessage(
+          senderProfile.nextMessageTo,
+          [
+            lineHelper.createTextMessage(`ข้อความจาก [${senderProfile.displayName}] ==>`),
+            messageToSend,
+          ]
+        );
+      }).catch((error) => { console.log('sendMessageToFriend Error', error + '') });
 
-  },
 
-  disableMember: (userId) => {
-    updateMemberData(userId, { 'status': -1 });
-  }
+},
+
+disableMember: (userId) => {
+  updateMemberData(userId, { 'status': -1 });
+}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -626,3 +569,60 @@ function downloadContent(messageId, downloadPath) {
       stream.on('error', reject);
     }));
 }
+
+function getTextMessage(message) {
+  return new Promise((resolve, reject) => {
+    resolve(lineHelper.createTextMessage(message.text));
+  });
+}
+
+function getImageMessage(message) {
+  return new Promise((resolve, reject) => {
+    const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.jpg`);
+    const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
+    return downloadContent(message.id, downloadPath)
+      .then((downloadPath) => {
+        cp.execSync(`convert -resize 240x jpeg:${downloadPath} jpeg:${previewPath}`);
+        resolve(lineHelper.createImageMessage(baseURL + '/downloaded/' + path.basename(downloadPath), baseURL + '/downloaded/' + path.basename(previewPath)));
+      });
+  });
+}
+
+// function pushVideoMessage(userId, message) {
+//   const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.mp4`);
+//   const previewPath = path.join(__dirname, 'downloaded', `${message.id}-preview.jpg`);
+//   return downloadContent(message.id, downloadPath)
+//     .then((downloadPath) => {
+//       cp.execSync(`convert mp4:${downloadPath}[0] jpeg:${previewPath}`);
+//       return line.pushMessage(
+//         userId,
+//         {
+//           type: 'video',
+//           originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
+//           previewImageUrl: baseURL + '/downloaded/' + path.basename(previewPath),
+//         }
+//       );
+//     });
+// }
+
+// function pushAudioMessage(userId, message) {
+//   const downloadPath = path.join(__dirname, 'downloaded', `${message.id}.m4a`);
+//   return downloadContent(message.id, downloadPath)
+//     .then((downloadPath) => {
+//       var getDuration = require('get-audio-duration');
+//       var audioDuration;
+//       getDuration(downloadPath)
+//         .then((duration) => { audioDuration = duration; })
+//         .catch((error) => { audioDuration = 1; })
+//         .finally(() => {
+//           return line.pushMessage(
+//             userId,
+//             {
+//               type: 'audio',
+//               originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
+//               duration: audioDuration * 1000,
+//             }
+//           );
+//         });
+//     });
+// }
