@@ -25,16 +25,18 @@ module.exports = {
     createPostBackOption('28-32 ปี', 'CANDIDATE-AGE_28-32'),
     createPostBackOption('33 ขึ้นไป', 'CANDIDATE-AGE_33UP')
   ],
-  sayHiActions: [
-    createPostBackOption('ส่งเลย', 'SAYHI-YES'),
-    createPostBackOption('ไม่ใช่ตอนนี้', 'SAYHI-NO'),
-  ],
   friendActions: [
     createPostBackOption('รับ', 'FRIEND_YES'),
     createPostBackOption('ไม่รับ', 'FRIEND_NO')
   ],
   getImageAction: () => {
     createPostBackOption('ดูรูป', 'ACTION-IMAGE');
+  },
+  getSayHiAction: (extra) => {
+    return [
+      createPostBackOption('ส่งเลย', 'SAYHI-YES', extra),
+      createPostBackOption('ไม่ใช่ตอนนี้', 'SAYHI-NO', extra),
+    ];
   },
   getCandidateProfileAction: (extra, isFriend) => {
     let options = [];

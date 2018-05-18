@@ -536,13 +536,7 @@ function getUserInfo(userId) {
 }
 
 function createMatchedMessage(candidateName, candidateId) {
-  var dup_array = JSON.parse(JSON.stringify(options.sayHiActions))
-  actionsOptions = dup_array.map(element => {
-    element.data = element.data + '_' + candidateId;
-    return element;
-  });
-  return
-  lineHelper.createTextMessage(`ว้าววว ยินดีด้วย [${candidateName}] ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง [${candidateName}] ได้เลย`);
+  return lineHelper.createTextMessage(`ว้าววว ยินดีด้วย [${candidateName}] ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง [${candidateName}] ได้เลย`);
   // lineHelper.createConfirmMessage('คุณต้องการส่งข้อความเลยหรือไม่', actionsOptions),
   ;
 }
@@ -552,6 +546,7 @@ function createCarouselMessage(altText, lists, isFriend) {
     var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
     return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId, isFriend);
   });
+  console.log(createCarouselMessage, columns);
   return lineHelper.createCarouselMessage(altText, columns)
 }
 
