@@ -33,7 +33,7 @@ module.exports = {
     createPostBackOption('รับ', 'FRIEND_YES'),
     createPostBackOption('ไม่รับ', 'FRIEND_NO')
   ],
-  imageAction: () => {
+  getImageAction: () => {
     createPostBackOption('ดูรูป', 'ACTION-IMAGE');
   },
   getCandidateProfileAction: (extra, isFriend) => {

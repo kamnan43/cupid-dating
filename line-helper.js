@@ -56,7 +56,7 @@ function createCarouselColumns(title, text, imageUrl, extra, isFriend) {
     thumbnailImageUrl: imageUrl,
     title: title,
     text: text,
-    defaultAction: options.imageAction,
+    defaultAction: options.getImageAction(),
     actions: columnOptions
 
   };
