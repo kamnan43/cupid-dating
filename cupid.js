@@ -370,7 +370,11 @@ function viewCandidateList(userId, replyToken, broadcast) {
               line.pushMessage(userId, [createImageCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, false)]);
             }
           } else {
-            line.replyMessage(replyToken, [lineHelper.createTextMessage(`ยังไม่มีรายใหม่ตอนนี้`)]);
+            if (replyToken) {
+              line.replyMessage(replyToken, [lineHelper.createTextMessage(`ยังไม่มีรายใหม่ตอนนี้`)]);
+            } else {
+              line.pushMessage(userId, [lineHelper.createTextMessage(`ยังไม่มีรายใหม่ตอนนี้`)]);
+            }
           }
         });
       } catch (e) {
