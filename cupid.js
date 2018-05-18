@@ -129,7 +129,7 @@ module.exports = {
           replyToken,
           [
             lineHelper.createTextMessage(`บันทึกข้อมูลเรียบร้อย`),
-            lineHelper.createTextMessage(`เมื่อมีคู่เดทที่ตรงคุณสมบัติของคุณ ระบบจะส่งข้อมูลคู่เดทให้คุณทันที`),
+            // lineHelper.createTextMessage(`เมื่อมีคู่เดทที่ตรงคุณสมบัติของคุณ ระบบจะส่งข้อมูลคู่เดทให้คุณทันที`),
           ]
         );
       })
@@ -371,9 +371,9 @@ function viewCandidateList(userId, replyToken, broadcast) {
             }
           } else {
             if (replyToken) {
-              line.replyMessage(replyToken, [lineHelper.createTextMessage(`ยังไม่มีรายใหม่ตอนนี้`)]);
+              line.replyMessage(replyToken, [lineHelper.createTextMessage(`ยังไม่มีเพื่อนใหม่ที่น่าสนใจตอนนี้`)]);
             } else {
-              line.pushMessage(userId, [lineHelper.createTextMessage(`ยังไม่มีรายใหม่ตอนนี้`)]);
+              line.pushMessage(userId, [lineHelper.createTextMessage(`ยังไม่มีเพื่อนใหม่ที่น่าสนใจตอนนี้`)]);
             }
           }
         });
