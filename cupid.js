@@ -27,7 +27,7 @@ module.exports = {
   },
 
   broadcastMessage: (text) => {
-    let query = membersRef.orderByKey
+    let query = membersRef.orderByKey()
       .once("value", function (snapshot) {
         snapshot.forEach(function (snap) {
           var doc = snap.val();
