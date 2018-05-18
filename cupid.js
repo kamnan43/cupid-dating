@@ -399,20 +399,13 @@ function viewCandidateList(userId, replyToken, broadcast) {
     });
 };
 
-async function viewFriendList(userId, replyToken) {
-  try {
-    let lists = [];
-    var memberRelationRef = database.ref("/members/" + userId + "/relations");
-    let query = await memberRelationRef
-      .orderByKey()
-      .once("value", async function (snapshot) {
-        await snapshot.forEach(async function (snap) {
-          var doc = snap.val();
-          console.log('viewFriendList A', doc);
-          if (doc.userId !== userId && doc.relation === 'LOVE' && doc.status == 1) {
-
-
-            let relation = await readCandidateRelation(doc.userId, userId);
+function viewFriendList(userId, replyToken) {
+  getMemberRelation(userId)
+    .then((docLists) => {
+      lists = [];
+      let promissMap = docLists.map(doc => {
+        return readCandidateRelation(doc.userId, userId)
+          .then((relation) => {
             console.log('relation', relation, doc.userId, userId);
             if (relation !== 'BLOCK') {
               if (lists.length < lineHelper.maxCarouselColumns) {
@@ -420,34 +413,22 @@ async function viewFriendList(userId, replyToken) {
                 lists.push(doc);
               }
             }
-            // var candidateRelationRef = database.ref("/members/" + doc.userId + "/relations");
-            // let candidateQuery = candidateRelationRef.orderByKey()
-            //   .equalTo(userId)
-            //   .once("value", function (candidateSnapshot) {
-            //     candidateSnapshot.forEach(function (candidateSnap) {
-            //       var candidateProfile = candidateSnap.val();
-            //       if (candidateProfile.relation === 'LOVE') {
-            //         if (lists.length < lineHelper.maxCarouselColumns) {
-            //           lists.push(doc);
-            //         }
-            //       }
-            //     });
-            //   });
-
-
-          }
-        });
-        console.log('lists', lists);
-        if (lists.length > 0) {
-          line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
-        } else {
-          line.replyMessage(replyToken, [lineHelper.createTextMessage(`ไม่มีเจ้าค่ะ ไม่มีเลยเจ้าค่ะ`)]);
-        }
+          });
       });
-  } catch (e) {
-    console.log(e);
-  }
-};
+      Promise.all(promissMap)
+        .then(() => {
+          console.log('lists', lists);
+          if (lists.length > 0) {
+            line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
+          } else {
+            line.replyMessage(replyToken, [lineHelper.createTextMessage(`ไม่มีเจ้าค่ะ ไม่มีเลยเจ้าค่ะ`)]);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    });
+}
 
 function sendNewFriendToCandidate(sendToUserId, userInfo) {
   console.log('candidate userInfo', sendToUserId, JSON.stringify(userInfo));
@@ -459,7 +440,7 @@ function sendNewFriendToCandidate(sendToUserId, userInfo) {
   );
 }
 
-async function readCandidateRelation(candidateUserId, userId) {
+function readCandidateRelation(candidateUserId, userId) {
   return new Promise((resolve, reject) => {
     var candidateRelationRef = database.ref("/members/" + candidateUserId + "/relations");
     candidateRelationRef.orderByKey()
@@ -559,6 +540,30 @@ function getUserInfo(userId) {
         console.error(error + '');
         reject();
       });
+  });
+}
+
+function getMemberRelation(userId) {
+  return new Promise((resolve, reject) => {
+    try {
+      let lists = [];
+      var memberRelationRef = database.ref("/members/" + userId + "/relations");
+      memberRelationRef
+        .orderByKey()
+        .once("value", function (snapshot) {
+          snapshot.forEach(function (snap) {
+            var doc = snap.val();
+            console.log('getMemberRelation', doc);
+            if (doc.userId !== userId && doc.relation === 'LOVE' && doc.status == 1) {
+              lists.push(doc);
+            }
+          });
+          resolve(lists);
+        });
+    } catch (e) {
+      console.log(e);
+      reject();
+    }
   });
 }
 
