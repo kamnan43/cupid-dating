@@ -399,14 +399,14 @@ function viewCandidateList(userId, replyToken, broadcast) {
     });
 };
 
-async function viewFriendList(userId, replyToken) {
+function viewFriendList(userId, replyToken) {
   try {
     let lists = [];
     var memberRelationRef = database.ref("/members/" + userId + "/relations");
     let query = memberRelationRef
       .orderByKey()
       .once("value", function (snapshot) {
-        snapshot.forEach(function (snap) {
+        snapshot.forEach(async function (snap) {
           var doc = snap.val();
           console.log('viewFriendList A', doc);
           if (doc.userId !== userId && doc.relation === 'LOVE' && doc.status == 1) {
