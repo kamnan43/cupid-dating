@@ -424,13 +424,15 @@ function viewLoveList(userId, replyToken) {
 
 
 
-            let relation = await readCandidateRelation(doc.userId, userId);
-            console.log('relation', relation, doc.userId, userId);
-            if (relation === 'LOVE') {
-              if (lists.length < lineHelper.maxCarouselColumns) {
-                lists.push(doc);
-              }
-            }
+            readCandidateRelation(doc.userId, userId)
+              .then((relation) => {
+                console.log('relation', relation, doc.userId, userId);
+                if (relation === 'LOVE') {
+                  if (lists.length < lineHelper.maxCarouselColumns) {
+                    lists.push(doc);
+                  }
+                }
+              });
 
 
             // var candidateRelationRef = database.ref("/members/" + doc.userId + "/relations");
@@ -453,6 +455,7 @@ function viewLoveList(userId, replyToken) {
 
           }
         });
+        console.log('lists',lists);
         if (lists.length > 0) {
           line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, true)]);
         } else {
@@ -474,7 +477,7 @@ function sendSuggestFriendToCandidate(sendToUserId, userInfo) {
   );
 }
 
-async function readCandidateRelation(candidateUserId, userId) {
+function readCandidateRelation(candidateUserId, userId) {
   return new Promise((resolve, reject) => {
     var candidateRelationRef = database.ref("/members/" + candidateUserId + "/relations");
     candidateRelationRef.orderByKey()
