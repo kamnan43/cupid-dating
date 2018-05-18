@@ -8,9 +8,9 @@ const config = require('./config.json');
 const cupid = require('./cupid.js');
 const http = require('http');
 const https = require('https');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const app = express();
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 app.use('/static', express.static('static'));
 app.use('/downloaded', express.static('downloaded'));
 app.post('/git', function (req, res) {
@@ -33,7 +33,7 @@ app.post('/webhooks', lineSdk.middleware(config), (req, res) => {
     });
 });
 app.post('/broadcast', (req, res) => {
-  console.log(req.body);
+  console.log(req);
   res.end();
 });
 
