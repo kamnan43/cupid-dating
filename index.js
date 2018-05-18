@@ -32,10 +32,6 @@ app.post('/webhooks', lineSdk.middleware(config), (req, res) => {
       res.status(500).end();
     });
 });
-app.post('/broadcast', (req, res) => {
-  console.log(req);
-  res.end();
-});
 
 function handleEvent(event) {
   console.log(event);
@@ -51,6 +47,9 @@ function handleEvent(event) {
         case 'text':
           if (['ตั้งค่าสเปค', 'หาเพื่อนใหม่', 'คนที่คุณถูกใจ', 'เพื่อนของคุณ', 'บอกว่ายังไม่ได้ทำไง'].indexOf(message.text) > -1) {
             return handleCommand(message, replyToken, event.source);
+          } else if (message.text.startsWith('[bc]')) {
+            message.text = message.text.replace('[bc]', '');
+            return cupid.broadcastMessage(message.text);
           }
         // case 'image':
         //   return cupid.sendImageMessage(userId, replyToken, message);
