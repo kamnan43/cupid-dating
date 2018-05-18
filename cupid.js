@@ -187,10 +187,7 @@ module.exports = {
             .then(() => {
               return line.replyMessage(
                 replyToken,
-                [
-                  createMatchedMessage(candidateName, candidateUserId),
-                  createCarouselMessage(`เพื่อนคนนี้ถูกใจคุณเหมือนกัน`, [candidateProfile], true)
-                ]
+                [createMatchedMessage(candidateName, candidateUserId)]
               );
             })
             .then(() => {
@@ -199,7 +196,10 @@ module.exports = {
             .then((profile) => {
               line.pushMessage(
                 candidateUserId,
-                [createMatchedMessage(profile.displayName, userId)]
+                [
+                  createMatchedMessage(profile.displayName, userId),
+                  createCarouselMessage(`เพื่อนคนนี้ถูกใจคุณเหมือนกัน`, [profile], true)
+                ]
               )
             });
         } else {
