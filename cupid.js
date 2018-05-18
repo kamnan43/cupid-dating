@@ -129,7 +129,6 @@ module.exports = {
           replyToken,
           [
             lineHelper.createTextMessage(`บันทึกข้อมูลเรียบร้อย`),
-            // lineHelper.createTextMessage(`เมื่อมีคู่เดทที่ตรงคุณสมบัติของคุณ ระบบจะส่งข้อมูลคู่เดทให้คุณทันที`),
           ]
         );
       })
@@ -349,7 +348,9 @@ function viewCandidateList(userId, replyToken, broadcast) {
             count++;
             if (doc.age === userInfo.candidate_age && doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
               // if (doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
-              if (broadcast) sendSuggestFriendToCandidate(doc.userId, userInfo);
+              if (broadcast && userInfo.age === doc.candidate_age && userInfo.gender === doc.candidate_gender) {
+                sendSuggestFriendToCandidate(doc.userId, userInfo);
+              }
               if (count <= lineHelper.maxCarouselColumns) {
                 lists.push(doc);
               } else {

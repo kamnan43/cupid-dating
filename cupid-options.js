@@ -1,6 +1,6 @@
 module.exports = {
   tosActions: [
-    createPostBackOption('เริ่มกันเลย', 'TOS_YES'),
+    createPostBackOption('ตกลง', 'TOS_YES'),
     createPostBackOption('ยกเลิก', 'TOS_NO')
   ],
   genderActions: [
@@ -61,5 +61,5 @@ module.exports = {
 }
 
 function createPostBackOption(label, key, data) {
-  return { label: label, type: 'postback', data: (key + '_' + (data || '')), displayText: label };
+  return { label: label, type: 'postback', data: (key + (data ? ('_' + data) : '')), displayText: label };
 }

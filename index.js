@@ -77,7 +77,7 @@ function handleEvent(event) {
           if (data === 'YES') {
             return cupid.saveNewMember(userId, replyToken);
           } else {
-            return cupid.sendTextMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ยอมรับ ด้านบนได้ทุกเมื่อ');
+            return cupid.sendTextMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ตกลง ด้านบนได้ทุกเมื่อ');
           }
         case 'GENDER':
           return cupid.saveGender(userId, replyToken, data);
