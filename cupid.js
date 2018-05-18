@@ -250,13 +250,13 @@ module.exports = {
         if (profile.nextMessageTo) {
           getUserInfo(profile.nextMessageTo)
             .then((candidateProfile) => {
-              console.log('sendMessageToFriend:sender profile', JSON.stringify(profile));
+              console.log('sendMessageToFriend: message', JSON.stringify(message));
               console.log('sendMessageToFriend:candidate profile', JSON.stringify(candidateProfile));
               candidateName = candidateProfile.displayName;
               return line.pushMessage(
-                userProfile.nextMessageTo,
+                profile.nextMessageTo,
                 [
-                  lineHelper.createTextMessage(`ข้อความจาก [${userProfile.displayName}] ==>`),
+                  lineHelper.createTextMessage(`ข้อความจาก [${profile.displayName}] ==>`),
                   message,
                 ]
               );
