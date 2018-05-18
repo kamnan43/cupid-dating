@@ -10,7 +10,7 @@ const http = require('http');
 const https = require('https');
 // const bodyParser = require('body-parser');
 const app = express();
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 app.use('/static', express.static('static'));
 app.use('/downloaded', express.static('downloaded'));
 app.post('/git', function (req, res) {
