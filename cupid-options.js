@@ -30,7 +30,7 @@ module.exports = {
     createPostBackOption('ไม่รับ', 'FRIEND_NO')
   ],
   getImageAction: () => {
-    createPostBackOption('ดูรูป', 'ACTION-IMAGE');
+    return createPostBackOption('ดูรูป', 'ACTION-IMAGE');
   },
   getSayHiAction: (extra) => {
     return [
