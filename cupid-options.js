@@ -45,6 +45,7 @@ module.exports = {
         // createUrlOption('ทักทาย', `line://oaMessage/@znu7334q/?%40${extra}%3A `),
         createPostBackOption('แชท', 'ACTION-CHAT', extra),
         createPostBackOption('บล็อค', 'ACTION-BLOCK', extra),
+        createUrlOption('แนะนำให้เพื่อน', 'http://www.google.com'),
         // createPostBackOption('แนะนำให้เพื่อน', 'ACTION-SHARE', extra),
       ];
     } else {
@@ -52,7 +53,7 @@ module.exports = {
         createPostBackOption('ทักทาย', 'ACTION-CHAT', extra),
         createPostBackOption('ถูกใจ', 'ACTION-LOVE', extra),
         createPostBackOption('บล็อค', 'ACTION-BLOCK', extra),
-        // createPostBackOption('แนะนำให้เพื่อน', 'ACTION-SHARE', extra),
+        createUrlOption('แนะนำให้เพื่อน', 'http://www.google.com'),
       ]
     }
     return options;
