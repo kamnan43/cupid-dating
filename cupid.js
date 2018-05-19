@@ -500,11 +500,11 @@ function getProfilePreviewPath(userId) {
 }
 
 function getProfileUrl(userId) {
-  return config.BASE_URL + `/downloaded/${userId}-profile.jpg`;
+  return config.BASE_URL + `/downloaded/${userId}-profile.jpg?date=${Date.now()}`;
 }
 
 function getProfilePreviewUrl(userId) {
-  return config.BASE_URL + `/downloaded/${userId}-profile-preview.jpg`;
+  return config.BASE_URL + `/downloaded/${userId}-profile-preview.jpg?date=${Date.now()}`;
 }
 
 function sendPleaseRegisterMessage(userId, replyToken, text) {
