@@ -619,7 +619,8 @@ function createProfileListMessage(altText, lists) {
 
 function createProfileMessage(altText, profile) {
   var title = (profile.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + profile.gender + ' อายุ ' + profile.age + ' ปี]'
-  return lineHelper.createButtonMessageWithImage(title, profile.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(profile.userId), profile.userId, profile.isFriend);
+  let c = lineHelper.createButtonMessageWithImage(title, profile.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(profile.userId), profile.userId, profile.isFriend);
+  console.log('createProfileMessage',c);
 }
 
 function createImageCarouselMessage(altText, lists) {
