@@ -82,7 +82,7 @@ module.exports = {
   },
   getCommentAction: (extra) => {
     return [
-      createPostBackOption('ดูความคิดเห็นทั้งหมด', 'ACTION-COMMENT'),
+      createPostBackOption('ดูความเห็นทั้งหมด', 'ACTION-COMMENT'),
       createPostBackOption('ดูโปรไฟล์', 'ACTION-PROFILE', extra)
     ];
   },
