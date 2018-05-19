@@ -43,12 +43,13 @@ module.exports = {
     if (isFriend) {
       options = [
         // createUrlOption('ทักทาย', `line://oaMessage/@znu7334q/?%40${extra}%3A `),
-        createPostBackOption('ทักทาย', 'ACTION-CHAT', extra),
+        createPostBackOption('แชท', 'ACTION-CHAT', extra),
         createPostBackOption('บล็อค', 'ACTION-BLOCK', extra),
         // createPostBackOption('แนะนำให้เพื่อน', 'ACTION-SHARE', extra),
       ];
     } else {
       options = [
+        createPostBackOption('ทักทาย', 'ACTION-CHAT', extra),
         createPostBackOption('ถูกใจ', 'ACTION-LOVE', extra),
         createPostBackOption('บล็อค', 'ACTION-BLOCK', extra),
         // createPostBackOption('แนะนำให้เพื่อน', 'ACTION-SHARE', extra),
@@ -58,7 +59,13 @@ module.exports = {
   },
   getCandidateImageAction: (actionText, extra) => {
     return createPostBackOption(actionText, 'ACTION-PROFILE', extra);
-  }
+  },
+  getMessageAction: (extra) => {
+    return [
+      createPostBackOption('ตอบกลับ', 'ACTION-CHAT', extra),
+      createPostBackOption('ดูโปรไฟล์', 'ACTION-PROFILE', extra)
+    ];
+  },
 }
 
 function createPostBackOption(label, key, data) {

@@ -100,6 +100,8 @@ function handleEvent(event) {
           return cupid.blockCandidate(userId, replyToken, data);
         case 'ACTION-CHAT':
           return cupid.chatCandidate(userId, replyToken, data);
+        case 'ACTION-COMMENT':
+          return cupid.commentCandidate(userId, replyToken, data);
         // case 'SAYHI-YES':
         //   return cupid.confirmedToSayHi(userId, replyToken, data);
         default:

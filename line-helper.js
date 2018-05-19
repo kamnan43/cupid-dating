@@ -28,6 +28,22 @@ function createButtonMessage(title, actions) {
   };
 }
 
+function createButtonMessageWithImage(title, text, imageUrl, extra, isFriend) {
+  let columnOptions = options.getCandidateProfileAction(extra, isFriend);
+  return {
+    type: 'template',
+    altText: title,
+    template: {
+      type: 'buttons',
+      thumbnailImageUrl: imageUrl,
+      title: title,
+      text: text,
+      defaultAction: options.getImageAction(extra),
+      actions: columnOptions,
+    },
+  };
+}
+
 function createConfirmMessage(title, actions) {
   return {
     type: 'template',

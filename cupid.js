@@ -214,7 +214,7 @@ module.exports = {
                 candidateUserId,
                 [
                   createMatchedMessage(profile.displayName, userId),
-                  createCarouselMessage(`เพื่อนคนนี้ถูกใจคุณเหมือนกัน`, [profile])
+                  createProfileMessage(`เพื่อนคนนี้ถูกใจคุณเหมือนกัน`, profile)
                 ]
               )
             });
@@ -255,6 +255,19 @@ module.exports = {
       });
   },
 
+  commentCandidate: (userId, replyToken, candidateUserId) => {
+    updateMemberData(userId, { 'nextPokeTo': candidateUserId })
+      .then(() => {
+        return getUserInfo(candidateUserId)
+      })
+      .then((profile) => {
+        line.replyMessage(
+          replyToken,
+          lineHelper.createTextMessage(`พิมพ์ข้อความที่ต้องการส่งถึง [${profile.displayName}] ได้เลย`),
+        )
+      });
+  },
+
   sendMessageToFriend: (userId, replyToken, message) => {
     var senderProfile;
     getUserInfo(userId)
@@ -263,9 +276,21 @@ module.exports = {
           senderProfile = profile;
           switch (message.type) {
             case 'text':
-              return getTextMessage(message);
-            case 'image':
-              return getImageMessage(message);
+              line.pushMessage(
+                senderProfile.nextMessageTo,
+                [
+                  lineHelper.createConfirmMessage(`ข้อความจาก [${senderProfile.displayName}] : \n` + message.text, options.getMessageAction(senderProfile.userId))
+                ]
+              ).then(() => {
+                return line.replyMessage(replyToken, [lineHelper.createTextMessage('ส่งแล้ว')]);
+              }).then(() => {
+                updateMemberData(userId, { 'nextMessageTo': '' })
+              })
+              break;
+            // return getTextMessage(message);
+            //return lineHelper.createConfirmMessage(`ข้อความจาก [${senderProfile.displayName}] : \n` + message.text, options.getMessageAction(senderProfile.userId))
+            // case 'image':
+            //   return getImageMessage(message);
             // case 'video':
             //   return pushVideoMessage(userId, replyToken, message);
             // case 'audio':
@@ -274,22 +299,12 @@ module.exports = {
             //   return handleLocation(message, event.replyToken);
             // case 'sticker':
             //   return handleSticker(message, event.replyToken);
-            // default:
-            //   return line.replyMessage(replyToken, [lineHelper.createTextMessage('ขออภัย ระบบยังไม่รองรับข้อความประเภทนี้')]);
+            default:
+              return line.replyMessage(replyToken, [lineHelper.createTextMessage('ขออภัย ระบบยังไม่รองรับข้อความประเภทนี้')]);
           }
         } else {
           return line.replyMessage(replyToken, [lineHelper.createTextMessage('ไม่เอา ไม่คุย ไม่ต้องมาพูด')]);
         }
-      })
-      .then((messageToSend) => {
-        console.log('sendMessageToFriend: message', JSON.stringify(messageToSend));
-        return line.pushMessage(
-          senderProfile.nextMessageTo,
-          [
-            lineHelper.createTextMessage(`ข้อความจาก [${senderProfile.displayName}] ==>`),
-            messageToSend,
-          ]
-        );
       }).catch((error) => { console.log('sendMessageToFriend Error', error + '') });
 
 
@@ -324,7 +339,7 @@ module.exports = {
 //           });
 //           console.log('columns', JSON.stringify(columns));
 //           if (columns.length > 0) {
-//             resolve(createCarouselMessage(`ตัวอย่างคนที่อาจเป็นเพื่อนใหม่ของคุณ`, columns));
+//             resolve(createProfileListMessage(`ตัวอย่างคนที่อาจเป็นเพื่อนใหม่ของคุณ`, columns));
 //           }
 //         });
 //     } catch (e) {
@@ -352,7 +367,7 @@ function viewCandidateProfile(userId, replyToken, candidateUserId) {
     .then((candidateInfo) => {
       candidateInfo.isFreind = (candidateRelation === 'LOVE' && memberRelation === candidateRelation);
       try {
-        line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, [candidateInfo])]);
+        line.replyMessage(replyToken, [createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, candidateInfo)]);
       } catch (e) {
         console.log(e);
       }
@@ -431,7 +446,7 @@ function viewFriendList(userId, replyToken) {
         .then(() => {
           console.log('lists', lists);
           if (lists.length > 0) {
-            line.replyMessage(replyToken, [createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
+            line.replyMessage(replyToken, [createProfileListMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
           } else {
             line.replyMessage(replyToken, [lineHelper.createTextMessage(`ไม่มีเจ้าค่ะ ไม่มีเลยเจ้าค่ะ`)]);
           }
@@ -447,7 +462,7 @@ function sendNewFriendToCandidate(sendToUserId, userInfo) {
   line.pushMessage(
     sendToUserId,
     [
-      createCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, [userInfo])
+      createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, userInfo)
     ]
   );
 }
@@ -584,13 +599,18 @@ function createMatchedMessage(candidateName, candidateId) {
   ;
 }
 
-function createCarouselMessage(altText, lists) {
+function createProfileListMessage(altText, lists) {
   var columns = lists.map(element => {
     var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
     return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId, element.isFriend);
   });
-  console.log(createCarouselMessage, columns);
+  console.log(createProfileListMessage, columns);
   return lineHelper.createCarouselMessage(altText, columns)
+}
+
+function createProfileMessage(altText, profile) {
+  var title = (profile.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + profile.gender + ' อายุ ' + profile.age + ' ปี]'
+  return lineHelper.createButtonMessageWithImage(title, profile.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(profile.userId), profile.userId, profile.isFriend);
 }
 
 function createImageCarouselMessage(altText, lists) {
