@@ -42,7 +42,7 @@ module.exports = {
     let options = [];
     if (isFriend) {
       options = [
-        createPostBackOption('ทักทาย', 'ACTION-CHAT', extra),
+        createUrlOption('ทักทาย', `line://oaMessage/@znu7334q/?%40${extra}%3A `),
         createPostBackOption('บล็อค', 'ACTION-BLOCK', extra),
         // createPostBackOption('แนะนำให้เพื่อน', 'ACTION-SHARE', extra),
       ];
@@ -62,4 +62,8 @@ module.exports = {
 
 function createPostBackOption(label, key, data) {
   return { label: label, type: 'postback', data: (key + (data ? ('_' + data) : '')), displayText: label };
+}
+
+function createUrlOption(label, url) {
+  return { label: label, type: 'uri', url: uri};
 }
