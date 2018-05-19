@@ -211,23 +211,14 @@ module.exports = {
         if (relation === 'LOVE') {
           updateMemberData(userId, { 'nextMessageTo': candidateUserId })
             .then(() => {
-              return line.replyMessage(
-                replyToken,
-                [createMatchedMessage(candidateName, candidateUserId)]
-              );
+              return line.replyMessage(replyToken, [createMatchedMessage(candidateName, candidateUserId)]);
             })
             .then(() => {
               return getUserInfo(userId)
             })
             .then((profile) => {
               profile.isFriend = true;
-              line.pushMessage(
-                candidateUserId,
-                [
-                  createMatchedMessage(profile.displayName, userId),
-                  createProfileMessage(`เพื่อนคนนี้ถูกใจคุณเหมือนกัน`, profile)
-                ]
-              )
+              line.pushMessage(candidateUserId, [createMatchedMessage(profile.displayName, userId)])
             });
         } else {
           line.replyMessage(
@@ -597,7 +588,7 @@ function getMemberRelation(userId) {
 }
 
 function createMatchedMessage(candidateName, candidateId) {
-  return lineHelper.createTextMessage(`ว้าววว ยินดีด้วย [${candidateName}] ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง [${candidateName}] ได้เลย`);
+  return lineHelper.createConfirmMessage(`ว้าววว ยินดีด้วย [${candidateName}] ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง [${candidateName}] ได้เลย`, options.getMessageAction(userId));
   ;
 }
 
