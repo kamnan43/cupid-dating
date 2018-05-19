@@ -264,7 +264,7 @@ module.exports = {
       .then((profile) => {
         let commentList = [];
         if (profile.comments) {
-          profile.comments.forEach(comment => {
+          Object.values(profile.comments).forEach(comment => {
             commentList.push(`${comment.commentBy.displayName} : ${comment.commentText}`);
           });
         }
