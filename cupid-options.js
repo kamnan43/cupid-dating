@@ -6,7 +6,7 @@ module.exports = {
   genderActions: [
     createPostBackOption('ชาย', 'GENDER_M'),
     createPostBackOption('หญิง', 'GENDER_F'),
-    createPostBackOption('อื่นๆ', 'GENDER_X')
+    // createPostBackOption('อื่นๆ', 'GENDER_X')
   ],
   ageActions: [
     createPostBackOption('18-22 ปี', 'AGE_18-22'),
@@ -42,7 +42,8 @@ module.exports = {
     let options = [];
     if (isFriend) {
       options = [
-        createUrlOption('ทักทาย', `line://oaMessage/@znu7334q/?%40${extra}%3A `),
+        // createUrlOption('ทักทาย', `line://oaMessage/@znu7334q/?%40${extra}%3A `),
+        createPostBackOption('ทักทาย', 'ACTION-CHAT', extra),
         createPostBackOption('บล็อค', 'ACTION-BLOCK', extra),
         // createPostBackOption('แนะนำให้เพื่อน', 'ACTION-SHARE', extra),
       ];
