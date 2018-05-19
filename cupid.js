@@ -259,7 +259,7 @@ module.exports = {
   },
 
   showComment: (userId, replyToken, candidateUserId) => {
-    if (candidateUserId !== userId) updateMemberData(userId, { 'nextCommentTo': candidateUserId });
+    if (candidateUserId !== userId) updateMemberData(userId, { 'nextMessageTo': '', 'nextCommentTo': candidateUserId });
     getUserInfo(candidateUserId)
       .then((profile) => {
         let commentList = [];
@@ -491,7 +491,7 @@ function sendNewFriendToCandidate(sendToUserId, userInfo) {
   line.pushMessage(
     sendToUserId,
     [
-      lineHelper.createConfirmMessage(`คุณอาจอยากรู้จักเพื่อนใหม่คนนี้\nชื่อ : ${userInfo.displayName}\nสถานะ : ${userInfo.status}`, options.getSuggestAction(userInfo.userId))
+      lineHelper.createConfirmMessage(`คุณอาจอยากรู้จักเพื่อนใหม่คนนี้\nชื่อ : ${userInfo.displayName}\nสถานะ : ${userInfo.statusMessage}`, options.getSuggestAction(userInfo.userId))
     ]
   );
 }
@@ -579,7 +579,6 @@ function updateMemberRelationData(userId, candidateProfile) {
 
 function updateMemberCommentData(userProfile, commentText, candidateUserId) {
   console.log('updateMemberCommentData', userProfile, commentText, candidateUserId);
-  candidateProfile['lastActionDate'] = Date.now();
   var memberCommentRef = database.ref("/members/" + candidateUserId + "/comments/" + userProfile.userId);
   let obj = {
     commentBy: {
