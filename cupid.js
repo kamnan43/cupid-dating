@@ -61,27 +61,36 @@ module.exports = {
     // });
   },
 
-  saveNewMember: (userId, replyToken) => {
-    var memberRef = database.ref("/members/" + userId);
-    memberRef.set({
-      userId: userId,
-      lastActionDate: Date.now(),
-      status: 0,
-    }).then(() => {
-      line.getProfile(userId)
-    }).then((profile) => {
-      Promise.all([
-        updateMemberProfilePicture(userId),
-        line.replyMessage(
-          replyToken,
-          [
-            lineHelper.createTextMessage(`ลงทะเบียนเรียบร้อยแล้ว`),
-            lineHelper.createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศ และ อายุ ของคุณ`),
-            lineHelper.createButtonMessage('ระบุเพศของคุณ', options.genderActions)
-          ]
-        )]
-      );
-    });
+  setPersonal: (userId, replyToken, firstTime) => {
+    if (firstTime) {
+      updateMemberData(userId, {
+        userId: userId,
+        lastActionDate: Date.now(),
+        status: 0,
+      });
+    }
+    line.getProfile(userId)
+      .then((profile) => {
+        let messages = [
+          lineHelper.createTextMessage(`กรุณาระบุเพศ และ อายุ ของคุณ`),
+          lineHelper.createButtonMessage('ระบุเพศของคุณ', options.genderActions)
+        ];
+        if (firstTime) messages.unshift(lineHelper.createTextMessage(`บันทึกเรียบร้อยแล้ว\nขั้นตอนต่อไป`));
+        Promise.all([
+          updateMemberProfilePicture(userId, profile),
+          line.replyMessage(replyToken, messages)]
+        );
+      });
+  },
+
+  saveSpec: (userId, replyToken) => {
+    line.replyMessage(
+      replyToken,
+      [
+        lineHelper.createTextMessage(`กรุณาระบุเพศที่คุณสนใจ`),
+        lineHelper.createButtonMessage('เพศที่คุณสนใจ', options.candidateGenderActions)
+      ]
+    );
   },
 
   saveGender: (userId, replyToken, gender) => {
@@ -106,13 +115,18 @@ module.exports = {
     }
     updateMemberData(userId, { 'age': age, 'min_age': minAge, 'max_age': maxAge })
       .then(() => {
-        line.replyMessage(
-          replyToken,
-          [
-            lineHelper.createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศที่คุณสนใจ`),
-            lineHelper.createButtonMessage('เพศที่คุณสนใจ', options.candidateGenderActions)
-          ]
-        );
+        return getUserInfo(userId)
+      })
+      .then((profile) => {
+        if (!profile.candidate_age) {
+          line.replyMessage(
+            replyToken,
+            [
+              lineHelper.createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศที่คุณสนใจ`),
+              lineHelper.createButtonMessage('เพศที่คุณสนใจ', options.candidateGenderActions)
+            ]
+          );
+        }
       });
   },
 
@@ -382,6 +396,7 @@ function viewCandidateList(userId, replyToken, broadcast) {
         let lists = [];
         let nextCandidate = userInfo.nextCandidate;
         let query = membersRef.orderByChild('age');
+        updateMemberProfilePicture(userId, userInfo);
         if (nextCandidate) {
           query = query.startAt(nextCandidate.age, nextCandidate.userId);
         }

@@ -45,13 +45,13 @@ function handleEvent(event) {
       const message = event.message;
       switch (message.type) {
         case 'text':
-          if (['ตั้งค่าสเปค', 'หาเพื่อนใหม่', 'คนที่คุณถูกใจ', 'เพื่อนของคุณ', 'บอกว่ายังไม่ได้ทำไง'].indexOf(message.text) > -1) {
+          if (['ตั้งค่าส่วนตัว', 'ตั้งค่าสเปค', 'หาเพื่อนใหม่', 'คนที่คุณถูกใจ', 'เพื่อนของคุณ', 'บอกว่ายังไม่ได้ทำไง'].indexOf(message.text) > -1) {
             return handleCommand(message, replyToken, event.source);
           } else if (message.text.startsWith('[bc]')) {
             message.text = message.text.replace('[bc]', '');
             return cupid.broadcastMessage(message.text);
           } else if (message.text.startsWith('@')) {
-            return cupid.sendCandidateProfile(userId, replyToken, message.text.replace('@',''));
+            return cupid.sendCandidateProfile(userId, replyToken, message.text.replace('@', ''));
           }
         // case 'image':
         //   return cupid.sendImageMessage(userId, replyToken, message);
@@ -80,7 +80,7 @@ function handleEvent(event) {
       switch (mode) {
         case 'TOS':
           if (data === 'YES') {
-            return cupid.saveNewMember(userId, replyToken);
+            return cupid.setPersonal(userId, replyToken, true);
           } else {
             return cupid.sendTextMessage(userId, replyToken, 'ขอบคุณที่แวะมา หากคุณเปลี่ยนใจ สามารถกดปุ่ม ตกลง ด้านบนได้ทุกเมื่อ');
           }
@@ -140,8 +140,10 @@ function handleEvent(event) {
 
 function handleCommand(message, replyToken, source) {
   switch (message.text) {
+    case 'ตั้งค่าส่วนตัว':
+      return cupid.setPersonal(source.userId, replyToken);
     case 'ตั้งค่าสเปค':
-      return cupid.saveNewMember(source.userId, replyToken);
+      return cupid.saveSpec(source.userId, replyToken);
     case 'หาเพื่อนใหม่':
       return cupid.sendCandidateList(source.userId, replyToken);
     case 'คนที่คุณถูกใจ':
