@@ -580,7 +580,7 @@ function updateMemberRelationData(userId, candidateProfile) {
 function updateMemberCommentData(userProfile, commentText, candidateUserId) {
   console.log('updateMemberCommentData', userProfile, commentText, candidateUserId);
   candidateProfile['lastActionDate'] = Date.now();
-  var memberRelationRef = database.ref("/members/" + candidateUserId + "/comments/" + userProfile.userId);
+  var memberCommentRef = database.ref("/members/" + candidateUserId + "/comments/" + userProfile.userId);
   let obj = {
     commentBy: {
       userId: userProfile.userId,
@@ -589,7 +589,9 @@ function updateMemberCommentData(userProfile, commentText, candidateUserId) {
     commentText: commentText,
     commentDate: Date.now()
   };
-  return memberRelationRef.update(obj);
+  console.log(obj);
+  return memberCommentRef.update(obj)
+    .catch((error) => { console.log('updateMemberCommentData Error', error + '') });;
 }
 
 function getUserInfo(userId) {
