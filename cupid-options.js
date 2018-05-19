@@ -64,6 +64,6 @@ function createPostBackOption(label, key, data) {
   return { label: label, type: 'postback', data: (key + (data ? ('_' + data) : '')), displayText: label };
 }
 
-function createUrlOption(label, url) {
-  return { label: label, type: 'uri', url: uri};
+function createUrlOption(label, uri) {
+  return { label: label, type: 'uri', uri: uri};
 }
