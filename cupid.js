@@ -323,6 +323,7 @@ module.exports = {
                 return line.replyMessage(replyToken, [lineHelper.createTextMessage('ส่งความคิดเห็นแล้ว')]);
               }).then(() => {
                 updateMemberData(userId, { 'nextCommentTo': '' });
+                updateMemberCommentData(senderProfile, message.text, senderProfile.nextCommentTo);
               })
               break;
             default:
