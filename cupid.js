@@ -317,7 +317,7 @@ module.exports = {
               line.pushMessage(
                 senderProfile.nextCommentTo,
                 [
-                  lineHelper.createConfirmMessage(`[${senderProfile.displayName}] ได้แสดงความคิดเห็นที่โปรไฟล์ของคุณ : ` + message.text, options.getCommentAction(senderProfile.userId))
+                  lineHelper.createConfirmMessage(`[${senderProfile.displayName}] ได้แสดงความคิดเห็นที่โปรไฟล์ของคุณ\n\n[${senderProfile.displayName}] : ` + message.text, options.getCommentAction(senderProfile.userId))
                 ]
               ).then(() => {
                 return line.replyMessage(replyToken, [lineHelper.createTextMessage('ส่งความคิดเห็นแล้ว')]);
@@ -488,10 +488,11 @@ function viewFriendList(userId, replyToken) {
 }
 
 function sendNewFriendToCandidate(sendToUserId, userInfo) {
+  var title = (userInfo.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + userInfo.gender + ' อายุ ' + userInfo.age + ' ปี]'
   line.pushMessage(
     sendToUserId,
     [
-      lineHelper.createConfirmMessage(`คุณอาจอยากรู้จักเพื่อนใหม่คนนี้\nชื่อ : ${userInfo.displayName}\nสถานะ : ${userInfo.statusMessage}`, options.getSuggestAction(userInfo.userId))
+      lineHelper.createConfirmMessage(`คุณอาจอยากรู้จักเพื่อนใหม่คนนี้\nชื่อ : ${title}\nสถานะ : ${userInfo.statusMessage}`, options.getSuggestAction(userInfo.userId))
     ]
   );
 }
