@@ -56,7 +56,6 @@ module.exports = {
     //     `คุณจะสามารถใช้งานได้เต็มที่ หลังจากตั้งค่าตัวเลือกส่วนตัวของคุณ`));
     // }
     messages.push(lineHelper.createConfirmMessage(`ต้องการเริ่มต้นใช้งาน เดี๋ยวนี้เลยหรือไม่`, options.tosActions));
-    console.log('messages', messages);
     line.replyMessage(replyToken, messages);
     // });
   },
@@ -209,7 +208,6 @@ module.exports = {
         return readCandidateRelation(candidateUserId, userId);
       })
       .then((relation) => {
-        console.log('relation', relation);
         if (relation === 'LOVE') {
           updateMemberData(userId, { 'nextMessageTo': candidateUserId })
             .then(() => {
@@ -380,11 +378,7 @@ function viewCandidateProfile(userId, replyToken, candidateUserId) {
     .then((candidateInfo) => {
       candidateInfo.isFriend = (candidateRelation === 'LOVE' && memberRelation === candidateRelation);
       try {
-        console.log('replyToken',replyToken);
-        let ms = createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, candidateInfo);
-        console.log('ms',JSON.stringify(ms));
-        line.replyMessage(replyToken, [ms])
-          .catch((error) => { console.log('viewCandidateProfile A', error) });;
+        line.replyMessage(replyToken, [createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, candidateInfo)]);
       } catch (e) {
         console.log(e);
       }
@@ -451,7 +445,6 @@ function viewFriendList(userId, replyToken) {
       let promissMap = docLists.map(doc => {
         return readCandidateRelation(doc.userId, userId)
           .then((relation) => {
-            console.log('relation', relation, doc.userId, userId);
             if (relation !== 'BLOCK') {
               if (lists.length < lineHelper.maxCarouselColumns) {
                 doc.isFriend = (relation === 'LOVE');
@@ -462,7 +455,6 @@ function viewFriendList(userId, replyToken) {
       });
       Promise.all(promissMap)
         .then(() => {
-          console.log('lists', lists);
           if (lists.length > 0) {
             line.replyMessage(replyToken, [createProfileListMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
           } else {
@@ -476,7 +468,6 @@ function viewFriendList(userId, replyToken) {
 }
 
 function sendNewFriendToCandidate(sendToUserId, userInfo) {
-  console.log('candidate userInfo', sendToUserId, JSON.stringify(userInfo));
   line.pushMessage(
     sendToUserId,
     [
@@ -573,7 +564,6 @@ function getUserInfo(userId) {
       .once("value", (snapshot) => {
         snapshot.forEach(function (snap) {
           let profile = snap.val();
-          console.log('getUserInfo', userId, profile);
           resolve(profile);
         });
       }, (error) => {
@@ -593,7 +583,6 @@ function getMemberRelation(userId) {
         .once("value", function (snapshot) {
           snapshot.forEach(function (snap) {
             var doc = snap.val();
-            console.log('getMemberRelation', doc);
             if (doc.userId !== userId && doc.relation === 'LOVE' && doc.status == 1) {
               lists.push(doc);
             }
@@ -617,15 +606,12 @@ function createProfileListMessage(altText, lists) {
     var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
     return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId, element.isFriend);
   });
-  console.log(createProfileListMessage, columns);
   return lineHelper.createCarouselMessage(altText, columns)
 }
 
 function createProfileMessage(altText, profile) {
   var title = (profile.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + profile.gender + ' อายุ ' + profile.age + ' ปี]'
-  let c = lineHelper.createButtonMessageWithImage(title, profile.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(profile.userId), profile.userId, profile.isFriend);
-  console.log('createProfileMessage', JSON.stringify(c));
-  return c;
+  return lineHelper.createButtonMessageWithImage(title, profile.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(profile.userId), profile.userId, profile.isFriend);
 }
 
 function createImageCarouselMessage(altText, lists) {
@@ -633,7 +619,6 @@ function createImageCarouselMessage(altText, lists) {
     var title = (element.displayName || 'ไม่มีชื่อ');
     return lineHelper.createImageCarouselColumns(title, getProfileUrl(element.userId), element.userId);
   });
-  console.log('createImageCarouselMessage', columns);
   return lineHelper.createImageCarouselMessage(altText, columns)
 }
 
