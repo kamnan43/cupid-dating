@@ -472,8 +472,11 @@ function viewFriendList(userId, replyToken) {
       Promise.all(promissMap)
         .then(() => {
           console.log('lists', lists);
+          console.log('replyToken', replyToken);
           if (lists.length > 0) {
-            line.replyMessage(replyToken, [createProfileListMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
+            let ms = createProfileListMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists);
+            console.log('ms', JSON.stringify(ms));
+            line.replyMessage(replyToken, [ms]);
           } else {
             line.replyMessage(replyToken, [lineHelper.createTextMessage(`ไม่มีเจ้าค่ะ ไม่มีเลยเจ้าค่ะ`)]);
           }
@@ -615,7 +618,6 @@ function getMemberRelation(userId) {
 
 function createMatchedMessage(candidateName, candidateId) {
   return lineHelper.createConfirmMessage(`ว้าววว ยินดีด้วย [${candidateName}] ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง [${candidateName}] ได้เลย`, options.getMessageAction(candidateId));
-  ;
 }
 
 function createProfileListMessage(altText, lists) {
