@@ -101,6 +101,7 @@ module.exports = {
   createTextMessage: createTextMessage,
   createImageMessage: createImageMessage,
   createButtonMessage: createButtonMessage,
+  createButtonMessageWithImage: createButtonMessageWithImage,
   createConfirmMessage: createConfirmMessage,
   createCarouselMessage: createCarouselMessage,
   createCarouselColumns: createCarouselColumns,
