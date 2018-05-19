@@ -365,8 +365,8 @@ function viewCandidateProfile(userId, replyToken, candidateUserId) {
       return getUserInfo(candidateUserId)
     })
     .then((candidateInfo) => {
-      log('candidateRelation',candidateRelation);
-      log('memberRelation',memberRelation);
+      console.log('candidateRelation',candidateRelation);
+      console.log('memberRelation',memberRelation);
       candidateInfo.isFreind = (candidateRelation === 'LOVE' && memberRelation === candidateRelation);
       try {
         line.replyMessage(replyToken, [createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, candidateInfo)]);
