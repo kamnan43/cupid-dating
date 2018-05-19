@@ -40,6 +40,7 @@ module.exports = {
   },
   getCandidateProfileAction: (extra, isFriend) => {
     let options = [];
+    console.log('isFriend',isFriend);
     if (isFriend) {
       options = [
         // createUrlOption('ทักทาย', `line://oaMessage/@znu7334q/?%40${extra}%3A `),
