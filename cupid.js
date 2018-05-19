@@ -126,6 +126,8 @@ module.exports = {
               lineHelper.createButtonMessage('เพศที่คุณสนใจ', options.candidateGenderActions)
             ]
           );
+        } else {
+          line.replyMessage(replyToken, [lineHelper.createTextMessage(`บันทึกข้อมูลเรียบร้อย`)]);
         }
       });
   },
@@ -152,12 +154,7 @@ module.exports = {
     }
     updateMemberData(userId, { 'candidate_age': candidate_age, 'candidate_min_age': minAge, 'candidate_max_age': maxAge, 'status': 1 })
       .then(() => {
-        line.replyMessage(
-          replyToken,
-          [
-            lineHelper.createTextMessage(`บันทึกข้อมูลเรียบร้อย`),
-          ]
-        );
+        line.replyMessage(replyToken, [lineHelper.createTextMessage(`บันทึกข้อมูลเรียบร้อย`)]);
       })
       .then(() => {
         setTimeout(viewCandidateListAndBraodcast, 1000, userId);
