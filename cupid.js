@@ -381,7 +381,9 @@ function viewCandidateProfile(userId, replyToken, candidateUserId) {
       candidateInfo.isFriend = (candidateRelation === 'LOVE' && memberRelation === candidateRelation);
       try {
         console.log('replyToken',replyToken);
-        line.replyMessage(replyToken, [createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, candidateInfo)])
+        let ms = createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, candidateInfo);
+        console.log('ms',JSON.stringify(ms));
+        line.replyMessage(replyToken, [ms])
           .catch((error) => { console.log('viewCandidateProfile A', error) });;
       } catch (e) {
         console.log(e);
