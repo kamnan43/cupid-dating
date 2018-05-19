@@ -266,7 +266,7 @@ module.exports = {
         let commentList = [];
         if (profile.comments) {
           Object.values(profile.comments).forEach(comment => {
-            commentList.push(`${comment.commentBy.displayName} : ${comment.commentText} (${moment(comment.commentDate).fromNow()})`);
+            commentList.push(`[${comment.commentBy.displayName}] : ${comment.commentText}   (${moment(comment.commentDate).fromNow()})`);
           });
         }
         if (candidateUserId !== userId) commentList.push(`\nพิมพ์ความคิดเห็นถึง [${profile.displayName}] ได้เลย`);
