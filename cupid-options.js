@@ -70,7 +70,7 @@ module.exports = {
 }
 
 function createPostBackOption(label, key, data) {
-  let shortLabel = label.replace(/\W/g, '').trimLeft().trimRight().substring(0,12) || 'ไม่มีชื่อ';
+  let shortLabel = label.replace(/\W/g, '').trimLeft().trimRight().substring(0,12);
   return { label: shortLabel, type: 'postback', data: (key + (data ? ('_' + data) : '')), displayText: label };
 }
 
