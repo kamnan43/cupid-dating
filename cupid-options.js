@@ -70,7 +70,8 @@ module.exports = {
 }
 
 function createPostBackOption(label, key, data) {
-  return { label: label, type: 'postback', data: (key + (data ? ('_' + data) : '')), displayText: label };
+  let shortLabel = label.replace(/\W/g, '').trimLeft().trimRight().substring(0,12);
+  return { label: shortLabel, type: 'postback', data: (key + (data ? ('_' + data) : '')), displayText: label };
 }
 
 function createUrlOption(label, uri) {
