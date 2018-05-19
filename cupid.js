@@ -265,7 +265,7 @@ module.exports = {
         let commentList = [];
         if (profile.comments) {
           profile.comments.forEach(comment => {
-            commentList.push(`${comment.commentBy} : ${comment.commentText}`);
+            commentList.push(`${comment.commentBy.displayName} : ${comment.commentText}`);
           });
         }
         if (candidateUserId !== userId) commentList.push(`\nพิมพ์ความคิดเห็นถึง [${profile.displayName}] ได้เลย`);
@@ -290,7 +290,7 @@ module.exports = {
                   lineHelper.createConfirmMessage(`ข้อความจาก [${senderProfile.displayName}] : \n` + message.text, options.getMessageAction(senderProfile.userId))
                 ]
               ).then(() => {
-                return line.replyMessage(replyToken, [lineHelper.createTextMessage('ส่งแล้ว')]);
+                return line.replyMessage(replyToken, [lineHelper.createTextMessage('ส่งข้อความแล้ว')]);
               }).then(() => {
                 updateMemberData(userId, { 'nextMessageTo': '' })
               })
@@ -320,9 +320,9 @@ module.exports = {
                   lineHelper.createConfirmMessage(`[${senderProfile.displayName}] ได้แสดงความคิดเห็นที่โปรไฟล์ของคุณ : ` + message.text, options.getCommentAction(senderProfile.userId))
                 ]
               ).then(() => {
-                return line.replyMessage(replyToken, [lineHelper.createTextMessage('ส่งแล้ว')]);
+                return line.replyMessage(replyToken, [lineHelper.createTextMessage('ส่งความคิดเห็นแล้ว')]);
               }).then(() => {
-                updateMemberData(userId, { 'nextCommentTo': '' })
+                updateMemberData(userId, { 'nextCommentTo': '' });
               })
               break;
             default:
@@ -574,6 +574,19 @@ function updateMemberRelationData(userId, candidateProfile) {
   candidateProfile['lastActionDate'] = Date.now();
   var memberRelationRef = database.ref("/members/" + userId + "/relations/" + candidateProfile.userId);
   return memberRelationRef.update(candidateProfile);
+}
+
+function updateMemberCommentData(userProfile, commentText, candidateUserId) {
+  candidateProfile['lastActionDate'] = Date.now();
+  var memberRelationRef = database.ref("/members/" + candidateUserId + "/comments/" + userProfile.userId);
+  return memberRelationRef.update({
+    commentBy: {
+      userId: userProfile.userId,
+      displayName: userProfile.displayName
+    },
+    commentText: commentText,
+    commentDate: Date.now()
+  });
 }
 
 function getUserInfo(userId) {

@@ -30,8 +30,11 @@ function createButtonMessage(title, actions) {
 
 function createButtonMessageWithImage(title, text, imageUrl, extra, isFriend, showOtherOptions) {
   let columnOptions;
-  if (!showOtherOptions) columnOptions = options.getCandidateProfileAction(extra, isFriend);
-  else columnOptions = options.getOtherAction(extra, isFriend);
+  if (!showOtherOptions) {
+    columnOptions = options.getCandidateProfileAction(extra, isFriend);
+  } else {
+    columnOptions = options.getOtherAction(extra, isFriend);
+  }
   return {
     type: 'template',
     altText: title,
