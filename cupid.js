@@ -402,16 +402,16 @@ function viewCandidateList(userId, replyToken, broadcast) {
           snapshot.forEach(function (snap) {
             var doc = snap.val();
             if (doc.userId !== userInfo.userId && doc.age === userInfo.candidate_age && doc.gender === userInfo.candidate_gender && doc.status == 1 && (!userInfo.relations || !userInfo.relations[doc.userId])) {
-              if (userInfo.age === doc.candidate_age && userInfo.gender === doc.candidate_gender && (!doc.relations || !doc.relations[userInfo.userId] || doc.relations[userInfo.userId].relation !== 'BLOCK')) {
-                if (broadcast) {
-                  sendNewFriendToCandidate(doc.userId, userInfo);
-                }
-                if (lists.length < lineHelper.maxCarouselColumns) {
-                  lists.push(doc);
-                } else {
-                  if (!nextCandidate) nextCandidate = doc;
-                }
+              // if (userInfo.age === doc.candidate_age && userInfo.gender === doc.candidate_gender && (!doc.relations || !doc.relations[userInfo.userId] || doc.relations[userInfo.userId].relation !== 'BLOCK')) {
+              if (broadcast && userInfo.age === doc.candidate_age && userInfo.gender === doc.candidate_gender && (!doc.relations || !doc.relations[userInfo.userId] || doc.relations[userInfo.userId].relation !== 'BLOCK')) {
+                sendNewFriendToCandidate(doc.userId, userInfo);
               }
+              if (lists.length < lineHelper.maxCarouselColumns) {
+                lists.push(doc);
+              } else {
+                if (!nextCandidate) nextCandidate = doc;
+              }
+              // }
             }
           });
           if (nextCandidate) {
