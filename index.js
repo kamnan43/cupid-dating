@@ -103,7 +103,7 @@ function handleEvent(event) {
         case 'ACTION-CHAT':
           return cupid.chatCandidate(userId, replyToken, data);
         case 'ACTION-COMMENT':
-          return cupid.commentCandidate(userId, replyToken, data);
+          return cupid.showComment(userId, replyToken, data ? data : userId);
         // case 'SAYHI-YES':
         //   return cupid.confirmedToSayHi(userId, replyToken, data);
         default:

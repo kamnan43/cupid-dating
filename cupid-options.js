@@ -45,13 +45,15 @@ module.exports = {
         // createUrlOption('ทักทาย', `line://oaMessage/@znu7334q/?%40${extra}%3A `),
         createPostBackOption('แชท', 'ACTION-CHAT', extra),
         createPostBackOption('บล็อค', 'ACTION-BLOCK', extra),
+        createPostBackOption('ความคิดเห็น', 'ACTION-COMMENT', extra),
         createUrlOption('แนะนำให้เพื่อน', `line://msg/text/?%E0%B8%84%E0%B8%99%E0%B8%99%E0%B8%B5%E0%B9%89%E0%B8%99%E0%B9%88%E0%B8%B2%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88%0A%E0%B9%80%E0%B8%88%E0%B8%AD%E0%B8%A1%E0%B8%B2%E0%B8%88%E0%B8%B2%E0%B8%81%20Cupid%20Dating%0A%E0%B8%A5%E0%B8%AD%E0%B8%87%E0%B9%80%E0%B8%82%E0%B9%89%E0%B8%B2%E0%B9%84%E0%B8%9B%E0%B8%AA%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%94%E0%B8%B9%E0%B8%AA%E0%B8%B4%20%E0%B8%97%E0%B8%B5%E0%B9%88%0Aline%3A%2F%2FoaMessage%2F%40znu7334q%2F%3F%40${extra}`),
       ];
     } else {
       options = [
         createPostBackOption('ทักทาย', 'ACTION-CHAT', extra),
         createPostBackOption('ถูกใจ', 'ACTION-LOVE', extra),
-        createPostBackOption('บล็อค', 'ACTION-BLOCK', extra),
+        // createPostBackOption('บล็อค', 'ACTION-BLOCK', extra),
+        createPostBackOption('ความคิดเห็น', 'ACTION-COMMENT', extra),
         createUrlOption('แนะนำให้เพื่อน', `line://msg/text/?%E0%B8%84%E0%B8%99%E0%B8%99%E0%B8%B5%E0%B9%89%E0%B8%99%E0%B9%88%E0%B8%B2%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88%0A%E0%B9%80%E0%B8%88%E0%B8%AD%E0%B8%A1%E0%B8%B2%E0%B8%88%E0%B8%B2%E0%B8%81%20Cupid%20Dating%0A%E0%B8%A5%E0%B8%AD%E0%B8%87%E0%B9%80%E0%B8%82%E0%B9%89%E0%B8%B2%E0%B9%84%E0%B8%9B%E0%B8%AA%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%94%E0%B8%B9%E0%B8%AA%E0%B8%B4%20%E0%B8%97%E0%B8%B5%E0%B9%88%0Aline%3A%2F%2FoaMessage%2F%40znu7334q%2F%3F%40${extra}`),
       ]
     }
@@ -63,6 +65,12 @@ module.exports = {
   getMessageAction: (extra) => {
     return [
       createPostBackOption('ตอบกลับ', 'ACTION-CHAT', extra),
+      createPostBackOption('ดูโปรไฟล์', 'ACTION-PROFILE', extra)
+    ];
+  },
+  getCommentAction: (extra) => {
+    return [
+      createPostBackOption('ดูความคิดเห็นทั้งหมด', 'ACTION-COMMENT'),
       createPostBackOption('ดูโปรไฟล์', 'ACTION-PROFILE', extra)
     ];
   },

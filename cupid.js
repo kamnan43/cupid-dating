@@ -200,6 +200,7 @@ module.exports = {
       .then((profile) => {
         candidateProfile = profile;
         delete candidateProfile.relations;
+        delete candidateProfile.comments;
         delete candidateProfile.nextCandidate;
         candidateName = candidateProfile.displayName;
         return updateMemberRelationData(userId, candidateProfile);
@@ -209,7 +210,7 @@ module.exports = {
       })
       .then((relation) => {
         if (relation === 'LOVE') {
-          updateMemberData(userId, { 'nextMessageTo': candidateUserId })
+          updateMemberData(userId, { 'nextMessageTo': candidateUserId, 'nextCommentTo': '' })
             .then(() => {
               return line.replyMessage(replyToken, [createMatchedMessage(candidateName, candidateUserId)]);
             })
@@ -245,7 +246,7 @@ module.exports = {
   },
 
   chatCandidate: (userId, replyToken, candidateUserId) => {
-    updateMemberData(userId, { 'nextMessageTo': candidateUserId })
+    updateMemberData(userId, { 'nextMessageTo': candidateUserId, 'nextCommentTo': '' })
       .then(() => {
         return getUserInfo(candidateUserId)
       })
@@ -257,15 +258,20 @@ module.exports = {
       });
   },
 
-  commentCandidate: (userId, replyToken, candidateUserId) => {
-    updateMemberData(userId, { 'nextPokeTo': candidateUserId })
-      .then(() => {
-        return getUserInfo(candidateUserId)
-      })
+  showComment: (userId, replyToken, candidateUserId) => {
+    if (candidateUserId !== userId) updateMemberData(userId, { 'nextCommentTo': candidateUserId });
+    getUserInfo(candidateUserId)
       .then((profile) => {
+        let commentList = [];
+        if (profile.comments) {
+          profile.comments.forEach(comment => {
+            commentList.push(`${comment.commentBy} : ${comment.commentText}`);
+          });
+        }
+        if (candidateUserId !== userId) commentList.push(`\nพิมพ์ความคิดเห็นถึง [${profile.displayName}] ได้เลย`);
         line.replyMessage(
           replyToken,
-          lineHelper.createTextMessage(`พิมพ์ข้อความที่ต้องการส่งถึง [${profile.displayName}] ได้เลย`),
+          lineHelper.createTextMessage(commentList.join('\n')),
         )
       });
   },
@@ -301,6 +307,24 @@ module.exports = {
             //   return handleLocation(message, event.replyToken);
             // case 'sticker':
             //   return handleSticker(message, event.replyToken);
+            default:
+              return line.replyMessage(replyToken, [lineHelper.createTextMessage('ขออภัย ระบบยังไม่รองรับข้อความประเภทนี้')]);
+          }
+        } else if (profile.nextCommentTo) {
+          senderProfile = profile;
+          switch (message.type) {
+            case 'text':
+              line.pushMessage(
+                senderProfile.nextCommentTo,
+                [
+                  lineHelper.createConfirmMessage(`[${senderProfile.displayName}] ได้แสดงความคิดเห็นที่โปรไฟล์ของคุณ : ` + message.text, options.getCommentAction(senderProfile.userId))
+                ]
+              ).then(() => {
+                return line.replyMessage(replyToken, [lineHelper.createTextMessage('ส่งแล้ว')]);
+              }).then(() => {
+                updateMemberData(userId, { 'nextCommentTo': '' })
+              })
+              break;
             default:
               return line.replyMessage(replyToken, [lineHelper.createTextMessage('ขออภัย ระบบยังไม่รองรับข้อความประเภทนี้')]);
           }
@@ -405,8 +429,8 @@ function viewCandidateList(userId, replyToken, broadcast) {
           });
           if (nextCandidate) {
             delete nextCandidate.relations;
+            delete nextCandidate.comments;
             delete nextCandidate.nextCandidate;
-            delete nextCandidate.nextFriend;
             updateMemberData(userId, { 'nextCandidate': nextCandidate })
           }
           if (lists.length > 0) {
