@@ -454,9 +454,9 @@ function viewCandidateList(userId, replyToken, broadcast) {
 };
 
 function viewFriendList(userId, replyToken) {
+  lists = [];
   getMemberRelation(userId)
     .then((docLists) => {
-      lists = [];
       let promissMap = docLists.map(doc => {
         return readCandidateRelation(doc.userId, userId)
           .then((relation) => {
@@ -468,9 +468,10 @@ function viewFriendList(userId, replyToken) {
             }
           });
       });
-      console.log('viewFriendList', lists);
+
       Promise.all(promissMap)
         .then(() => {
+          console.log('lists',lists);
           if (lists.length > 0) {
             line.replyMessage(replyToken, [createProfileListMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
           } else {
