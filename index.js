@@ -50,6 +50,8 @@ function handleEvent(event) {
           } else if (message.text.startsWith('[bc]')) {
             message.text = message.text.replace('[bc]', '');
             return cupid.broadcastMessage(message.text);
+          } else if (message.text.startsWith('@')) {
+            return cupid.sendCandidateProfile(userId, replyToken, message.text.replace('@',''));
           }
         // case 'image':
         //   return cupid.sendImageMessage(userId, replyToken, message);
