@@ -28,8 +28,10 @@ function createButtonMessage(title, actions) {
   };
 }
 
-function createButtonMessageWithImage(title, text, imageUrl, extra, isFriend) {
-  let columnOptions = options.getCandidateProfileAction(extra, isFriend);
+function createButtonMessageWithImage(title, text, imageUrl, extra, isFriend, showOtheroptions) {
+  let columnOptions;
+  if (showOtheroptions) options.getCandidateProfileAction(extra, isFriend);
+  else options.getOtherAction(extra, isFriend);
   return {
     type: 'template',
     altText: title,

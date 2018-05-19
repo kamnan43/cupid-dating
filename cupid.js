@@ -161,8 +161,8 @@ module.exports = {
       });
   },
 
-  sendCandidateProfile: (userId, replyToken, candidateUserId) => {
-    viewCandidateProfile(userId, replyToken, candidateUserId);
+  sendCandidateProfile: (userId, replyToken, candidateUserId, showOtheroptions) => {
+    viewCandidateProfile(userId, replyToken, candidateUserId, showOtheroptions);
   },
 
   sendCandidateList: (userId, replyToken) => {
@@ -378,7 +378,7 @@ function viewCandidateListAndBraodcast(userId) {
   viewCandidateList(userId, undefined, true);
 }
 
-function viewCandidateProfile(userId, replyToken, candidateUserId) {
+function viewCandidateProfile(userId, replyToken, candidateUserId, showOtherOptions) {
   let candidateRelation;
   let memberRelation;
   readCandidateRelation(candidateUserId, userId)
@@ -393,7 +393,7 @@ function viewCandidateProfile(userId, replyToken, candidateUserId) {
     .then((candidateInfo) => {
       candidateInfo.isFriend = (candidateRelation === 'LOVE' && memberRelation === candidateRelation);
       try {
-        line.replyMessage(replyToken, [createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, candidateInfo)]);
+        line.replyMessage(replyToken, [createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, candidateInfo, showOtheroptions)]);
       } catch (e) {
         console.log(e);
       }
@@ -435,9 +435,9 @@ function viewCandidateList(userId, replyToken, broadcast) {
           }
           if (lists.length > 0) {
             if (replyToken) {
-              line.replyMessage(replyToken, [createProfileListMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, false)]);
+              line.replyMessage(replyToken, [createProfileListMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
             } else {
-              line.pushMessage(userId, [createProfileListMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists, false)]);
+              line.pushMessage(userId, [createProfileListMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
             }
           } else {
             if (replyToken) {
@@ -468,7 +468,6 @@ function viewFriendList(userId, replyToken) {
             }
           });
       });
-
       Promise.all(promissMap)
         .then(() => {
           console.log('lists', lists);
@@ -625,12 +624,12 @@ function createProfileListMessage(altText, lists) {
     var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
     return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId, element.isFriend);
   });
-  return lineHelper.createButtonMessageWithImage(altText, columns)
+  return lineHelper.createCarouselMessage(altText, columns)
 }
 
-function createProfileMessage(altText, profile) {
+function createProfileMessage(altText, profile, showOtheroptions) {
   var title = (profile.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + profile.gender + ' อายุ ' + profile.age + ' ปี]'
-  return lineHelper.createButtonMessageWithImage(title, profile.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(profile.userId), profile.userId, profile.isFriend);
+  return lineHelper.createButtonMessageWithImage(title, profile.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(profile.userId), profile.userId, profile.isFriend, showOtheroptions);
 }
 
 function createImageCarouselMessage(altText, lists) {

@@ -93,7 +93,7 @@ function handleEvent(event) {
         case 'CANDIDATE-AGE':
           return cupid.saveCandidateAge(userId, replyToken, data);
         case 'ACTION-PROFILE':
-          return cupid.sendCandidateProfile(userId, replyToken, data);
+          return cupid.sendCandidateProfile(userId, replyToken, data, false);
         case 'ACTION-IMAGE':
           return cupid.sendCandidateProfileImage(userId, replyToken, data);
         case 'ACTION-LOVE':
@@ -104,6 +104,8 @@ function handleEvent(event) {
           return cupid.chatCandidate(userId, replyToken, data);
         case 'ACTION-COMMENT':
           return cupid.showComment(userId, replyToken, data ? data : userId);
+        case 'ACTION-OTHER':
+          return cupid.sendCandidateProfile(userId, replyToken, data, true);
         // case 'SAYHI-YES':
         //   return cupid.confirmedToSayHi(userId, replyToken, data);
         default:
