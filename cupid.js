@@ -161,8 +161,8 @@ module.exports = {
       });
   },
 
-  sendCandidateProfile: (userId, replyToken, candidateUserId, showOtheroptions) => {
-    viewCandidateProfile(userId, replyToken, candidateUserId, showOtheroptions);
+  sendCandidateProfile: (userId, replyToken, candidateUserId, showOtherOptions) => {
+    viewCandidateProfile(userId, replyToken, candidateUserId, showOtherOptions);
   },
 
   sendCandidateList: (userId, replyToken) => {
@@ -393,7 +393,7 @@ function viewCandidateProfile(userId, replyToken, candidateUserId, showOtherOpti
     .then((candidateInfo) => {
       candidateInfo.isFriend = (candidateRelation === 'LOVE' && memberRelation === candidateRelation);
       try {
-        line.replyMessage(replyToken, [createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, candidateInfo, showOtheroptions)]);
+        line.replyMessage(replyToken, [createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, candidateInfo, showOtherOptions)]);
       } catch (e) {
         console.log(e);
       }
@@ -627,9 +627,9 @@ function createProfileListMessage(altText, lists) {
   return lineHelper.createCarouselMessage(altText, columns)
 }
 
-function createProfileMessage(altText, profile, showOtheroptions) {
+function createProfileMessage(altText, profile, showOtherOptions) {
   var title = (profile.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + profile.gender + ' อายุ ' + profile.age + ' ปี]'
-  return lineHelper.createButtonMessageWithImage(title, profile.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(profile.userId), profile.userId, profile.isFriend, showOtheroptions);
+  return lineHelper.createButtonMessageWithImage(title, profile.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(profile.userId), profile.userId, profile.isFriend, showOtherOptions);
 }
 
 function createImageCarouselMessage(altText, lists) {

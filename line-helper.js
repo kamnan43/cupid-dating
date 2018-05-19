@@ -28,9 +28,9 @@ function createButtonMessage(title, actions) {
   };
 }
 
-function createButtonMessageWithImage(title, text, imageUrl, extra, isFriend, showOtheroptions) {
+function createButtonMessageWithImage(title, text, imageUrl, extra, isFriend, showOtherOptions) {
   let columnOptions;
-  if (showOtheroptions) options.getCandidateProfileAction(extra, isFriend);
+  if (showOtherOptions) options.getCandidateProfileAction(extra, isFriend);
   else options.getOtherAction(extra, isFriend);
   return {
     type: 'template',
