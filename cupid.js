@@ -588,7 +588,7 @@ function getMemberRelation(userId) {
 }
 
 function createMatchedMessage(candidateName, candidateId) {
-  return lineHelper.createConfirmMessage(`ว้าววว ยินดีด้วย [${candidateName}] ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง [${candidateName}] ได้เลย`, options.getMessageAction(userId));
+  return lineHelper.createConfirmMessage(`ว้าววว ยินดีด้วย [${candidateName}] ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง [${candidateName}] ได้เลย`, options.getMessageAction(candidateId));
   ;
 }
 
