@@ -380,7 +380,8 @@ function viewCandidateProfile(userId, replyToken, candidateUserId) {
     .then((candidateInfo) => {
       candidateInfo.isFriend = (candidateRelation === 'LOVE' && memberRelation === candidateRelation);
       try {
-        line.replyMessage(replyToken, [createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, candidateInfo)]);
+        line.replyMessage(replyToken, [createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, candidateInfo)])
+          .catch((error) => { console.log('viewCandidateProfile A', error + '') });;
       } catch (e) {
         console.log(e);
       }
@@ -620,7 +621,7 @@ function createProfileListMessage(altText, lists) {
 function createProfileMessage(altText, profile) {
   var title = (profile.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + profile.gender + ' อายุ ' + profile.age + ' ปี]'
   let c = lineHelper.createButtonMessageWithImage(title, profile.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(profile.userId), profile.userId, profile.isFriend);
-  console.log('createProfileMessage',c);
+  console.log('createProfileMessage', c);
 }
 
 function createImageCarouselMessage(altText, lists) {
