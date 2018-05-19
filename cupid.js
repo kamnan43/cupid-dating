@@ -67,20 +67,21 @@ module.exports = {
       userId: userId,
       lastActionDate: Date.now(),
       status: 0,
-    })
-      .then(() => {
-        Promise.all([
-          saveMemberProfilePicture(userId),
-          line.replyMessage(
-            replyToken,
-            [
-              lineHelper.createTextMessage(`ลงทะเบียนเรียบร้อยแล้ว`),
-              lineHelper.createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศ และ อายุ ของคุณ`),
-              lineHelper.createButtonMessage('ระบุเพศของคุณ', options.genderActions)
-            ]
-          )]
-        );
-      });
+    }).then(() => {
+      line.getProfile(userId)
+    }).then((profile) => {
+      Promise.all([
+        updateMemberProfilePicture(userId),
+        line.replyMessage(
+          replyToken,
+          [
+            lineHelper.createTextMessage(`ลงทะเบียนเรียบร้อยแล้ว`),
+            lineHelper.createTextMessage(`ขั้นตอนต่อไป กรุณาระบุเพศ และ อายุ ของคุณ`),
+            lineHelper.createButtonMessage('ระบุเพศของคุณ', options.genderActions)
+          ]
+        )]
+      );
+    });
   },
 
   saveGender: (userId, replyToken, gender) => {
@@ -516,18 +517,13 @@ function sendPleaseRegisterMessage(userId, replyToken, text) {
   );
 }
 
-function saveMemberProfilePicture(userId) {
-  line.getProfile(userId)
-    .then((profile) => {
-      return Promise.all([
-        downloadProfilePicture(profile.pictureUrl, getProfilePath(userId)),
-        updateMemberData(userId, profile)
-      ])
-    })
-    .then(() => {
-      // createPreviewImage
-      cp.execSync(`convert -resize 240x jpeg: ${getProfilePath(userId)} jpeg: ${getProfilePreviewPath(userId)}`);
-    }).catch((error) => { console.log('saveMemberProfilePicture Error', error + '') });
+function updateMemberProfilePicture(userId, profile) {
+  Promise.all([
+    downloadProfilePicture(profile.pictureUrl, getProfilePath(userId)),
+    updateMemberData(userId, profile)
+  ]).then(() => {
+    cp.execSync(`convert -resize 240x jpeg: ${getProfilePath(userId)} jpeg: ${getProfilePreviewPath(userId)}`);
+  }).catch((error) => { console.log('updateMemberProfilePicture Error', error + '') });
 }
 
 function downloadProfilePicture(pictureUrl, downloadPath) {
