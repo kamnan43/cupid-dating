@@ -173,9 +173,9 @@ module.exports = {
     viewFriendList(userId, replyToken, false);
   },
 
-  sendLoveList: (userId, replyToken) => {
-    viewLoveList(userId, replyToken, true);
-  },
+  // sendLoveList: (userId, replyToken) => {
+  //   viewLoveList(userId, replyToken, true);
+  // },
 
   sendCandidateProfileImage: (userId, replyToken, candidateUserId) => {
     if (!candidateUserId) sendPleaseRegisterMessage(userId, replyToken);
@@ -474,7 +474,7 @@ function viewFriendList(userId, replyToken) {
           console.log('lists', lists);
           console.log('replyToken', replyToken);
           if (lists.length > 0) {
-            let ms = createProfileListMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists);
+            let ms = createImageCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists);
             console.log('ms', JSON.stringify(ms));
             line.replyMessage(replyToken, [ms]);
           } else {
@@ -620,13 +620,13 @@ function createMatchedMessage(candidateName, candidateId) {
   return lineHelper.createConfirmMessage(`ว้าววว ยินดีด้วย [${candidateName}] ก็ถูกใจคุณเหมือนกัน\nคุณสามารถส่งข้อความไปถึง [${candidateName}] ได้เลย`, options.getMessageAction(candidateId));
 }
 
-function createProfileListMessage(altText, lists) {
-  var columns = lists.map(element => {
-    var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
-    return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId, element.isFriend);
-  });
-  return lineHelper.createCarouselMessage(altText, columns)
-}
+// function createProfileListMessage(altText, lists) {
+//   var columns = lists.map(element => {
+//     var title = (element.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + element.gender + ' อายุ ' + element.age + ' ปี]'
+//     return lineHelper.createCarouselColumns(title, element.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(element.userId), element.userId, element.isFriend);
+//   });
+//   return lineHelper.createImageCarouselMessage(altText, columns)
+// }
 
 function createProfileMessage(altText, profile) {
   var title = (profile.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + profile.gender + ' อายุ ' + profile.age + ' ปี]'
