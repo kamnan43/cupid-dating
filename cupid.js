@@ -8,6 +8,7 @@ const path = require('path');
 const cp = require('child_process');
 const http = require('http');
 const fs = require('fs');
+const moment = require('moment');
 const firebase = require("firebase-admin");
 var firebaseConfig = config.firebase;
 firebaseConfig.credential = firebase.credential.cert(require(firebaseConfig.serviceAccountFile));
@@ -265,7 +266,7 @@ module.exports = {
         let commentList = [];
         if (profile.comments) {
           Object.values(profile.comments).forEach(comment => {
-            commentList.push(`${comment.commentBy.displayName} : ${comment.commentText}`);
+            commentList.push(`${comment.commentBy.displayName} : ${comment.commentText} (${moment(comment.commentDate).fromNow()})`);
           });
         }
         if (candidateUserId !== userId) commentList.push(`\nพิมพ์ความคิดเห็นถึง [${profile.displayName}] ได้เลย`);
