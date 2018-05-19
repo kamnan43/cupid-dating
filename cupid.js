@@ -471,7 +471,7 @@ function viewFriendList(userId, replyToken) {
 
       Promise.all(promissMap)
         .then(() => {
-          console.log('lists',lists);
+          console.log('lists', lists);
           if (lists.length > 0) {
             line.replyMessage(replyToken, [createProfileListMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
           } else {
