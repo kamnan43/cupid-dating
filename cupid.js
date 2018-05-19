@@ -491,7 +491,7 @@ function sendNewFriendToCandidate(sendToUserId, userInfo) {
   line.pushMessage(
     sendToUserId,
     [
-      createProfileMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่คนนี้`, userInfo)
+      lineHelper.createConfirmMessage(`คุณอาจอยากรู้จักเพื่อนใหม่คนนี้\nชื่อ : ${userInfo.displayName}\nสถานะ : ${userInfo.status}`, options.getSuggestAction(userInfo.userId))
     ]
   );
 }

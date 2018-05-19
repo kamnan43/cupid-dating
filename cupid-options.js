@@ -80,6 +80,12 @@ module.exports = {
       createPostBackOption('ดูโปรไฟล์', 'ACTION-PROFILE', extra)
     ];
   },
+  getSuggestAction: (extra) => {
+    return [
+      createPostBackOption('ทักทาย', 'ACTION-CHAT', extra),
+      createPostBackOption('ดูโปรไฟล์', 'ACTION-PROFILE', extra)
+    ];
+  },
   getCommentAction: (extra) => {
     return [
       createPostBackOption('ดูความเห็นทั้งหมด', 'ACTION-COMMENT'),
@@ -89,10 +95,10 @@ module.exports = {
 }
 
 function createPostBackOption(label, key, data) {
-  let shortLabel = label.trimLeft().trimRight().substring(0,12);
+  let shortLabel = label.trimLeft().trimRight().substring(0, 12);
   return { label: shortLabel, type: 'postback', data: (key + (data ? ('_' + data) : '')), displayText: shortLabel };
 }
 
 function createUrlOption(label, uri) {
-  return { label: label, type: 'uri', uri: uri};
+  return { label: label, type: 'uri', uri: uri };
 }
