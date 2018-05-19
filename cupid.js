@@ -128,6 +128,7 @@ module.exports = {
           );
         } else {
           line.replyMessage(replyToken, [lineHelper.createTextMessage(`บันทึกข้อมูลเรียบร้อย`)]);
+          setTimeout(viewCandidateListAndBraodcast, 1000, userId);
         }
       });
   },
