@@ -623,6 +623,7 @@ function createProfileMessage(altText, profile) {
 }
 
 function createImageCarouselMessage(altText, lists) {
+  console.log('createImageCarouselMessage');
   var columns = lists.map(element => {
     var title = (element.displayName || 'ไม่มีชื่อ');
     return lineHelper.createImageCarouselColumns(title, getProfileUrl(element.userId), element.userId);
