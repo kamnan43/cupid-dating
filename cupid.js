@@ -621,7 +621,7 @@ function createProfileListMessage(altText, lists) {
 function createProfileMessage(altText, profile) {
   var title = (profile.displayName || 'ไม่มีชื่อ') + ' [เพศ ' + profile.gender + ' อายุ ' + profile.age + ' ปี]'
   let c = lineHelper.createButtonMessageWithImage(title, profile.statusMessage || 'ไม่ระบุสถานะ', getProfileUrl(profile.userId), profile.userId, profile.isFriend);
-  console.log('createProfileMessage', c);
+  console.log('createProfileMessage', JSON.stringify(c));
 }
 
 function createImageCarouselMessage(altText, lists) {
