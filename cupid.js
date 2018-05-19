@@ -468,6 +468,7 @@ function viewFriendList(userId, replyToken) {
             }
           });
       });
+      console.log('viewFriendList', lists);
       Promise.all(promissMap)
         .then(() => {
           if (lists.length > 0) {
