@@ -384,7 +384,7 @@ function viewCandidateProfile(userId, replyToken, candidateUserId) {
       } catch (e) {
         console.log(e);
       }
-    });
+    }).catch((error) => { console.log('viewCandidateProfile Error', error + '') });
 };
 
 function viewCandidateList(userId, replyToken, broadcast) {
