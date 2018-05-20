@@ -22,7 +22,7 @@ function createButtonMessage(title, actions) {
     altText: title,
     template: {
       type: 'buttons',
-      text: title,
+      text: title.substring(0,60),
       actions: actions,
     },
   };
@@ -41,8 +41,8 @@ function createButtonMessageWithImage(title, text, imageUrl, extra, isFriend, sh
     template: {
       type: 'buttons',
       thumbnailImageUrl: imageUrl,
-      title: title,
-      text: text,
+      title: title.substring(0,40),
+      text: text.substring(0,60),
       defaultAction: options.getImageAction(extra),
       actions: columnOptions,
     },
@@ -76,8 +76,8 @@ function createCarouselColumns(title, text, imageUrl, extra, isFriend) {
   let columnOptions = options.getCandidateProfileAction(extra, isFriend);
   return {
     thumbnailImageUrl: imageUrl,
-    title: title,
-    text: text,
+    title: title.substring(0,40),
+    text: text.substring(0,60),
     defaultAction: options.getImageAction(extra),
     actions: columnOptions
 
