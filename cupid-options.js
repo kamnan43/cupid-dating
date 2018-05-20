@@ -17,7 +17,7 @@ module.exports = {
   candidateGenderActions: [
     createPostBackOption('ชาย', 'CANDIDATE-GENDER_M'),
     createPostBackOption('หญิง', 'CANDIDATE-GENDER_F'),
-    createPostBackOption('อื่นๆ', 'CANDIDATE-GENDER_X')
+    // createPostBackOption('อื่นๆ', 'CANDIDATE-GENDER_X')
   ],
   candidateAgeActions: [
     createPostBackOption('18-22 ปี', 'CANDIDATE-AGE_18-22'),
