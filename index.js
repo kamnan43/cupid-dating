@@ -60,7 +60,7 @@ function handleEvent(event) {
         // case 'audio':
         //   return cupid.sendAudioMessage(userId, replyToken, message);
         case 'location':
-        return cupid.sendMessageToFriend(userId, replyToken, `ได้รับตำแหน่ง ${message.latitude} , ${message.longitude}`);
+        return cupid.sendTextMessage(userId, replyToken, `ได้รับตำแหน่ง ${message.latitude} , ${message.longitude}`);
         // case 'sticker':
         //   return handleSticker(message, event.replyToken);
         default:
