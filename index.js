@@ -59,12 +59,12 @@ function handleEvent(event) {
         //   return cupid.sendVideoMessage(userId, replyToken, message);
         // case 'audio':
         //   return cupid.sendAudioMessage(userId, replyToken, message);
-        case 'location':
-        return cupid.sendTextMessage(userId, replyToken, `ได้รับตำแหน่ง ${message.latitude} , ${message.longitude}`);
+        // case 'location':
+        //   return cupid.sendTextMessage(userId, replyToken, `ได้รับตำแหน่ง ${message.latitude} , ${message.longitude}`);
         // case 'sticker':
         //   return handleSticker(message, event.replyToken);
         default:
-        return cupid.sendMessageToFriend(userId, replyToken, message);
+          return cupid.sendMessageToFriend(userId, replyToken, message);
       }
     case 'follow':
       return cupid.sendGreetingMessage(userId, replyToken);
