@@ -439,9 +439,15 @@ function viewCandidateList(userId, replyToken, broadcast) {
           }
           if (lists.length > 0) {
             if (replyToken) {
-              line.replyMessage(replyToken, [createImageCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
+              line.replyMessage(replyToken, [
+                lineHelper.createTextMessage('เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้'),
+                createImageCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)
+              ]);
             } else {
-              line.pushMessage(userId, [createImageCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)]);
+              line.pushMessage(userId, [
+                lineHelper.createTextMessage('เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้'),
+                createImageCarouselMessage(`เราคิดว่า คุณอาจอยากรู้จักเพื่อนใหม่เหล่านี้`, lists)
+              ]);
             }
           } else {
             if (replyToken) {
