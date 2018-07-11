@@ -12,7 +12,31 @@ class Setting extends Component {
       partnerAgeFrom: 18,
       partnerAgeTo: 25,
       acceptTerms: false,
+      displayName: ''
     }
+    this.initLiff();
+  }
+
+  initLiff() {
+    window.liff.init(
+      data => {
+        // Now you can call LIFF API
+        const userId = data.context.userId;
+        // console.log('userId', userId);
+        window.liff.getProfile()
+          .then(profile => {
+            let prevState = { ...this.state };
+            prevState.displayName = profile.displayName;
+            this.setState(prevState);
+          })
+          .catch((err) => {
+            console.log(' getProfileerror', err);
+          });
+      },
+      err => {
+        console.log('LIFF initialization failed ', err);
+      }
+    );
   }
 
   handleGender(who, value) {
@@ -62,7 +86,7 @@ class Setting extends Component {
             <div className="panel-body">
               <div className="form-group">
                 <span><label htmlFor="frmAge">Display Name</label>&nbsp;
-                <input type="text" className="form-control" placeholder="Name that show to other users" value={window.displayName} />
+                <input type="text" className="form-control" placeholder="Name that show to other users" value={this.state.displayName} />
                 </span>
               </div>
               <div className="form-group">
@@ -77,7 +101,7 @@ class Setting extends Component {
           </div>
           <div className="panel panel-default">
             <div className="panel-heading">
-              <h3 className="panel-title">Friend Filter</h3>
+              <h3 className="panel-title">You're looking for</h3>
             </div>
             <div className="panel-body">
               <div className="form-group">
@@ -86,11 +110,13 @@ class Setting extends Component {
                 <span>&nbsp;<input type="radio" name="frmPartnerGender" id="frmPartnerGender" checked={this.state.partnerGender === 'F'} onChange={this.handleGender.bind(this, 'partner', 'F')} /> Female</span>
               </div>
               <div className="form-group">
-                <span><label htmlFor="frmPartnerAge">Age</label>&nbsp;
+                <span><label htmlFor="frmPartnerAge">Age</label>
+                  &nbsp;&nbsp;From&nbsp;&nbsp;
                 <NumericInput
                     min={15}
                     max={this.state.partnerAgeTo}
                     size={5}
+                    mobile={true}
                     value={this.state.partnerAgeFrom}
                     onChange={this.handleAge.bind(this, 'from')} />
                   &nbsp;&nbsp;To&nbsp;&nbsp;

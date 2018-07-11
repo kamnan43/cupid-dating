@@ -33,6 +33,10 @@ app.post('/webhooks', lineSdk.middleware(config), (req, res) => {
     });
 });
 
+app.post('/liff', (req, res) => {
+  console.log('liff', req.body);
+});
+
 function handleEvent(event) {
   console.log(event);
   var userId = event.source.userId;

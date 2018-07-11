@@ -25,26 +25,6 @@
 </head>
 
 <body>
-  <script>
-    var displayName = '';
-    liff.init(
-      data => {
-        // Now you can call LIFF API
-        const userId = data.context.userId;
-        console.log('userId', userId);
-        liff.getProfile()
-          .then(profile => {
-            displayName = profile.displayName
-          })
-          .catch((err) => {
-            console.log(' getProfileerror', err);
-          });
-      },
-      err => {
-        console.log('LIFF initialization failed ', err);
-      }
-    );
-  </script>
   <noscript>
     You need to enable JavaScript to run this app.
   </noscript>
