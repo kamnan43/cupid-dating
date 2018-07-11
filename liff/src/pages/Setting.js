@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import NumericInput from 'react-numeric-input';
-import fetch from 'node-fetch';
+import rp  from 'request-promise';
 
 class Setting extends Component {
   constructor(props) {
@@ -73,17 +72,11 @@ class Setting extends Component {
   }
 
   handleSubmit() {
-    console.log(this.state);
     let url = 'https://sitthi.me:3804/liff/setting';
-    fetch(url, {
+    rp({
       method: 'POST',
-      mode: 'no-cors',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin':'*',
-      },
-      body: JSON.stringify({
+      uri: url,
+      body: {
         userId: this.state.userId,
         displayName: this.state.displayName,
         gender: this.state.gender,
@@ -92,9 +85,15 @@ class Setting extends Component {
         candidate_min_age:this.state.partnerAgeFrom,
         candidate_max_age:this.state.partnerAgeTo,
         status: 1,
-      })
+      },
+      json: true,
     })
-
+      .then(function (response) {
+        console.log(`getData result : ${response}`);
+      })
+      .catch(function (err) {
+        console.log('getData error : ', err);
+      });
   }
 
   render() {

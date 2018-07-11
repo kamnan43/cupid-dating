@@ -9,6 +9,7 @@ const cupid = require('./cupid.js');
 const http = require('http');
 const https = require('https');
 const bodyParser = require('body-parser');
+const cors = require('cors')
 const app = express();
 // app.use(bodyParser.json());
 app.use('/static', express.static('static'));
@@ -33,6 +34,8 @@ app.post('/webhooks', lineSdk.middleware(config), (req, res) => {
     });
 });
 app.use(bodyParser.json());
+app.use(cors());
+app.options('*', cors());
 app.post('/liff/setting', (req, res) => {
   console.log('liff2', req.body);
   // cupid.saveSetting(req.body)
