@@ -34,10 +34,10 @@ app.post('/webhooks', lineSdk.middleware(config), (req, res) => {
 });
 app.use(bodyParser.json());
 app.post('/liff/setting', (req, res) => {
-  console.log('liff', req.body);
-  cupid.saveSetting(req.body)
-    .then(() => res.end())
-    .catch(() => res.status(500).end());
+  console.log('liff2', req.body);
+  // cupid.saveSetting(req.body)
+  //   .then(() => res.end())
+  //   .catch(() => res.status(500).end());
 });
 
 function handleEvent(event) {

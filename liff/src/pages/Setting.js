@@ -77,9 +77,11 @@ class Setting extends Component {
     let url = 'https://sitthi.me:3804/liff/setting';
     fetch(url, {
       method: 'POST',
+      mode: 'no-cors',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin':'*',
       },
       body: JSON.stringify({
         userId: this.state.userId,
