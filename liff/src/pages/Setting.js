@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import NumericInput from 'react-numeric-input';
+import fetch from 'fetch';
 
 class Setting extends Component {
   constructor(props) {
@@ -27,6 +28,7 @@ class Setting extends Component {
           .then(profile => {
             let prevState = { ...this.state };
             prevState.displayName = profile.displayName;
+            prevState.userId = userId;
             this.setState(prevState);
           })
           .catch((err) => {
@@ -72,6 +74,25 @@ class Setting extends Component {
 
   handleSubmit() {
     console.log(this.state);
+    let url = 'https://sitthi.me:3804/liff/setting';
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: this.state.userId,
+        displayName: this.state.displayName,
+        gender: this.state.gender,
+        age: this.state.age,
+        candidate_gender:this.state.partnerGender,
+        candidate_min_age:this.state.partnerAgeFrom,
+        candidate_max_age:this.state.partnerAgeTo,
+        status: 1,
+      })
+    })
+
   }
 
   render() {

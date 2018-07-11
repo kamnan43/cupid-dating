@@ -83,6 +83,10 @@ module.exports = {
       });
   },
 
+  saveSetting: (data) => {
+    return updateMemberData(data.userId, data);
+  },
+
   saveSpec: (userId, replyToken) => {
     line.replyMessage(
       replyToken,
