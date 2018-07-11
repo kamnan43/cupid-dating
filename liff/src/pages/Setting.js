@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import NumericInput from 'react-numeric-input';
-import fetch from 'fetch';
+import fetch from 'node-fetch';
 
 class Setting extends Component {
   constructor(props) {
